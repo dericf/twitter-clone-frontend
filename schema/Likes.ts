@@ -5,3 +5,11 @@ export interface TweetLike {
 }
 
 export type TweetLikeResponse = Array<TweetLike>
+
+export interface TweetLikeCreateRequestBody {
+	tweetId: number
+}
+
+export interface TweetLikeDeleteRequestBody {
+	tweetId: number
+}
