@@ -38,41 +38,38 @@ export const TweetCard = ({ tweet }: Props) => {
         </div>
         <div className="p-8">
           <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
-          <Link as={`/users/${tweet.userId}`} href={`/users/${tweet.userId}`}>
-
-          {tweet.username}
-          </Link>
+            <Link as={`/users/${tweet.userId}`} href={`/users/${tweet.userId}`}>
+              {tweet.username}
+            </Link>
           </div>
-          
-          
-            <span
-              className="block mt-1 text-lg leading-tight font-medium text-black"
-              >
-              {dateFormat(tweet.createdAt)} at {timeFormat(tweet.createdAt)}
-              
-            </span>
-          
+
+          <span className="block mt-1 text-lg leading-tight font-medium text-black">
+            {dateFormat(tweet.createdAt)} at {timeFormat(tweet.createdAt)}
+          </span>
+
           <p className="mt-2 text-gray-500 text-2xl">{tweet.content}</p>
-          <div className="flex">
-            {/* Like button */}
-            <LikeButton tweetId={tweet.tweetId} />
+          {isAuthenticated === true && (
+            <div className="flex">
+              {/* Like button */}
+              <LikeButton tweetId={tweet.tweetId} />
 
-            {/* Comments */}
-            <Button color="blue" title="Show Comments">
-              <svg
-                className="w-8 h-8"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </Button>
-          </div>
+              {/* Comments */}
+              <Button color="white" title="Show Comments">
+                <svg
+                  className="w-8 h-8"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
