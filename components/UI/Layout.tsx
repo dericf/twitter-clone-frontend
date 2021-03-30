@@ -7,6 +7,7 @@ import { Button } from "./Button";
 import { LoginButton } from "./LoginButton";
 import { LogoutButton } from "./LogoutButton";
 import { MainTitle } from "./MainAppTitle";
+import Link from "next/link"
 // import LoadingBackdrop from "./LoadingBackdrop";
 
 export const Layout = ({ children }) => {
@@ -37,15 +38,18 @@ export const Layout = ({ children }) => {
       </div>
 
       <div className="flex-1 flex overflow-hidden bg-gray-700 ">
-        <div className="hidden md:flex md:flex-col w-64 flex-shrink-0 justify-center px-6 py-8 bg-white shadow-lg">
+        <div className="flex flex-col w-24 sm:w-40 md:w-64 flex-shrink-0 justify-center px-0.5 sm:px-3 md:px-6 py-6 bg-white shadow-lg">
           {/* Left Sidebar */}
-          <Button color="blue">Tweets</Button>
-          <Button color="blue">Likes</Button>
-          <Button color="blue">Profile</Button>
+          <Link href="/" as="/"><Button color="blue" className="text-xs sm:text-sm md:text-lg">Discover</Button></Link>
+          <Link href="/tweets" as="/tweets"><Button color="blue" className="text-xs sm:text-sm md:text-lg">Tweets</Button></Link>
+          <Link href="/likes" as="/likes"><Button color="blue" className="text-xs sm:text-sm md:text-lg">Likes</Button></Link>
+          <Link href="/comments" as="/comments"><Button color="blue" className="text-xs sm:text-sm md:text-lg">Comments</Button></Link>
+          <Link href="/profile" as="/profile"><Button color="blue" className="text-xs sm:text-sm md:text-lg">Profile</Button></Link>
+          
         </div>
 
         {/* Scroll Wrapper */}
-        <div className="flex flex-1  ">
+        <div className="flex flex-1 mx-6">
           {/* Main Content */}
           <div className="flex-1 overflow-y-auto">{children}</div>
         </div>
