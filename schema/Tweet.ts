@@ -1,13 +1,17 @@
 export interface Tweet {
-  tweetId: Number;
-  userId: Number;
-  username: String;
-  content: String;
-  createdAt: String;
+  tweetId: number;
+  userId: number;
+  username: string;
+  content: string;
+  createdAt: string;
 }
 
 export type TweetResponse = Array<Tweet>;
 
 export interface TweetCreateRequestBody {
-  content: String;
+  content: string;
+}
+
+export interface TweetUpdateRequestBody {
+  newContent: string;
 }
