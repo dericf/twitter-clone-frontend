@@ -24,6 +24,7 @@ export default function Home() {
   return (
     <Layout>
       <div className="flex flex-col w-full h-full items-center justify-items-center">
+        <h3 className="mx-auto text-3xl text-white py-2">Discover New Tweets</h3>
         {tweets &&
           tweets.map((tweet) => <TweetCard key={tweet.tweetId.toString()} tweet={tweet} />)}
           {/* <div key={tweet.tweetId.toString()}>{JSON.stringify(tweet, null, 4)}</div> */}
