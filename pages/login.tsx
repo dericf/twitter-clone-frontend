@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <Layout>
       <form
-        className="form flex flex-col max-w-md mx-auto my-2 justify-evenly h-1/4"
+        className="mt-16 form grid grid-col1 gap-y-2 rounded-sm w-full max-w-lg mx-auto my-4 py-4 justify-evenly align-center shadow-md bg-blue-500"
         name="loginForm"
         method="POST"
         action="#"
@@ -25,20 +25,21 @@ export default function Home() {
           await tryAuthenticateWithUsernamePassword(username, password)
         }}
       >
-        <div className="flex flex-col w-10/12 mx-auto ">
+        <div className="flex flex-col w-auto  m-auto text-white  text-xl">
+          <h3 className="text-4xl text-white">Please Log In</h3>
           <label htmlFor="email">Username/Email</label>
           <input
-            className="text-gray-900 px-4 py-2 focus:hover:active:bg-blue-300 "
+            className="text-gray-900 px-4 py-2 focus:bg-gray-200   mt-1 "
             type="text"
             name="username"
             value={username}
             onChange={(e) => setUsername(e.currentTarget.value)}
           />
         </div>
-        <div className="flex flex-col w-10/12 mx-auto ">
+        <div className="flex flex-col mx-auto mt-2 text-white text-xl ">
           <label htmlFor="password">Password</label>
           <input
-            className="text-gray-900 px-4 py-2"
+            className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.currentTarget.value)}
