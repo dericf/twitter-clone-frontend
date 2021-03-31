@@ -7,7 +7,11 @@ import { Button } from "./Button";
 import { LoginButton } from "./LoginButton";
 import { LogoutButton } from "./LogoutButton";
 import { MainTitle } from "./MainAppTitle";
-import Link from "next/link"
+import Link from "next/link";
+
+import { MobileBottomNav } from "./Nav/MobileBottomNav";
+import { LeftSidebar } from "./Nav/LeftSidebarNav";
+import { NewTweetButton } from "../Tweets/NewTweetButton";
 // import LoadingBackdrop from "./LoadingBackdrop";
 
 export const Layout = ({ children }) => {
@@ -26,10 +30,13 @@ export const Layout = ({ children }) => {
 
   return (
     <main className=" w-screen h-screen flex flex-col overflow-hidden">
-      <div className="flex flex-none px-2 py-2 w-full h-20 items-center justify-between shadow-lg bg-blue-600 text-white">
+      <div className="flex flex-none px-2 py-2 w-full h-20 items-center justify-between shadow-lg bg-blue-500 text-white">
         <MainTitle />
         {isAuthenticated ? (
-          <LogoutButton />
+        <div className="flex">
+        <NewTweetButton />
+        <LogoutButton />
+        </div>
         ) : router.asPath.includes("login") ? (
           <></>
         ) : (
@@ -38,20 +45,19 @@ export const Layout = ({ children }) => {
       </div>
 
       <div className="flex-1 flex overflow-hidden bg-gray-700 ">
-        <div className="flex flex-col w-24 sm:w-40 md:w-64 flex-shrink-0 justify-center px-0.5 sm:px-3 md:px-6 py-6 bg-white shadow-lg">
-          {/* Left Sidebar */}
-          <Link href="/" as="/"><Button color="blue" className="text-xs sm:text-sm md:text-lg">Discover</Button></Link>
-          <Link href="/tweets" as="/tweets"><Button color="blue" className="text-xs sm:text-sm md:text-lg">Tweets</Button></Link>
-          <Link href="/likes" as="/likes"><Button color="blue" className="text-xs sm:text-sm md:text-lg">Likes</Button></Link>
-          <Link href="/comments" as="/comments"><Button color="blue" className="text-xs sm:text-sm md:text-lg">Comments</Button></Link>
-          <Link href="/profile" as="/profile"><Button color="blue" className="text-xs sm:text-sm md:text-lg">Profile</Button></Link>
-          
-        </div>
+        <nav className="hidden sm:flex flex-col w-24 sm:w-40 md:w-52 flex-shrink-0 justify-center px-0.5 sm:px-3 md:px-6 py-6 bg-white shadow-lg">
+          <LeftSidebar />
+        </nav>
 
         {/* Scroll Wrapper */}
         <div className="flex flex-1 mx-6">
           {/* Main Content */}
-          <div className="flex-1 overflow-y-auto">{children}</div>
+          <div className="flex-1 overflow-y-auto justify-between sm:pb-12">
+            {children}
+            <nav className="fixed sm:hidden flex justify-between items-center  bottom-0 w-screen h-12 -mx-6 flex-grow flex-shrink-0">
+              <MobileBottomNav />
+            </nav>
+          </div>
         </div>
       </div>
     </main>
