@@ -1,16 +1,15 @@
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+.blur {
+  filter: blur(10px);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+.backdrop-blur-sm {
+  backdrop-filter: blur(3px);
 }
 
-* {
-  box-sizing: border-box;
+.backdrop-blur-md {
+  backdrop-filter: blur(6px);
+}
+
+.backdrop-blur-lg {
+  backdrop-filter: blur(9px);
 }
