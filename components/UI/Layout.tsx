@@ -26,9 +26,10 @@ export const Layout = ({ children, isProtected = false }) => {
     if (user === null) {
       (async () => {
         const isAuth = await loadAuthState();
-        setLoading(false);
         if (isAuth === false && isProtected === true) {
           router.push("/login");
+        } else {
+          setLoading(false);
         }
       })().catch((err) => {
         console.error(err);
