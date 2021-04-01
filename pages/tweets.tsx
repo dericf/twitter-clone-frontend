@@ -17,7 +17,7 @@ export default function Home() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   // const [tweets, setTweets] = useState<TweetResponse>([]);
-  const {createTweet, refreshTweets, tweets} = useTweetContext()
+  const { createTweet, refreshTweets, tweets } = useTweetContext();
 
   useEffect(() => {
     (async () => {
@@ -26,18 +26,16 @@ export default function Home() {
   }, [user]);
 
   return (
-    <Protected>
-      <Layout>
-        {/* TODO: Need 3 columns here | leftsidebar - content - rightsidebar |*/}
-        <div className="flex flex-col w-full h-full items-center justify-items-center">
-          <h3 className="mx-auto text-3xl text-white py-2">My Tweets</h3>
-          {tweets &&
-            tweets.map((tweet) => (
-              <TweetCard key={tweet.tweetId.toString()} tweet={tweet} />
-            ))}
-          {/* <div key={tweet.tweetId.toString()}>{JSON.stringify(tweet, null, 4)}</div> */}
-        </div>
-      </Layout>
-    </Protected>
+    <Layout isProtected={true}>
+      {/* TODO: Need 3 columns here | leftsidebar - content - rightsidebar |*/}
+      <div className="flex flex-col w-full h-full items-center justify-items-center">
+        <h3 className="mx-auto text-3xl text-white py-2">My Tweets</h3>
+        {tweets &&
+          tweets.map((tweet) => (
+            <TweetCard key={tweet.tweetId.toString()} tweet={tweet} />
+          ))}
+        {/* <div key={tweet.tweetId.toString()}>{JSON.stringify(tweet, null, 4)}</div> */}
+      </div>
+    </Layout>
   );
 }
