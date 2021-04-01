@@ -14,6 +14,8 @@ interface Props extends PropType {
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
   icon?: JSX.Element;
+  fluid?: boolean;
+  link?: string | null;
 }
 
 export const Button: FunctionComponent<Props> = ({
@@ -24,20 +26,21 @@ export const Button: FunctionComponent<Props> = ({
   children,
   type = "button",
   icon,
+  fluid = false,
+  link = null,
   ...props
 }) => {
   let colorClasses = "";
   const {key} = props
-  console.log("Props..", props, key);
   switch (color) {
     case "blue":
-      colorClasses = `text-white bg-blue-500 focus:ring-blue-400 hover:bg-blue-700`;
+      colorClasses = `text-white bg-lightBlue-700 focus:ring-lightBlue-900 hover:bg-lightBlue-800`;
       break;
     case "white":
-      colorClasses = `text-gray-900 bg-white focus:ring-gray-100 hover:bg-gray-800 hover:text-white`;
+      colorClasses = `text-blueGray-700 bg-white focus:ring-blueGray-100 hover:bg-blueGray-800 hover:text-white`;
       break;
     case "green":
-      colorClasses = `text-white bg-green-500 focus:ring-green-400 hover:bg-green-700`;
+      colorClasses = `text-white bg-emerald-500 focus:ring-emerald-400 hover:bg-emerald-700`;
       break;
     case "red":
       colorClasses = `text-white bg-red-500 focus:ring-red-400 hover:bg-red-700`;
@@ -47,7 +50,7 @@ export const Button: FunctionComponent<Props> = ({
   }
   return (
     <button
-      className={`flex justify-center align-middle py-2 px-4 mx-2 my-2 ${colorClasses} font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 ${className}`}
+      className={`flex justify-center align-middle py-2 px-4 mx-2 my-2 ${colorClasses} font-semibold rounded-sm shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 ${className}`}
       type={type}
       // onClick={onClick}
       {...props}
