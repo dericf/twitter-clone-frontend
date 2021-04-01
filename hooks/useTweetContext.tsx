@@ -6,13 +6,6 @@ import { Tweet, TweetCreateRequestBody } from "../schema/Tweet";
 import { createNewTweet, getAllTweets } from "../crud/tweets";
 import { useAuth } from "./useAuth";
 
-export interface User {
-  id: number;
-  username: string;
-  email: string;
-  bio: string;
-  birthdate: string;
-}
 
 export interface TweetContextI {
   tweets: Array<Tweet>,
@@ -43,7 +36,7 @@ export default function TweetContextProvider({ children }) {
   };
 
   const refreshTweets = async () => {
-    const allTweets = await getAllTweets(user.id);
+    const allTweets = await getAllTweets(user?.id);
     setTweets(allTweets);
   };
 

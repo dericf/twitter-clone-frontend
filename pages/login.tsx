@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <Layout>
       <form
-        className="mt-16 form grid grid-col1 gap-y-2 rounded-sm w-full max-w-lg mx-auto my-4 py-4 justify-evenly align-center shadow-md bg-blue-500"
+        className="mt-16 mx-auto my-4 py-8 form grid grid-col1 gap-y-2 rounded-sm w-full max-w-lg  justify-evenly align-center shadow-md bg-lightBlue-700"
         name="loginForm"
         method="POST"
         action="#"
@@ -26,10 +26,10 @@ export default function Home() {
         }}
       >
         <div className="flex flex-col w-auto  m-auto text-white  text-xl">
-          <h3 className="text-4xl text-white">Please Log In</h3>
+          <h3 className="text-4xl text-white mb-4">Please Log In</h3>
           <label htmlFor="email">Username/Email</label>
           <input
-            className="text-gray-900 px-4 py-2 focus:bg-gray-200   mt-1 "
+            className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1 "
             type="text"
             name="username"
             value={username}

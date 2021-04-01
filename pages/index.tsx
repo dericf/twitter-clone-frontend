@@ -10,8 +10,6 @@ import {TweetCard} from "../components/Tweets/TweetCard"
 export default function Home() {
   const { sendAlert, sendError } = useAlert();
 
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
   const [tweets, setTweets] = useState<TweetResponse>([]);
 
   useEffect(() => {

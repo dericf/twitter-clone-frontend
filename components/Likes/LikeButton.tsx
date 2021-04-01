@@ -38,15 +38,16 @@ export const LikeButton: FunctionComponent<PropType> = ({
     (async () => {
       const likes = await getAllTweetLikes(tweetId);
       setTweetLikes(likes);
-      setLoading(false);
-      console.log("likes :>> ", likes);
+      // console.log("likes :>> ", likes);
       likes.forEach((like) => {
         if (like.userId === user.id) {
           setTweetIsLikedByUser(true);
         }
       });
+      setLoading(false);
     })().catch((err) => {
       console.error(err);
+      setLoading(false);
     });
   }, []);
 
@@ -65,18 +66,18 @@ export const LikeButton: FunctionComponent<PropType> = ({
   };
 
   return loading === true ? (
-    <Button className="ml-0" color="blue" disabled>
+    <Button className="ml-0" color="white" disabled>
       <LoadingSpinner />
     </Button>
   ) : (
     <Button
-      className="ml-0"
+      className={`ml-0 ${tweetIsLikedByUser ? "text-white " : "text-blueGray-700 hover:text-white"} `}
       color={tweetIsLikedByUser ?  "blue" : "white" }
       title="Like Tweet"
       onClick={likeTweet}
     >
       <svg
-        className="w-8 h-8 cursor-pointer"
+        className={`w-8 h-8 cursor-pointer `}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
         fill="currentColor"

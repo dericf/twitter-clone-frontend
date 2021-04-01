@@ -1,15 +1,7 @@
 import React, { useState, useContext, createContext } from "react";
 import { useAlert } from "./useAlert";
 import { useRouter } from "next/router";
-
-export interface User {
-  id: number;
-  username: string;
-  email: string;
-  bio: string;
-  birthdate: string;
-}
-
+import { User } from "../schema/User";
 export interface Auth {
   isAuthenticated: boolean;
   user: User;
@@ -50,7 +42,6 @@ export default function AuthProvider({ children }) {
     username: string,
     password: string,
     loginRedirect: string = "/",
-
   ): Promise<boolean> => {
     try {
       // Server Auth Scheme requires form data - not regular json body
@@ -75,7 +66,7 @@ export default function AuthProvider({ children }) {
         setIsAuthenticated(true);
         const user: User = await getAuthUserData();
         setUser(user);
-        router.push(loginRedirect)
+        router.push(loginRedirect);
       } else {
         console.log("Error: ", res.status);
         sendError("Error logging in. Please try again.");
@@ -98,12 +89,15 @@ export default function AuthProvider({ children }) {
         credentials: "include",
       });
 
-      console.log("res :>> ", res);
       if (res.status >= 200 && res.status < 300) {
         const user: User = await res.json();
-        console.log("user :>> ", user);
+        // console.log("user :>> ", user);
+        sendAlert("Successfully loaded user session");
         return user;
       } else {
+        sendError(
+          "There was an issue getting your user session. Please refresh the page.",
+        );
         return null;
       }
     } catch (error) {
@@ -113,7 +107,7 @@ export default function AuthProvider({ children }) {
 
   const logout = async () => {
     const res = await fetch(`http://localhost:8001/logout`, {
-      method: "POST",
+      method: "GET",
       credentials: "include",
     });
     setIsAuthenticated(false);
@@ -125,11 +119,11 @@ export default function AuthProvider({ children }) {
     // Try and get the authenticated user data
     const user: User = await getAuthUserData();
     if (user) {
-			setIsAuthenticated(true)
+      setIsAuthenticated(true);
       setUser(user);
       return true;
     } else {
-			setIsAuthenticated(false)
+      setIsAuthenticated(false);
       setUser(null);
       return false;
     }
