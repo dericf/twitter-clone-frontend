@@ -15,11 +15,11 @@ export const getAllTweets = async (userId = null): Promise<TweetResponse> => {
         credentials: "include",
       },
     );
-    console.log("res.json :>> ", res.status);
+    // console.log("res.json :>> ", res.status);
     if (res.status >= 200 && res.status < 300) {
       const json: TweetResponse = await res.json();
 
-      console.log("json :>> ", json);
+      // console.log("json :>> ", json);
       return json;
     } else {
       return null;
@@ -30,7 +30,7 @@ export const getAllTweets = async (userId = null): Promise<TweetResponse> => {
   }
 };
 
-const createNewTweet = async (
+export const createNewTweet = async (
   requestBody: TweetCreateRequestBody,
 ): Promise<EmptyResponse> => {
   try {
@@ -59,7 +59,7 @@ const createNewTweet = async (
 
 
 
-const updateTweet = async (
+export const updateTweet = async (
   requestBody: TweetUpdateRequestBody,
   tweetId: number,
 ): Promise<EmptyResponse> => {
@@ -88,7 +88,7 @@ const updateTweet = async (
 };
 
 
-const deleteTweet = async (
+export const deleteTweet = async (
   tweetId: number,
 ): Promise<EmptyResponse> => {
   try {
