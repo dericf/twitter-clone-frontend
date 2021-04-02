@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "./Button";
 import { LoginButton } from "./LoginButton";
+import { RegisterButton } from "./RegisterButton";
 import { LogoutButton } from "./LogoutButton";
 import { MainTitle } from "./MainAppTitle";
 import Link from "next/link";
@@ -14,22 +15,39 @@ import { LeftSidebar } from "./Nav/LeftSidebarNav";
 import { NewTweetButton } from "../Tweets/NewTweetButton";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { LoadingOverlay } from "./LoadingOverlay";
+import { useAlert } from "../../hooks/useAlert";
 // import LoadingBackdrop from "./LoadingBackdrop";
 
-export const Layout = ({ children, isProtected = false }) => {
+export const Layout = ({
+  children,
+  isProtected = false,
+  noAuth = false,
+  silentAuth = false,
+  pageTitle = null,
+  onAuthSuccess = () => {},
+}) => {
   const { user, isAuthenticated, loadAuthState } = useAuth();
-
+  const {sendError, sendAlert} = useAlert()
   const [loading, setLoading] = useState(!user);
 
   const router = useRouter();
   useEffect(() => {
+    if (noAuth === true) {
+      setLoading(false)
+      return () => {}
+    }
     if (user === null) {
       (async () => {
         const isAuth = await loadAuthState();
         if (isAuth === false && isProtected === true) {
-          router.push("/login");
+          router.push(`/login?redirect=${router.asPath.toString()}`);
         } else {
           setLoading(false);
+          if (!silentAuth) {
+            sendError(
+              "There was an issue getting your user session. Please refresh the page.",
+            );
+          }
         }
       })().catch((err) => {
         console.error(err);
@@ -39,7 +57,7 @@ export const Layout = ({ children, isProtected = false }) => {
         }
       });
     }
-  }, []);
+  }, [router.isReady]);
 
   if (loading === true) {
     return <LoadingOverlay />;
@@ -47,7 +65,7 @@ export const Layout = ({ children, isProtected = false }) => {
 
   return (
     <main className=" w-screen h-screen flex flex-col overflow-hidden">
-      <div className="flex flex-none px-2 py-2 w-full h-20 items-center justify-between shadow-lg bg-lightBlue-700 text-white">
+      <div className="flex flex-none px-2 py-2 w-full h-20 items-center justify-between shadow-xl border-lightBlue-800 border-b-2 bg-lightBlue-700 text-white">
         <MainTitle />
         {isAuthenticated ? (
           <div className="flex">
@@ -57,7 +75,10 @@ export const Layout = ({ children, isProtected = false }) => {
         ) : router.asPath.includes("login") ? (
           <></>
         ) : (
+          <div className="flex">
           <LoginButton />
+          <RegisterButton />
+          </div>
         )}
       </div>
 
@@ -67,11 +88,16 @@ export const Layout = ({ children, isProtected = false }) => {
         </nav>
 
         {/* Scroll Wrapper */}
-        <div className="flex flex-1 pb-12 bg-blueGray-700">
+        <div className="flex flex-1 pb-12 sm:pb-0 bg-blueGray-700">
           {/* Main Content */}
-          <div className="flex-1 overflow-y-auto justify-between">
+          <div className="flex-1 overflow-y-auto justify-between mx-4">
+            {pageTitle && (
+              <h3 className="text-4xl text-center text-white my-4">
+                {pageTitle}
+              </h3>
+            )}
             {children}
-            <nav className="fixed sm:hidden flex justify-between items-center  bottom-0 w-screen h-12 flex-grow flex-shrink-0">
+            <nav className="fixed sm:hidden flex justify-between items-center  bottom-0 w-screen h-12 flex-grow flex-shrink-0 -mx-4">
               <MobileBottomNav />
             </nav>
           </div>
