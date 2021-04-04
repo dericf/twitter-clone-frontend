@@ -11,6 +11,7 @@ interface Props extends PropType {
   color?: ButtonColor;
   loading?: boolean;
   className?: string;
+  disabled?: boolean;
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
   icon?: JSX.Element;
@@ -22,6 +23,7 @@ export const Button: FunctionComponent<Props> = ({
   color = "white",
   loading = false,
   className = "",
+  disabled = false,
   // onClick = () => {},
   children,
   type = "button",
@@ -50,7 +52,12 @@ export const Button: FunctionComponent<Props> = ({
   }
   return (
     <button
-      className={`flex justify-center align-middle py-2 px-4 mx-2 my-2 ${colorClasses} font-semibold rounded-sm shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 ${className}`}
+      disabled={disabled}
+      className={`flex justify-center align-middle 
+      ${disabled === true ? "opacity-30 cursor-not-allowed !hover:bg-rose-800:" : ""}
+      text-sm py-2 px-4 mx-2 my-2 ${colorClasses} font-semibold rounded-sm shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 
+      ${fluid ? "flex-grow w-full": ""}
+      ${className}`}
       type={type}
       // onClick={onClick}
       {...props}
@@ -58,6 +65,7 @@ export const Button: FunctionComponent<Props> = ({
     >
       {/* {icon && icon} */}
       {loading ? (
+        <>
         <svg
           className="h-5 w-5 mr-3 animate-spin"
           xmlns="http://www.w3.org/2000/svg"
@@ -72,6 +80,9 @@ export const Button: FunctionComponent<Props> = ({
             d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
           />
         </svg>
+          disabled
+        </>
+        
       ) : (
         children
       )}
