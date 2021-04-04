@@ -16,25 +16,24 @@ import { NewTweetButton } from "../Tweets/NewTweetButton";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { LoadingOverlay } from "./LoadingOverlay";
 import { useAlert } from "../../hooks/useAlert";
-// import LoadingBackdrop from "./LoadingBackdrop";
 
 export const Layout = ({
   children,
   isProtected = false,
   noAuth = false,
-  silentAuth = false,
+  silentAuth = true,
   pageTitle = null,
   onAuthSuccess = () => {},
 }) => {
   const { user, isAuthenticated, loadAuthState } = useAuth();
-  const {sendError, sendAlert} = useAlert()
+  const { sendError, sendAlert } = useAlert();
   const [loading, setLoading] = useState(!user);
 
   const router = useRouter();
   useEffect(() => {
     if (noAuth === true) {
-      setLoading(false)
-      return () => {}
+      setLoading(false);
+      return () => {};
     }
     if (user === null) {
       (async () => {
@@ -59,9 +58,9 @@ export const Layout = ({
     }
   }, [router.isReady]);
 
-  if (loading === true) {
-    return <LoadingOverlay />;
-  }
+  // if (loading === true) {
+  //   return <LoadingOverlay />;
+  // }
 
   return (
     <main className=" w-screen h-screen flex flex-col overflow-hidden">
@@ -76,8 +75,8 @@ export const Layout = ({
           <></>
         ) : (
           <div className="flex">
-          <LoginButton />
-          <RegisterButton />
+            <LoginButton />
+            <RegisterButton />
           </div>
         )}
       </div>
@@ -96,7 +95,7 @@ export const Layout = ({
                 {pageTitle}
               </h3>
             )}
-            {children}
+            {loading ? <LoadingOverlay /> : children}
             <nav className="fixed sm:hidden flex justify-between items-center  bottom-0 w-screen h-12 flex-grow flex-shrink-0 -mx-4">
               <MobileBottomNav />
             </nav>
