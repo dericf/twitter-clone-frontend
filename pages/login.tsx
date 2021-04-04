@@ -1,5 +1,6 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { Button } from "../components/UI/Button";
 import { Layout } from "../components/UI/Layout";
 import { useAlert } from "../hooks/useAlert";
@@ -8,25 +9,47 @@ import { useAuth } from "../hooks/useAuth";
 export default function Home() {
   const { sendAlert, sendError } = useAlert();
 
-	const {tryAuthenticateWithUsernamePassword} = useAuth()
+  const router = useRouter();
+
+  const { tryAuthenticateWithUsernamePassword } = useAuth();
 
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  let redirect: string = "/";
+
+  useEffect(() => {
+    if (router.query["redirect"]) {
+      redirect = router.query["redirect"].toString();
+      console.log("Redirect String", redirect)
+    }
+  }, [router.isReady]);
 
   return (
-    <Layout>
+    <Layout pageTitle="Please Log In" noAuth>
       <form
-        className="mt-16 mx-auto my-4 py-8 form grid grid-col1 gap-y-2 rounded-sm w-full max-w-lg  justify-evenly align-center shadow-md bg-lightBlue-700"
+        className="mt-4 mx-auto my-4 py-8 form grid grid-col1 gap-y-2 rounded-sm w-full max-w-lg  justify-evenly align-center shadow-md bg-lightBlue-700"
         name="loginForm"
-        method="POST"
+        method="GET"
         action="#"
         onSubmit={async (e) => {
           e.preventDefault();
-          await tryAuthenticateWithUsernamePassword(username, password)
+          if (
+            await tryAuthenticateWithUsernamePassword(
+              username,
+              password,
+              router.query["redirect"]?.toString()
+            ) === false
+          ) {
+            // Failed
+            sendError("Error logging in")
+          } else {
+            // Success
+            sendAlert("Welcome")
+          }
+          
         }}
       >
         <div className="flex flex-col w-auto  m-auto text-white  text-xl">
-          <h3 className="text-4xl text-white mb-4">Please Log In</h3>
           <label htmlFor="email">Username/Email</label>
           <input
             className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1 "
@@ -45,9 +68,25 @@ export default function Home() {
             onChange={(e) => setPassword(e.currentTarget.value)}
           />
         </div>
-        <Button type="submit" color="white" className="text-2xl mt-4">
+
+        <div className="flex mx-4 my-6 border-b col-span-1 sm:col-span-2"></div>
+        <Button
+          onClick={() => router.push("/register")}
+          type="button"
+          color="white"
+          className="text-2xl mt-4 col-span-1 sm:col-span-1"
+        >
+          Register New Account
+        </Button>
+
+        <Button
+          type="submit"
+          color="green"
+          className="text-2xl mt-4 col-span-1 sm:col-span-1"
+        >
           Login
         </Button>
+
       </form>
     </Layout>
   );
