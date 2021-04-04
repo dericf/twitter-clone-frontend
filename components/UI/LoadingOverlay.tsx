@@ -1,7 +1,6 @@
 export const LoadingOverlay = () => {
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center text-white bg-blueGray-700">
-			<h1 className="text-6xl ">Loading</h1>
+    <div className="flex w-full h-full items-center justify-center text-white">
       <svg
         className="h-24 w-24 animate-spin"
         xmlns="http://www.w3.org/2000/svg"
