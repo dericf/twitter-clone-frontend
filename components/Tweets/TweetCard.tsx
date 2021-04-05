@@ -5,6 +5,7 @@ import { dateFormat, timeFormat } from "../../utilities/dates";
 import { LikeButton } from "../Likes/LikeButton";
 import { Button } from "../UI/Button";
 import { EditTweetButton } from "./EditTweetModal";
+import { DeleteTweetModal } from "./DeleteTweetModal";
 import { FollowButton } from "./FollowButton";
 interface Props {
   tweet: Tweet;
@@ -28,7 +29,10 @@ export const TweetCard = ({ tweet }: Props) => {
                 {user.id !== tweet.userId ? (
                   <FollowButton followUserId={tweet.userId} />
                 ) : (
-                  <EditTweetButton tweet={tweet} />
+                  <div className="flex items-center">
+                    <EditTweetButton tweet={tweet} />
+                    <DeleteTweetModal tweetId={tweet.tweetId} />
+                  </div>
                 )}
               </>
             )}
@@ -38,24 +42,26 @@ export const TweetCard = ({ tweet }: Props) => {
             {dateFormat(tweet.createdAt)} at {timeFormat(tweet.createdAt)}
           </span>
 
-          <p className="mt-2 text-gray-500 text-2xl">{tweet.content}</p>
+          <p className="mt-2 text-blueGray-500 text-2xl">{tweet.content}</p>
           {isAuthenticated === true && (
-            <div className="flex">
+            <div className="flex justify-start space-x-4 mt-3 bg-blueGray-300 px-4 py-2 rounded-sm">
               {/* Like button */}
               <LikeButton tweetId={tweet.tweetId} />
 
               {/* Comments */}
               <Button color="white" title="Show Comments">
                 <svg
-                  className="w-8 h-8 "
                   xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
+                  className="h-8 w-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
                   <path
-                    fillRule="evenodd"
-                    d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
-                    clipRule="evenodd"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
                   />
                 </svg>
               </Button>
