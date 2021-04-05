@@ -1,4 +1,5 @@
 import { FollowsCreateRequestBody, FollowsDeleteRequestBody, FollowsResponse } from "../schema/Follows";
+import { EmptyResponse } from "../schema/General";
 
 export const getAllFollows = async (
   userId: number,

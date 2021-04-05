@@ -24,7 +24,7 @@ export default function Home() {
   // const { userId } = router.query;
 
   useEffect(() => {
-    if(!router.isReady) return;
+    if (!router.isReady) return;
     userId = router.query["userId"];
     (async () => {
       // const allTweets = await getAllTweets();

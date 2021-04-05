@@ -14,7 +14,7 @@ export const TweetCard = ({ tweet }: Props) => {
   const { isAuthenticated, user } = useAuth();
   return (
     <div className="mx-auto my-6 w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl  bg-white rounded-sm shadow-md">
-      <div className="flex ">
+      <div className="flex">
         <div className="p-8 flex-grow">
           <div className="uppercase tracking-wide text-sm text-lightBlue-500 font-semibold flex justify-between items-center">
             <Link as={`/user/${tweet.userId}`} href={`/users/${tweet.userId}`}>

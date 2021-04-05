@@ -8,7 +8,7 @@ import { TweetResponse } from "../schema/Tweet";
 import { TweetCard } from "../components/Tweets/TweetCard";
 import { useAuth } from "../hooks/useAuth";
 import { Protected } from "../components/Auth/Protected";
-import { useTweetContext } from "../hooks/useTweetContext";
+import { useStore } from "../hooks/useStore";
 
 export default function Home() {
   const { sendAlert, sendError } = useAlert();
@@ -17,7 +17,7 @@ export default function Home() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   // const [tweets, setTweets] = useState<TweetResponse>([]);
-  const { createTweet, refreshTweets, tweets } = useTweetContext();
+  const { createTweet, refreshTweets, tweets } = useStore();
 
   useEffect(() => {
     (async () => {
@@ -26,16 +26,16 @@ export default function Home() {
   }, [user]);
 
   return (
-    <Layout isProtected={true}>
-      {/* TODO: Need 3 columns here | leftsidebar - content - rightsidebar |*/}
-      <div className="flex flex-col w-full h-full items-center justify-items-center">
-        <h3 className="mx-auto text-3xl text-white py-2">My Tweets</h3>
-        {tweets &&
-          tweets.map((tweet) => (
-            <TweetCard key={tweet.tweetId.toString()} tweet={tweet} />
-          ))}
-        {/* <div key={tweet.tweetId.toString()}>{JSON.stringify(tweet, null, 4)}</div> */}
-      </div>
+    <Layout pageTitle="My Tweets" isProtected={true}>
+      {tweets &&
+        tweets.map((tweet) => (
+          <TweetCard key={tweet.tweetId.toString()} tweet={tweet} />
+        ))}
+
+      {tweets?.length === 0 && (
+        <div className="text-xl text-white ">You have no Tweets yet</div>
+      )}
+      {/* <div key={tweet.tweetId.toString()}>{JSON.stringify(tweet, null, 4)}</div> */}
     </Layout>
   );
 }

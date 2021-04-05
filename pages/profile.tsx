@@ -16,7 +16,7 @@ export default function Home() {
   const [password, setPassword] = useState<string>("");
 
   return (
-    <Layout isProtected={true}>
+    <Layout pageTitle="User Profile" isProtected={true}>
       <UserProfileCard></UserProfileCard>
     </Layout>
   );

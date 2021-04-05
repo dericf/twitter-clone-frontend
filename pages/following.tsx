@@ -33,6 +33,11 @@ export default function Home() {
         follows.map((follow) => (
           <FollowCard follow={follow} key={follow.username} />
         ))}
+      {follows?.length === 0 && (
+        <div className="text-xl text-white ">
+          You aren't following anyone yet
+        </div>
+      )}
     </Layout>
   );
 }
