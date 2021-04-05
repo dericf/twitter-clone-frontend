@@ -1,10 +1,18 @@
 import React, { useState, useContext, createContext } from "react";
 import { useAlert } from "./useAlert";
 import { useRouter } from "next/router";
-import { User } from "../schema/User";
+import {
+  User,
+  UserCreateResponse,
+  UserCreateRequestBody,
+  UserRegisterForm,
+} from "../schema/User";
+import { LoginResponseBody } from "../schema/Auth";
+import { APIErrorResponse } from "../schema/General";
 export interface Auth {
   isAuthenticated: boolean;
   user: User;
+  setUser: (user: User) => void;
   tryAuthenticateWithUsernamePassword: (
     username: string,
     password: string,
@@ -12,6 +20,7 @@ export interface Auth {
   ) => Promise<boolean>;
   loadAuthState: () => Promise<boolean>;
   logout: () => void;
+  tryRegister: (_: UserCreateRequestBody) => Promise<UserCreateResponse>;
 }
 
 // export const initialAuthValue = {
@@ -43,39 +52,79 @@ export default function AuthProvider({ children }) {
     password: string,
     loginRedirect: string = "/",
   ): Promise<boolean> => {
-    try {
-      // Server Auth Scheme requires form data - not regular json body
-      let formData = new URLSearchParams();
-      formData.append("username", username);
-      formData.append("password", password);
+    // Server Auth Scheme requires form data - not regular json body
+    let formData = new URLSearchParams();
+    formData.append("username", username);
+    formData.append("password", password);
 
-      const res = await fetch(`http://localhost:8001/token`, {
+    const res = await fetch(`http://localhost:8001/token`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      credentials: "include",
+      body: formData,
+    });
+
+    if (res.status >= 200 && res.status < 300) {
+      const json: LoginResponseBody = await res.json();
+
+      // Get the user data from server
+      const user: User = await getAuthUserData();
+      setIsAuthenticated(true);
+      setUser(user);
+
+      // Check if user was redirect to log in from another page
+      // If so -> navigate back to it
+      if (loginRedirect) {
+        router.push(loginRedirect);
+      } else {
+        router.push("/");
+      }
+      return true;
+    } else {
+      const err: APIErrorResponse = await res.json();
+      // Bad response status
+      throw new Error(err.detail);
+    }
+  };
+
+  const tryRegister = async (
+    args: UserRegisterForm,
+  ): Promise<UserCreateResponse> => {
+    const { username, email, bio, birthdate, password, confirmPassword } = args;
+    try {
+      console.log("args :>> ", args);
+      const res = await fetch(`http://localhost:8001/users`, {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/x-www-form-urlencoded",
         },
         credentials: "include",
-        body: formData,
+        body: JSON.stringify(args),
       });
 
       if (res.status >= 200 && res.status < 300) {
         const json = await res.json();
-        console.log("Cookie: ", document.cookie);
         console.log("json :>> ", json);
+        await tryAuthenticateWithUsernamePassword(username, password);
         setIsAuthenticated(true);
-        const user: User = await getAuthUserData();
-        setUser(user);
-        router.push(loginRedirect);
+        // const user: User = await getAuthUserData();
+        // setUser(user);
+        // setTimeout(() => {
+        //   router.push("/ ");
+        // }, 1000);
       } else {
         console.log("Error: ", res.status);
-        sendError("Error logging in. Please try again.");
-        return false;
+        sendError("Error registering user. Please try again.");
+        return null;
       }
     } catch (error) {
       console.log("Caught error :>> ", error);
       sendError("Error logging in. Please try again.");
-      return false;
+      return null;
     }
   };
 
@@ -92,12 +141,9 @@ export default function AuthProvider({ children }) {
       if (res.status >= 200 && res.status < 300) {
         const user: User = await res.json();
         // console.log("user :>> ", user);
-        sendAlert("Successfully loaded user session");
+        // sendAlert("Successfully loaded user session");
         return user;
       } else {
-        sendError(
-          "There was an issue getting your user session. Please refresh the page.",
-        );
         return null;
       }
     } catch (error) {
@@ -110,9 +156,10 @@ export default function AuthProvider({ children }) {
       method: "GET",
       credentials: "include",
     });
-    setIsAuthenticated(false);
-    setUser(null);
-    router.push("/");
+    router.push("/login").then(() => {
+      setIsAuthenticated(false);
+      setUser(null);
+    });
   };
 
   const loadAuthState = async (): Promise<boolean> => {
@@ -134,7 +181,9 @@ export default function AuthProvider({ children }) {
       value={{
         isAuthenticated,
         user,
+        setUser,
         tryAuthenticateWithUsernamePassword,
+        tryRegister,
         logout,
         loadAuthState,
       }}
