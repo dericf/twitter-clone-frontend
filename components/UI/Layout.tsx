@@ -89,13 +89,16 @@ export const Layout = ({
         {/* Scroll Wrapper */}
         <div className="flex flex-1 pb-12 sm:pb-0 bg-blueGray-700">
           {/* Main Content */}
-          <div className="flex-1 overflow-y-auto justify-between mx-4">
+          <div className="flex-1 overflow-y-auto justify-between ">
             {pageTitle && (
               <h3 className="text-4xl text-center text-white my-4">
                 {pageTitle}
               </h3>
             )}
-            {loading ? <LoadingOverlay /> : children}
+            <div className="flex flex-col w-full h-full items-center justify-items-center">
+              {loading ? <LoadingOverlay /> : children}
+            </div>
+
             <nav className="fixed sm:hidden flex justify-between items-center  bottom-0 w-screen h-12 flex-grow flex-shrink-0 -mx-4">
               <MobileBottomNav />
             </nav>
