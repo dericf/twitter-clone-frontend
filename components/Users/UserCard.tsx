@@ -1,9 +1,11 @@
-import { useAuth, User } from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
+import { EditUserInfoButton } from "./EditUserInfoModal";
+import { DeleteUserModal } from "./DeleteUserModal";
 
 export const UserProfileCard = () => {
   const { user } = useAuth();
   return (
-    <div className="max-w-md mx-auto my-6 bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+    <div className="max-w-md mx-auto my-6 bg-white rounded-sm shadow-md overflow-hidden md:max-w-2xl">
       <div className="md:flex">
         <div className="flex md:flex-shrink-0 justify-center pl-8 items-center">
           {/* <img
@@ -25,17 +27,28 @@ export const UserProfileCard = () => {
             />
           </svg>
         </div>
-        <div className="p-8">
-          <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
-            {user.username}
+        <div className="p-8 flex-1">
+          <div className="uppercase tracking-wide text-sm text-lightBlue-500 font-semibold flex justify-between items-center">
+            <div className="flex flex-col">
+              <span className="cursor-pointer hover:text-lightBlue-700">
+                {user.username}
+              </span>
+              {/* <a
+                href="#"
+                className="block mt-1 text-lg leading-tight font-medium text-black hover:underline"
+              >
+                {user.email}
+              </a> */}
+            </div>
+            {user && (
+              <div className="flex items-center">
+                <EditUserInfoButton />
+                <DeleteUserModal />
+              </div>
+            )}
           </div>
-          <a
-            href="#"
-            className="block mt-1 text-lg leading-tight font-medium text-black hover:underline"
-          >
-            {user.email}
-          </a>
-          <p className="mt-2 text-gray-500">{user.bio}</p>
+
+          <p className="mt-2 p-2 text-blueGray-500">{user.bio}</p>
         </div>
       </div>
     </div>
