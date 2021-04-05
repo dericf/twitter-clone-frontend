@@ -10,8 +10,8 @@ import { UserCreateRequestBody, UserRegisterForm } from "../schema/User";
 export default function Home() {
   const { sendAlert, sendError } = useAlert();
 
-  const router = useRouter()
-  
+  const router = useRouter();
+
   const { tryRegister } = useAuth();
 
   // conshandleFormChange;
@@ -22,8 +22,8 @@ export default function Home() {
   // const [birthdate, setBirthdate] = useState<string>("");
 
   const [form, setForm] = useState<UserRegisterForm>({
-    username: "x-user",
-    email: "x@email.com",
+    username: "",
+    email: "@email.com",
     password: "123456",
     confirmPassword: "123456",
     bio: "A Bio...",
@@ -39,33 +39,41 @@ export default function Home() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    console.log('Registering :>> ', {
+    console.log("Registering :>> ", {
       username: form.username,
       password: form.password,
       confirmPassword: form.confirmPassword,
       email: form.email,
       bio: form.bio,
-      birthdate: form.birthdate
+      birthdate: form.birthdate,
     });
-    
+
+    if (form.password !== form.confirmPassword) {
+      sendError("Passwords do not match!");
+      return false;
+    }
+
     await tryRegister({
       username: form.username,
       password: form.password,
-      confirmPassword: form.confirmPassword,
       email: form.email,
       bio: form.bio,
-      birthdate: form.birthdate
+      birthdate: form.birthdate,
     });
-  }
+  };
 
   return (
-    <Layout pageTitle="Register a New Account" onAuthSuccess={() => console.log("Auth was as ")} noAuth={true} >
+    <Layout
+      pageTitle="Register a New Account"
+      onAuthSuccess={() => console.log("Auth was as ")}
+      noAuth={true}
+    >
       {/* <h3 className="text-4xl text-center text-white mb-4">Please Log In</h3> */}
       <form
         className="my-4 mx-auto py-8 px-8 form 
-        grid grid-flow-row grid-cols-1  gap-y-2 gap-x-6
-        justify-evenly align-center 
-        w-full max-w-xl
+        grid grid-flow-row grid-cols-1 gap-y-2 gap-x-6
+        justify-center align-center 
+        w-full max-w-2xl
         text-white text-xl
         shadow-lg bg-lightBlue-700
         rounded-sm 
@@ -75,10 +83,10 @@ export default function Home() {
         action="#"
         onSubmit={handleRegister}
       >
-        <div className="flex flex-col justify-center items-center  place-self-center sm:place-self-center w-48 max-w-full">
+        <div className="flex flex-col justify-center items-center  place-self-center sm:place-self-start  w-max">
           <label htmlFor="email">Username</label>
           <input
-            className="text-gray-900 px-4 py-2 w-auto focus:bg-gray-200 mt-1  "
+            className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1 w-max  "
             type="text"
             name="username"
             value={form.username}
@@ -86,10 +94,10 @@ export default function Home() {
           />
         </div>
 
-        <div className="flex flex-col justify-center items-center place-self-center w-80 max-w-full ">
+        <div className="flex flex-col justify-center items-center place-self-center sm:place-self-end flex-1 w-max">
           <label htmlFor="email">Email</label>
           <input
-            className="text-gray-900 px-4 py-2 w-full focus:bg-gray-200 mt-1 "
+            className="text-gray-900 px-4 py-2 w-full focus:bg-gray-200 mt-1 w-max"
             type="text"
             placeholder="e.g. you@email.com"
             name="email"
@@ -126,7 +134,7 @@ export default function Home() {
         <div className="flex flex-col justify-center items-stretch place-self-center col-span-1  sm:col-span-2 w-48 max-w-full">
           <label htmlFor="birthdate">Birthdate</label>
           <input
-            className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1"
+            className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1 text-center w-max"
             type="text"
             name="birthdate"
             value={form.birthdate}
@@ -147,7 +155,7 @@ export default function Home() {
 
         <div className="flex mx-4 my-6 border-b col-span-1 sm:col-span-2"></div>
         <Button
-        onClick={() => router.push("/login")}
+          onClick={() => router.push("/login")}
           type="button"
           color="white"
           className="text-2xl mt-4 col-span-1 sm:col-span-1"
@@ -159,10 +167,17 @@ export default function Home() {
           type="submit"
           color="green"
           className="text-2xl mt-4 col-span-1 sm:col-span-1"
+          disabled={
+            form.username.length === 0 ||
+            form.email.length === 0 ||
+            !form.email.includes("@") ||
+            form.password.length === 0 ||
+            form.confirmPassword.length === 0 ||
+            form.password != form.confirmPassword
+          }
         >
           Register
         </Button>
-
       </form>
     </Layout>
   );
