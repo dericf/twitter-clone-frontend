@@ -16,7 +16,7 @@ import { useAlert } from "../../hooks/useAlert";
 import { useStore } from "../../hooks/useStore";
 import { Tweet } from "../../schema/Tweet";
 
-interface NewTweetPropType {
+interface EditTweetModalPropType {
   tweet: Tweet;
   showModal: boolean;
   setShowModal: (_: boolean) => void;
@@ -24,7 +24,7 @@ interface NewTweetPropType {
 
 const MAX_TWEET_LENGTH = 40;
 
-const EditTweetModal: FunctionComponent<NewTweetPropType> = (props) => {
+const EditTweetModal: FunctionComponent<EditTweetModalPropType> = (props) => {
   // Destructure Props
   const { tweet, showModal, setShowModal } = props;
 
