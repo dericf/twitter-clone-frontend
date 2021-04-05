@@ -5,22 +5,23 @@ import React, {
 } from "react";
 
 import Link from "next/link";
+import { useStore } from "../../../hooks/useStore";
 
 type PropType = JSX.IntrinsicAttributes &
   React.ButtonHTMLAttributes<HTMLButtonElement> &
   React.AnchorHTMLAttributes<HTMLAnchorElement>;
 interface Props extends PropType {
-  isActiveLink: boolean;
+  pageId: string;
 }
 
 export const SidebarLink: FunctionComponent<Props> = ({
   href,
   onClick,
   children,
-  isActiveLink = null,
+  pageId,
   ...props
 }) => {
-
+  const { activePage } = useStore();
   return (
     <Link href={href} as={href}>
       <button
@@ -31,7 +32,7 @@ export const SidebarLink: FunctionComponent<Props> = ({
         focus:ring-lightBlue-900 
         
         
-        ${isActiveLink ? "bg-lightBlue-800 " : "bg-lightBlue-700 "}
+        ${pageId === activePage ? "bg-lightBlue-800 " : "bg-lightBlue-600 "}
         hover:bg-lightBlue-800 
 
         text-xs sm:text-sm md:text-lg 
