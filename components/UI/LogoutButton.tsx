@@ -5,7 +5,7 @@ export const LogoutButton = () => {
   const { logout } = useAuth();
 
   return (
-    <Button color="white" onClick={logout}>
+    <Button color="transparent" onClick={logout} className="text-white">
       Logout
     </Button>
   );
