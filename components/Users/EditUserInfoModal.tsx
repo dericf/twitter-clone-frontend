@@ -120,7 +120,7 @@ const EditUserInfoModal: FunctionComponent<EditUserInfoModalPropType> = (
                 className="font-semibold text-black normal-case "
                 htmlFor="password"
               >
-                New Username
+                New Username (optional)
               </label>
               <input
                 className="bg-blueGray-600 px-4 py-2 mt-1 text-white"
@@ -142,13 +142,13 @@ const EditUserInfoModal: FunctionComponent<EditUserInfoModalPropType> = (
                 className="font-semibold text-black normal-case "
                 htmlFor="password"
               >
-                Confirm Password
+                Confirm Password to Apply Changes
               </label>
               <input
                 className="bg-blueGray-600 px-4 py-2 mt-1 text-white"
                 type="password"
                 name="password"
-                placeholder="Confirm your password"
+                placeholder="Password"
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.currentTarget.value)}
@@ -193,8 +193,14 @@ export const EditUserInfoButton: FunctionComponent<PropType> = (props) => {
 
   return (
     <>
-      <Button color="green" onClick={() => setShowModal(true)}>
+      <Button
+        color="green"
+        onClick={() => setShowModal(true)}
+        className="flex items-center"
+        animated
+      >
         <svg
+          className="h-4 w-4 mr-2"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -204,7 +210,7 @@ export const EditUserInfoButton: FunctionComponent<PropType> = (props) => {
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
           />
         </svg>
         Edit

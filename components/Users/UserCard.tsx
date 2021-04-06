@@ -1,11 +1,12 @@
 import { useAuth } from "../../hooks/useAuth";
 import { EditUserInfoButton } from "./EditUserInfoModal";
 import { DeleteUserModal } from "./DeleteUserModal";
+import { dateFormat } from "../../utilities/dates";
 
 export const UserProfileCard = () => {
   const { user } = useAuth();
   return (
-    <div className="max-w-md mx-auto my-6 bg-white rounded-sm shadow-md overflow-hidden md:max-w-2xl">
+    <div className="mx-auto my-6 bg-white rounded-sm shadow-md overflow-hidden w-full max-w-xl">
       <div className="md:flex">
         <div className="flex md:flex-shrink-0 justify-center pl-8 items-center">
           {/* <img
@@ -15,7 +16,7 @@ export const UserProfileCard = () => {
           /> */}
 
           <svg
-            className="w-full h-24 md:w-24 mx-auto self-center"
+            className="w-full h-24 md:w-24 mx-auto self-center text-blueGray-700"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -28,17 +29,16 @@ export const UserProfileCard = () => {
           </svg>
         </div>
         <div className="p-8 flex-1">
-          <div className="uppercase tracking-wide text-sm text-lightBlue-500 font-semibold flex justify-between items-center">
+          <div className="tracking-wide text-sm text-lightBlue-500 font-semibold flex flex-col sm:flex-row justify-between items-center">
             <div className="flex flex-col">
-              <span className="cursor-pointer hover:text-lightBlue-700">
-                {user.username}
-              </span>
-              {/* <a
-                href="#"
-                className="block mt-1 text-lg leading-tight font-medium text-black hover:underline"
-              >
+              <span className="uppercase">{user.username}</span>
+
+              <p className="block mt-1 text-sm leading-tight font-medium text-blueGray-700">
                 {user.email}
-              </a> */}
+              </p>
+              <p className="block mt-1 text-xs leading-tight font-normal text-blueGray-400">
+                Born {dateFormat(user.birthdate)}
+              </p>
             </div>
             {user && (
               <div className="flex items-center">
@@ -48,7 +48,11 @@ export const UserProfileCard = () => {
             )}
           </div>
 
-          <p className="mt-2 p-2 text-blueGray-500">{user.bio}</p>
+          <div className="mt-2 py-2 text-blueGray-500">
+            {user.bio.split("\n").map((line, index) => (
+              <p key={line + index}>{line}</p>
+            ))}
+          </div>
         </div>
       </div>
     </div>
