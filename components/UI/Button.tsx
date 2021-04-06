@@ -18,6 +18,7 @@ interface Props extends PropType {
   icon?: JSX.Element;
   fluid?: boolean;
   link?: string | null;
+  animated?: boolean;
 }
 
 export const Button: FunctionComponent<Props> = ({
@@ -31,6 +32,7 @@ export const Button: FunctionComponent<Props> = ({
   icon,
   fluid = false,
   link = null,
+  animated = false,
   ...props
 }) => {
   let colorClasses = "";
@@ -63,6 +65,7 @@ export const Button: FunctionComponent<Props> = ({
           ? "opacity-30 cursor-not-allowed !hover:bg-rose-800:"
           : ""
       }
+      ${animated ? "transform hover:-translate-y-0.5" : ""}
       text-sm py-2 px-4 mx-2 my-2 ${colorClasses} font-semibold rounded-sm ${
         color === "transparent" ? "shadow-none" : "shadow-md"
       } focus:outline-none focus:ring-2 focus:ring-opacity-75 
