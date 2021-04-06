@@ -1,3 +1,4 @@
+import { APIResponse } from "./API";
 import { EmptyResponse } from "./General";
 
 export interface Comment {
@@ -5,28 +6,32 @@ export interface Comment {
   userId: number;
   tweetId: number;
   content: string;
+  username: string;
 }
 
-export type CommentResponse = Array<Comment>;
+export interface CommentResponse extends APIResponse<Array<Comment>> {
+  //
+}
 
 export interface CommentCreateRequestBody {
   content: string;
   tweetId: number;
 }
 
-export interface CommentCreateResponse extends Comment {}
+export type CommentCreateResponse = APIResponse<Comment>;
 
 export interface CommentUpdateRequestBody {
   commentId: number;
   newContent: string;
 }
 
-export interface CommentUpdateResponse extends Comment {}
-
+export interface CommentUpdateResponse extends APIResponse<Comment> {
+  //
+}
 export interface CommentDeleteRequestBody {
   commentId: number;
 }
 
-export interface CommentDeleteResponse extends EmptyResponse {
-  // Empty Response	for 200
+export interface CommentDeleteResponse extends APIResponse<EmptyResponse> {
+  //
 }
