@@ -34,6 +34,11 @@ export default function Home() {
         tweets.map((tweet) => (
           <TweetCard key={tweet.tweetId.toString()} tweet={tweet} />
         ))}
+      {tweets?.length === 0 && (
+        <div className="text-xl text-white ">
+          No one has tweeted yet. Be the first one!
+        </div>
+      )}
     </Layout>
   );
 }
