@@ -23,14 +23,22 @@ export interface StoreContextI {
   updateTweetContent: (body: TweetUpdateRequestBody, tweetId: number) => void;
   updateFollowState: (newState: boolean, userId: number) => void;
   refreshTweets: () => void;
+  activePage: string;
+  setActivePage: (_: string) => void;
 }
 
 export const StoreContext = createContext({} as StoreContextI);
 
 export default function StoreContextProvider({ children }) {
+  //
+  // Initialize Store State
+  //
   const [tweets, setTweets] = useState<Array<Tweet>>([]);
   const [followers, setFollowers] = useState<Array<Follower>>([]);
   const [follows, setFollows] = useState<Array<Follows>>([]);
+  const [activePage, setActivePage] = useState<string>("");
+
+  // Auth context
   const { user } = useAuth();
 
   // Toast notifications
@@ -112,6 +120,8 @@ export default function StoreContextProvider({ children }) {
         updateFollowState,
         createTweet,
         refreshTweets,
+        activePage,
+        setActivePage,
       }}
     >
       {children}
