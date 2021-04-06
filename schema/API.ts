@@ -21,3 +21,7 @@ export const errorTextFromStatusCode = (
     return "server-error";
   }
 };
+
+export const responseDidSucceed = (statusCode: number): boolean => {
+  return statusCode >= 200 && statusCode < 300;
+};
