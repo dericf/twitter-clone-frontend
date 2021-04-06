@@ -29,7 +29,7 @@ export const getAllTweetLikes = async (
     if (res.status >= 200 && res.status < 300) {
       const json: TweetLikeResponse = await res.json();
 
-      console.log("json :>> ", json);
+      // console.log("json :>> ", json);
       return json;
     } else {
       return null;

@@ -108,7 +108,7 @@ export default function AuthProvider({ children }) {
 
       if (res.status >= 200 && res.status < 300) {
         const json = await res.json();
-        console.log("json :>> ", json);
+        // console.log("json :>> ", json);
         await tryAuthenticateWithUsernamePassword(username, password);
         setIsAuthenticated(true);
         // const user: User = await getAuthUserData();

@@ -21,11 +21,11 @@ export const getAllFollowers = async (
       },
       credentials: "include",
     });
-    console.log("res.json :>> ", res.status);
+    // console.log("res.json :>> ", res.status);
     if (res.status >= 200 && res.status < 300) {
       const json: FollowerResponse = await res.json();
 
-      console.log("json :>> ", json);
+      // console.log("json :>> ", json);
       return json;
     } else {
       return null;
