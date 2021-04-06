@@ -15,14 +15,13 @@ import { Button } from "../UI/Button";
 import { useAlert } from "../../hooks/useAlert";
 import { useStore } from "../../hooks/useStore";
 import { Tweet } from "../../schema/Tweet";
+import { MAX_TWEET_LENGTH } from "../../constants/constants";
 
 interface EditTweetModalPropType {
   tweet: Tweet;
   showModal: boolean;
   setShowModal: (_: boolean) => void;
 }
-
-const MAX_TWEET_LENGTH = 40;
 
 const EditTweetModal: FunctionComponent<EditTweetModalPropType> = (props) => {
   // Destructure Props
@@ -144,8 +143,14 @@ export const EditTweetButton: FunctionComponent<PropType> = (props) => {
 
   return (
     <>
-      <Button color="green" onClick={() => setShowModal(true)}>
+      <Button
+        animated
+        color="green"
+        onClick={() => setShowModal(true)}
+        className="flex justify-between items-center"
+      >
         <svg
+          className="h-4 w-4 mr-2"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -155,7 +160,7 @@ export const EditTweetButton: FunctionComponent<PropType> = (props) => {
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
           />
         </svg>
         Edit
