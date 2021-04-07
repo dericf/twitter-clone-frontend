@@ -8,6 +8,8 @@ import { Button } from "../UI/Button";
 import { MAX_COMMENT_LENGTH } from "../../constants/constants";
 import { useAlert } from "../../hooks/useAlert";
 import { useAuth } from "../../hooks/useAuth";
+import { DeleteCommentModal } from "./DeleteCommentModal";
+import { EditCommentButton } from "./EditCommentModal";
 
 interface PropType extends JSX.IntrinsicAttributes {
   tweetId: number;
@@ -34,8 +36,8 @@ export const CommentList: FunctionComponent<PropType> = (props) => {
       // Toast Notification
       sendAlert("Success. Your comment has been added");
 
-      // Optimistically update the comment in the UI (At the beginning of the list)
-      setComments([{ ...value }, ...comments]);
+      // Optimistically update the comment in the UI (At the end of the list)
+      setComments([...comments, { ...value }]);
 
       // Reset the textarea
       setNewComment("");
@@ -59,20 +61,35 @@ export const CommentList: FunctionComponent<PropType> = (props) => {
     <div className="flex justify-center w-full mx-0 place-self-center">
       <div className="flex flex-col w-full  text-white bg-blueGray-300 py-3 px-6 justify-center items-center">
         {comments.map((comment) => (
+          // TODO: extract into CommentCard component
           <div
             key={comment.id}
             className="flex bg-white text-blueGray-900 py-2 px-3 flex-col w-full mx-8 h-24 mb-4"
           >
-            <div className="uppercase tracking-wide text-sm text-lightBlue-500 font-semibold flex justify-between items-center">
+            <div className="flex justify-between items-center">
               <Link
                 as={`/user/${comment.userId}`}
                 href={`/users/${comment.userId}`}
               >
-                <span className="cursor-pointer hover:text-lightBlue-700">
+                <span className="cursor-pointer hover:text-lightBlue-700 uppercase tracking-wide text-sm text-lightBlue-500 font-semibold">
                   {comment.username}{" "}
                   {comment.userId == user?.id && <>{"(me)"}</>}
                 </span>
               </Link>
+              {comment.userId == user?.id && (
+                <div className="flex items-center">
+                  <EditCommentButton
+                    comment={comment}
+                    comments={comments}
+                    setComments={setComments}
+                  />
+                  <DeleteCommentModal
+                    commentId={comment.id}
+                    comments={comments}
+                    setComments={setComments}
+                  />
+                </div>
+              )}
             </div>
 
             <p className="text-md text-blueGray-800 font-normal">
@@ -112,7 +129,8 @@ export const CommentList: FunctionComponent<PropType> = (props) => {
           <Button
             type="submit"
             color="green"
-            className=" flex items-center justify-center flex-grow -mx-0"
+            className=" flex items-center justify-center flex-grow mx-0"
+            disabled={newComment.length === 0}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
