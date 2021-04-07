@@ -3,10 +3,11 @@ import { FunctionComponent, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useStore } from "../../../hooks/useStore";
+import { SidebarLinkI } from "../../../schema/Navigation";
 
 interface PropType extends JSX.IntrinsicAttributes {}
 
-const SIDEBAR_LINKS = [
+const SIDEBAR_LINKS: Array<SidebarLinkI> = [
   {
     href: "/",
     id: "discover",
