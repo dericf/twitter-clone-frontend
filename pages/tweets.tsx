@@ -14,14 +14,21 @@ export default function Home() {
   const { sendAlert, sendError } = useAlert();
   const { user } = useAuth();
 
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  // const [tweets, setTweets] = useState<TweetResponse>([]);
-  const { createTweet, refreshTweets, tweets } = useStore();
+  const { tweets, setTweets } = useStore();
 
   useEffect(() => {
+    if (!user) {
+      return;
+    }
     (async () => {
-      await refreshTweets();
+      try {
+        const { value, error } = await getAllTweets(user.id);
+
+        if (error) throw new Error(error);
+        setTweets(value);
+      } catch (error) {
+        sendError(error);
+      }
     })();
   }, [user]);
 
