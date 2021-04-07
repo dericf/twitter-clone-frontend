@@ -96,7 +96,7 @@ export const updateComment = async (
   newContent: string,
   commentId: number,
 ): Promise<CommentUpdateResponse> => {
-  const res = await fetch(`http://localhost:8001/comments/${commentId}`, {
+  const res = await fetch(`http://localhost:8001/comments/`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -104,6 +104,7 @@ export const updateComment = async (
     },
     body: JSON.stringify({
       newContent,
+      commentId,
     } as CommentUpdateRequestBody),
     credentials: "include",
   });
@@ -122,7 +123,7 @@ export const updateComment = async (
 export const deleteComment = async (
   commentId: number,
 ): Promise<CommentDeleteResponse> => {
-  const res = await fetch(`http://localhost:8001/tweet-likes/`, {
+  const res = await fetch(`http://localhost:8001/comments/`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
