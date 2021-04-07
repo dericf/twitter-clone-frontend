@@ -1,23 +1,19 @@
-import Head from "next/head";
 import { useEffect, useState } from "react";
-import { Button } from "../../components/UI/Button";
 import { Layout } from "../../components/UI/Layout";
 import { getAllTweets } from "../../crud/tweets";
 import { useAlert } from "../../hooks/useAlert";
-import { TweetResponse } from "../../schema/Tweet";
 import { TweetCard } from "../../components/Tweets/TweetCard";
-import { Protected } from "../../components/Auth/Protected";
 import { useRouter } from "next/router";
 import { getUserById } from "../../crud/users";
 import { User } from "../../schema/User";
-import { LoadingSpinner } from "../../components/UI/LoadingSpinner";
+import { useStore } from "../../hooks/useStore";
 
 export default function Home() {
   const { sendAlert, sendError } = useAlert();
   const router = useRouter();
 
   const [user, setUser] = useState<User>(null);
-  const [tweets, setTweets] = useState<TweetResponse>([]);
+  const { tweets, setTweets } = useStore();
 
   let userId = null;
 
@@ -35,8 +31,13 @@ export default function Home() {
           Number.parseInt(userId?.toString()),
         );
         setUser(user);
-        const userTweets = await getAllTweets(userId);
-        setTweets(userTweets);
+        try {
+          const { value: userTweets, error } = await getAllTweets(userId);
+          if (error) throw new Error(error);
+          setTweets(userTweets);
+        } catch (error) {
+          sendError(error);
+        }
       }
     })();
   }, [router.isReady]);
