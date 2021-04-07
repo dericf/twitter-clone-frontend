@@ -11,6 +11,7 @@ import { createNewTweet, getAllTweets, updateTweet } from "../crud/tweets";
 import { useAuth } from "./useAuth";
 import { Follower } from "../schema/Followers";
 import { Follows } from "../schema/Follows";
+import { PageId } from "../schema/Navigation";
 
 export interface StoreContextI {
   tweets: Array<Tweet>;
@@ -24,7 +25,7 @@ export interface StoreContextI {
   updateFollowState: (newState: boolean, userId: number) => void;
   refreshTweets: () => void;
   activePage: string;
-  setActivePage: (_: string) => void;
+  setActivePage: (_: PageId) => void;
 }
 
 export const StoreContext = createContext({} as StoreContextI);
@@ -36,7 +37,7 @@ export default function StoreContextProvider({ children }) {
   const [tweets, setTweets] = useState<Array<Tweet>>([]);
   const [followers, setFollowers] = useState<Array<Follower>>([]);
   const [follows, setFollows] = useState<Array<Follows>>([]);
-  const [activePage, setActivePage] = useState<string>("");
+  const [activePage, setActivePage] = useState<PageId>("discover");
 
   // Auth context
   const { user } = useAuth();
