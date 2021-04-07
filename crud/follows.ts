@@ -1,88 +1,83 @@
-import { FollowsCreateRequestBody, FollowsDeleteRequestBody, FollowsResponse } from "../schema/Follows";
+import { errorTextFromStatusCode, responseDidSucceed } from "../schema/API";
+import {
+  Follows,
+  FollowsCreateRequestBody,
+  FollowsDeleteRequestBody,
+  FollowsResponse,
+} from "../schema/Follows";
 import { EmptyResponse } from "../schema/General";
 
 export const getAllFollows = async (
   userId: number,
 ): Promise<FollowsResponse> => {
-  try {
-    // Base URL
-    let url = new URL(`http://localhost:8001/follows/${userId}`);
+  // Base URL
+  let url = new URL(`http://localhost:8001/follows/${userId}`);
 
-    const res = await fetch(url.toString(), {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
-    // console.log("res.json :>> ", res.status);
-    if (res.status >= 200 && res.status < 300) {
-      const json: FollowsResponse = await res.json();
+  const res = await fetch(url.toString(), {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
 
-      // console.log("json :>> ", json);
-      return json;
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.log("Caught error: ", error);
-    return null;
+  if (responseDidSucceed(res.status)) {
+    const json: Array<Follows> = await res.json();
+    return {
+      value: json,
+    };
+  } else {
+    return {
+      error: errorTextFromStatusCode(res.status),
+    };
   }
 };
-
 
 export const createNewFollow = async (
   requestBody: FollowsCreateRequestBody,
 ): Promise<EmptyResponse> => {
-  try {
-    const res = await fetch(`http://localhost:8001/follows`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        accept: "application/json",
-      },
-      body: JSON.stringify(requestBody),
-      credentials: "include",
-    });
-    if (res.status >= 200 && res.status < 300) {
-      const json: EmptyResponse = await res.json();
-      return json;
-    } else {
-      // Non-200 response TODO: Throw custom error and make caller handle
-      return null;
-    }
-  } catch (error) {
-    // Actual Error
-    console.log("Caught error :>> ", error);
-    return null;
+  const res = await fetch(`http://localhost:8001/follows`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
+    body: JSON.stringify(requestBody),
+    credentials: "include",
+  });
+  if (responseDidSucceed(res.status)) {
+    const json: Follows = await res.json();
+    return {
+      value: json,
+    };
+  } else {
+    return {
+      error: errorTextFromStatusCode(res.status),
+    };
   }
 };
-
 
 export const deleteFollow = async (
   requestBody: FollowsDeleteRequestBody,
 ): Promise<EmptyResponse> => {
-  try {
-    const res = await fetch(`http://localhost:8001/follows`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        accept: "application/json",
-      },
-      body: JSON.stringify(requestBody),
-      credentials: "include",
-    });
-    if (res.status >= 200 && res.status < 300) {
-      const json: EmptyResponse = await res.json();
-      return json;
-    } else {
-      // Non-200 response TODO: Throw custom error and make caller handle
-      return null;
-    }
-  } catch (error) {
-    // Actual Error
-    console.log("Caught error :>> ", error);
-    return null;
+  const res = await fetch(`http://localhost:8001/follows`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
+    body: JSON.stringify(requestBody),
+    credentials: "include",
+  });
+  if (responseDidSucceed(res.status)) {
+    const json: EmptyResponse = await res.json();
+    return {
+      value: json,
+    };
+  } else {
+    return {
+      error: errorTextFromStatusCode(res.status),
+    };
   }
 };
