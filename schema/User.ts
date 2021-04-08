@@ -1,3 +1,6 @@
+import { APIResponse } from "./API";
+import { EmptyResponse } from "./General";
+
 export interface User {
   id: number;
   username: string;
@@ -6,15 +9,11 @@ export interface User {
   birthdate: string;
 }
 
-export type UserResponse = Array<User>;
-
 export interface UserUpdateRequestBody {
   password: string;
   newUsername?: string;
   newBio?: string;
 }
-
-export type UserUpdateResponse = User;
 
 export interface UserCreateRequestBody {
   username: string;
@@ -28,8 +27,11 @@ export interface UserRegisterForm extends UserCreateRequestBody {
   confirmPassword: string;
 }
 
-export type UserCreateResponse = User;
-
 export interface UserDeleteRequestBody {
   password: string;
 }
+
+export type UserResponse = APIResponse<Array<User>>;
+export type UserUpdateResponse = APIResponse<User>;
+export type UserCreateResponse = APIResponse<User>;
+export type UserDeleteResponse = APIResponse<EmptyResponse>;
