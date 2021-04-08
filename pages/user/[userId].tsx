@@ -23,11 +23,8 @@ export default function Home() {
     if (!router.isReady) return;
     userId = router.query["userId"];
     (async () => {
-      // const allTweets = await getAllTweets();
-      // setTweets(allTweets);
-      console.log("userId :>> ", userId);
       if (userId) {
-        const user: User = await getUserById(
+        const { value: user, error } = await getUserById(
           Number.parseInt(userId?.toString()),
         );
         setUser(user);

@@ -44,16 +44,19 @@ const EditUserInfoModal: FunctionComponent<EditUserInfoModalPropType> = (
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     try {
-      await updateUser({
+      const { value, error } = await updateUser({
         password,
         newBio: newBio === user.bio ? null : newBio,
         newUsername: newUsername === user.username ? null : newUsername,
       });
+      if (error) throw new Error(error);
+
+      // No error
       setUser({ ...user, bio: newBio, username: newUsername });
       setShowModal(false);
     } catch (error) {
       // Handle any errors here
-      sendError(`${error}`);
+      sendError(error);
     }
   };
 
@@ -80,7 +83,7 @@ const EditUserInfoModal: FunctionComponent<EditUserInfoModalPropType> = (
       <div className="fixed bottom-0 left-0 top-0 right-0 px-4 backdrop-blur-md z-10">
         <div
           className="flex flex-col justify-center items-center
-            mx-auto p-8 rounded-lg 
+            mx-auto p-8 
             fixed 
             left-0 md:left-1/4 
             right-0 md:right-1/4
