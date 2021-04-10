@@ -1,5 +1,7 @@
+import { errorTextFromStatusCode, responseDidSucceed } from "../schema/API";
 import { EmptyResponse } from "../schema/General";
 import {
+  TweetLike,
   TweetLikeCreateRequestBody,
   TweetLikeDeleteRequestBody,
   TweetLikeResponse,
@@ -8,35 +10,32 @@ import {
 export const getAllTweetLikes = async (
   tweetId: number = null,
 ): Promise<TweetLikeResponse> => {
-  try {
-    // Base URL
-    let url = new URL("http://localhost:8001/tweet-likes");
+  // Base URL
+  let url = new URL("http://localhost:8001/tweet-likes");
 
-    // Include optional search params if present
-    if (tweetId) {
-      url.searchParams.set("tweetId", tweetId.toString());
-    }
+  // Include optional search params if present
+  if (tweetId) {
+    url.searchParams.set("tweetId", tweetId.toString());
+  }
 
-    const res = await fetch(url.toString(), {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
-    // console.log("res.json :>> ", res.status);
-    if (res.status >= 200 && res.status < 300) {
-      const json: TweetLikeResponse = await res.json();
-
-      // console.log("json :>> ", json);
-      return json;
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.log("Caught error: ", error);
-    return null;
+  const res = await fetch(url.toString(), {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  // console.log("res.json :>> ", res.status);
+  if (responseDidSucceed(res.status)) {
+    const json: Array<TweetLike> = await res.json();
+    return {
+      value: json,
+    };
+  } else {
+    return {
+      error: errorTextFromStatusCode(res.status),
+    };
   }
 };
 
