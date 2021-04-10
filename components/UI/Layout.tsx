@@ -25,15 +25,16 @@ export const Layout = ({
   tabTitle = pageTitle,
   onAuthSuccess = () => {},
   loading = false,
+  showSidebar = true,
 }) => {
   const { user, isAuthenticated, loadAuthState } = useAuth();
   const { sendError, sendAlert } = useAlert();
   const [isLoading, setLoading] = useState(loading || !user);
   const { activePage, setActivePage } = useStore();
+  const [sidebar, setSidebar] = useState<boolean>(showSidebar);
   const router = useRouter();
 
   useEffect(() => {
-    console.log(router.asPath.startsWith("/"));
     const path = router.asPath;
 
     if (path === "/") {
@@ -87,7 +88,7 @@ export const Layout = ({
         <title>{tabTitle} | Twitter Clone</title>
       </Head>
       <main className=" w-screen h-screen flex flex-col overflow-hidden">
-        <div className="flex flex-none px-2 py-2 w-full h-20 items-center justify-between shadow-xl border-lightBlue-800 border-b-2 bg-lightBlue-700 text-white">
+        <div className="flex flex-none px-2 py-2 w-full h-20 items-center justify-between shadow-xl  border-none bg-lightBlue-700 text-white">
           <MainTitle />
           {isAuthenticated ? (
             <div className="flex">
@@ -105,9 +106,19 @@ export const Layout = ({
         </div>
 
         <div className="flex-1 flex overflow-hidden ">
-          <nav className="hidden sm:flex flex-col w-24 sm:w-40 md:w-52 flex-shrink-0 justify-center px-0.5 sm:px-3 md:px-6 py-6 bg-white shadow-lg">
-            <LeftSidebar />
-          </nav>
+          {sidebar && (
+            <nav className="hidden sm:flex flex-col w-24 sm:w-40 md:w-52 flex-shrink-0 justify-center px-0.5 sm:px-3 md:px-6 py-6 bg-white shadow-lg">
+              <LeftSidebar />
+            </nav>
+          )}
+          <button
+            type="button"
+            onClick={() => setSidebar(!sidebar)}
+            className="fixed bottom-4 left-4 z-50 px-2 py-2 bg-white shadow-lg hover:shadow:2xl  hover:opacity-30 cursor-pointer border-none ring-none focus:ring-none focus:outline-none"
+            title="Show/Hide Sidebar"
+          >
+            |||
+          </button>
 
           {/* Scroll Wrapper */}
           <div className="flex flex-1 pb-12 sm:pb-0 bg-blueGray-700">
