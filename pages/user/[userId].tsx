@@ -40,11 +40,11 @@ export default function Home() {
   }, [router.isReady]);
 
   return (
-    <Layout isProtected={true}>
+    <Layout
+      isProtected={true}
+      pageTitle={`${user.username.toUpperCase()}'s Tweets`}
+    >
       <div className="flex flex-col w-full h-full items-center justify-items-center">
-        <h3 className="mx-auto text-3xl text-white py-2">
-          {user && user.username}
-        </h3>
         {tweets &&
           tweets.map((tweet) => (
             <TweetCard key={tweet.tweetId.toString()} tweet={tweet} />
