@@ -22,17 +22,19 @@ export const FollowCard = (props: Props) => {
   useEffect(() => {
     if (!user) return;
     (async () => {
-      setUserTweets(await getAllTweets(follow.userId, 3));
+      const { value, error } = await getAllTweets(follow.userId);
+      if (error) throw new Error(error);
+      setUserTweets(value);
     })().catch((err) => {
       console.error(err);
     });
   }, [user]);
 
   return (
-    <div className="max-w-md mx-auto my-6 bg-trueGray-100 rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+    <div className="mx-auto my-6 bg-trueGray-100 rounded-sm shadow-md w-full max-w-xl">
       <div className="flex">
         <div className="p-4 md:p-8 flex flex-col justify-center items-start flex-grow">
-          <Link href={`/user${follow.userId}/`} as={`/user/${follow.userId}`}>
+          <Link href={`/user/${follow.userId}/`} as={`/user/${follow.userId}`}>
             <div className="uppercase tracking-wide cursor-pointer text-sm text-lightBlue-500 hover:text-lightBlue-700 font-semibold">
               {follow.username}
             </div>
@@ -47,7 +49,7 @@ export const FollowCard = (props: Props) => {
           <div className="tracking-wide mt-1 text-sm text-lightBlue-500 font-semibold">
             Latest Tweets by {follow.username}:
           </div>
-          <div className="self-center align-self-center">
+          <div className="w-full">
             {userTweets &&
               userTweets.map((tweet) => (
                 <TweetCard key={tweet.tweetId.toString()} tweet={tweet} />
