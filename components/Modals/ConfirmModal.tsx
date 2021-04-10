@@ -67,24 +67,26 @@ export const ConfirmModal: FunctionComponent<ConfirmModalProps> = (props) => {
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 top-0 right-0 px-4 backdrop-blur-md z-10">
+      <div className="fixed bottom-0 left-0 top-0 right-0 backdrop-blur-md z-10">
         <div
-          className="flex flex-col justify-center items-center
-            mx-auto p-8 rounded-lg 
-            fixed 
-            left-0 md:left-1/4 
-            right-0 md:right-1/4
-            top-[10%]
-            z-20 shadow-xl 
+          className="
+            mx-auto p-0 rounded-sm 
+            fixed
+            top-[25%]
+            bottom-[25%]
+            left-0 sm:left-[25%]
+            right-0 sm:right-[25%]
+            max-h-60
+            z-20 shadow-xl
             backdrop-filter
             bg-white"
         >
-          <h4 className="text-4xl text-gray-900 mb-2">{title}</h4>
           <form
             action="post"
             onSubmit={handleSubmit}
-            className="flex flex-col w-full max-w-lg space-y-4"
+            className="flex flex-col justify-between text-center pt-4 w-full h-full"
           >
+            <h4 className="text-4xl text-gray-900 mb-2">{title}</h4>
             {message && (
               <div className="flex justify-center items-center font-normal text-md normal-case text-black py-6">
                 {message}
@@ -97,12 +99,13 @@ export const ConfirmModal: FunctionComponent<ConfirmModalProps> = (props) => {
               </div>
             )}
             <div className="flex flex-col">
-              <div className="flex justify-between py-4">
+              <div className="flex justify-between py-0">
                 <Button
-                  className="flex-grow"
                   color="white"
                   onClick={handleCancel}
                   type="submit"
+                  className="flex-grow border-none rounded-none"
+                  addMargins={false}
                 >
                   Cancel
                 </Button>
@@ -110,8 +113,9 @@ export const ConfirmModal: FunctionComponent<ConfirmModalProps> = (props) => {
                 <Button
                   color="blue"
                   type="submit"
-                  className="flex-grow"
                   disabled={confirmDisabled}
+                  className="flex-grow border-none rounded-none"
+                  addMargins={false}
                 >
                   Confirm
                 </Button>
