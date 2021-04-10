@@ -1,3 +1,5 @@
+import { APIResponse } from "./API";
+
 export interface Follower {
   userId: number;
   username: string;
@@ -10,6 +12,4 @@ export interface FollowerRequestParams {
   userId: number;
 }
 
-export type FollowerResponse = Array<Follower>;
-
-
+export type FollowerResponse = APIResponse<Array<Follower>>;

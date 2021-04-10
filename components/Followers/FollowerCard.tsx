@@ -1,9 +1,16 @@
 import { useAuth } from "../../hooks/useAuth";
+import Link from "next/link";
+import { Follower } from "../../schema/Followers";
 
-export const FollowerCard = ({ follower }) => {
+interface Props {
+  follower: Follower;
+}
+
+export const FollowerCard = (props: Props) => {
+  const { follower } = props;
   const { user } = useAuth();
   return (
-    <div className="max-w-md mx-auto my-6 bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+    <div className="mx-auto my-6 bg-white rounded-xl shadow-md overflow-hidden w-full max-w-xl">
       <div className="md:flex">
         <div className="flex md:flex-shrink-0 justify-center pl-8 items-center">
           {/* <img
@@ -26,15 +33,23 @@ export const FollowerCard = ({ follower }) => {
           </svg>
         </div>
         <div className="p-8">
-          <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
-            {follower.username}
-          </div>
-          <a
-            href="#"
-            className="block mt-1 text-lg leading-tight font-medium text-black hover:underline"
+          <Link
+            href={`/user/${follower.userId}/`}
+            as={`/user/${follower.userId}`}
           >
-            {follower.email}
-          </a>
+            <span className="uppercase tracking-wide cursor-pointer text-sm text-lightBlue-500 font-semibold">
+              {follower.username}
+            </span>
+          </Link>
+
+          {/* <Link
+            href={`/user${follower.userId}/`}
+            as={`/user/${follower.userId}`}
+          >
+            <a className="block mt-1 text-lg leading-tight font-medium text-black hover:underline">
+              {user.email}
+            </a>
+          </Link> */}
           <p className="mt-2 text-gray-500">{follower.bio}</p>
         </div>
       </div>

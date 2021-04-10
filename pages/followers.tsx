@@ -10,15 +10,15 @@ import { useAuth } from "../hooks/useAuth";
 import { Protected } from "../components/Auth/Protected";
 import { useStore } from "../hooks/useStore";
 import { getAllFollowers } from "../crud/followers";
-import { FollowerResponse } from "../schema/Followers";
+import { Follower, FollowerResponse } from "../schema/Followers";
 import { FollowerCard } from "../components/Followers/FollowerCard";
 // import { UserProfileCard } from "../components/Users/UserCard";
 
-export default function Home() {
+export default function Followers() {
   const { sendAlert, sendError } = useAlert();
   const { user } = useAuth();
 
-  const [followers, setFollowers] = useState<FollowerResponse>();
+  const [followers, setFollowers] = useState<Array<Follower>>();
 
   // const [tweets, setTweets] = useState<TweetResponse>([]);
   // const { createTweet, refreshTweets, tweets } = useStore();
@@ -26,9 +26,15 @@ export default function Home() {
   useEffect(() => {
     (async () => {
       // await refreshTweets();
-      const allFollowers = await getAllFollowers({ userId: user?.id });
+
+      const { value: allFollowers, error } = await getAllFollowers({
+        userId: user?.id,
+      });
+      if (error) throw new Error(error);
       setFollowers(allFollowers);
-    })();
+    })().catch((error) => {
+      sendError(error);
+    });
   }, [user]);
 
   return (
