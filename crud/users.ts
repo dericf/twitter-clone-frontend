@@ -3,7 +3,6 @@ import {
   errorTextFromStatusCode,
   responseDidSucceed,
 } from "../schema/API";
-import { UserNotAuthenticatedError } from "../schema/Errors";
 import { APIErrorResponse, EmptyResponse } from "../schema/General";
 import {
   User,

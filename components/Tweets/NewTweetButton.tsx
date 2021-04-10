@@ -15,7 +15,6 @@ import { Button } from "../UI/Button";
 import { useAlert } from "../../hooks/useAlert";
 import { useStore } from "../../hooks/useStore";
 import { MAX_TWEET_LENGTH } from "../../constants/constants";
-import { UserNotAuthenticatedError } from "../../schema/Errors";
 import { createNewTweet } from "../../crud/tweets";
 
 interface NewTweetPropType {
