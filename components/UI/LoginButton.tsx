@@ -7,7 +7,7 @@ export const LoginButton = () => {
 
   return (
     <Button color="white" onClick={() => router.push("/login")}>
-      login
+      Login
     </Button>
   );
 };

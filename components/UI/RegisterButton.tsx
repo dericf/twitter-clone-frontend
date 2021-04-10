@@ -6,8 +6,8 @@ export const RegisterButton = () => {
   const router = useRouter();
 
   return (
-    <Button color="green" onClick={() => router.push("/register")}>
-      Register
+    <Button color="transparent" onClick={() => router.push("/register")}>
+      Sign Up
     </Button>
   );
 };
