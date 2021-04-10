@@ -1,16 +1,16 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import { Button } from "../components/UI/Button";
-import { Layout } from "../components/UI/Layout";
-import { getAllTweets } from "../crud/tweets";
-import { useAlert } from "../hooks/useAlert";
-import { TweetResponse } from "../schema/Tweet";
-import { TweetCard } from "../components/Tweets/TweetCard";
-import { useAuth } from "../hooks/useAuth";
-import { Protected } from "../components/Auth/Protected";
-import { useStore } from "../hooks/useStore";
+import { Button } from "../../components/UI/Button";
+import { Layout } from "../../components/UI/Layout";
+import { getAllTweets } from "../../crud/tweets";
+import { useAlert } from "../../hooks/useAlert";
+import { TweetResponse } from "../../schema/Tweet";
+import { TweetCard } from "../../components/Tweets/TweetCard";
+import { useAuth } from "../../hooks/useAuth";
+import { Protected } from "../../components/Auth/Protected";
+import { useStore } from "../../hooks/useStore";
 
-export default function Home() {
+export default function Tweets() {
   const { sendAlert, sendError } = useAlert();
   const { user } = useAuth();
 
