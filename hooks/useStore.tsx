@@ -49,6 +49,7 @@ export default function StoreContextProvider({ children }) {
   const router = useRouter();
 
   const createTweet = async (body: TweetCreateRequestBody) => {
+    // ! Depricated - do not use anymore
     try {
       const resp = await createNewTweet(body);
       sendAlert("Success !");
@@ -100,12 +101,14 @@ export default function StoreContextProvider({ children }) {
   };
 
   const refreshTweets = async () => {
-    const allTweets = await getAllTweets(user?.id);
+    // ! Depricated - do not use anymore
+    const { value: allTweets, error } = await getAllTweets(user?.id);
+    if (error) throw new Error(error);
     setTweets(allTweets);
   };
 
   const refreshTweetsForUser = () => {
-    // TODO
+    // ! Depricated - do not use anymore
   };
 
   return (
