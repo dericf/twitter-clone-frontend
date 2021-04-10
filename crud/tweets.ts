@@ -1,5 +1,9 @@
 import { DEFAULT_TWEET_LIMIT } from "../constants/constants";
-import { errorTextFromStatusCode, responseDidSucceed } from "../schema/API";
+import {
+  APIResponse,
+  errorTextFromStatusCode,
+  responseDidSucceed,
+} from "../schema/API";
 import {
   Tweet,
   TweetCreateRequestBody,
@@ -10,6 +14,30 @@ import {
   TweetUpdateResponse,
 } from "../schema/Tweet";
 import { getAllTweetLikes } from "./likes";
+
+export const getSingleTweetById = async (
+  tweetId: number = null,
+): Promise<APIResponse<Tweet>> => {
+  let url = new URL(`http://localhost:8001/tweets/one/${tweetId}`);
+  const res = await fetch(url.toString(), {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (responseDidSucceed(res.status)) {
+    const json: Tweet = await res.json();
+    return {
+      value: json,
+    };
+  } else {
+    return {
+      error: errorTextFromStatusCode(res.status),
+    };
+  }
+};
 
 export const getAllTweets = async (
   userId = null,
