@@ -13,18 +13,19 @@ import { getAllFollows } from "../crud/follows";
 import { UserProfileCard } from "../components/Users/UserCard";
 import { FollowCard } from "../components/Follows/FollowsCard";
 
-export default function Home() {
+export default function Following() {
   const { sendAlert, sendError } = useAlert();
   const { user } = useAuth();
   const { follows, setFollows } = useStore();
 
   useEffect(() => {
-    console.log("Running effect...");
     if (!user) return;
     (async () => {
-      const allFollows = await getAllFollows(user.id);
+      const { value: allFollows, error } = await getAllFollows(user.id);
       setFollows(allFollows);
-    })();
+    })().catch((error) => {
+      sendError(error);
+    });
   }, [user]);
 
   return (

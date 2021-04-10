@@ -12,7 +12,7 @@ import { useAuth } from "../hooks/useAuth";
 import { getAllFollows } from "../crud/follows";
 import { DEFAULT_TWEET_LIMIT } from "../constants/constants";
 
-export default function Home() {
+export default function Discover() {
   // Custom Hooks
   const { sendAlert, sendError, sendInfo } = useAlert();
   const { user } = useAuth();

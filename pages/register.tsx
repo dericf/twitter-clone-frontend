@@ -7,7 +7,7 @@ import { useAlert } from "../hooks/useAlert";
 import { useAuth } from "../hooks/useAuth";
 import { UserCreateRequestBody, UserRegisterForm } from "../schema/User";
 
-export default function Home() {
+export default function Register() {
   const { sendAlert, sendError } = useAlert();
 
   const router = useRouter();

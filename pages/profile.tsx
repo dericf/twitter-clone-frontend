@@ -7,7 +7,7 @@ import { useAlert } from "../hooks/useAlert";
 import { useAuth } from "../hooks/useAuth";
 import { UserProfileCard } from "../components/Users/UserCard";
 
-export default function Home() {
+export default function Profile() {
   const { sendAlert, sendError } = useAlert();
 
   const { user, isAuthenticated } = useAuth();

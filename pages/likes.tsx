@@ -8,7 +8,7 @@ import { TweetCard } from "../components/Tweets/TweetCard";
 import { useAuth } from "../hooks/useAuth";
 import { DEFAULT_TWEET_LIMIT } from "../constants/constants";
 //
-export default function Home() {
+export default function Likes() {
   const { sendAlert, sendError, sendInfo } = useAlert();
   const { user } = useAuth();
 
