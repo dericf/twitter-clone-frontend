@@ -69,7 +69,7 @@ const EditTweetModal: FunctionComponent<EditTweetModalPropType> = (props) => {
       <div className="fixed bottom-0 left-0 top-0 right-0 px-4 backdrop-blur-md z-10">
         <div
           className="flex flex-col justify-center items-center
-            mx-auto p-8 rounded-lg 
+            mx-auto p-8
             fixed 
             left-0 md:left-1/4 
             right-0 md:right-1/4
@@ -117,7 +117,8 @@ const EditTweetModal: FunctionComponent<EditTweetModalPropType> = (props) => {
                 className="flex-grow"
                 disabled={
                   newContent.length === 0 ||
-                  newContent.length > MAX_TWEET_LENGTH
+                  newContent.length > MAX_TWEET_LENGTH ||
+                  newContent === tweet.content
                 }
               >
                 Confirm
