@@ -71,8 +71,8 @@ export default function Register() {
       {/* <h3 className="text-4xl text-center text-white mb-4">Please Log In</h3> */}
       <form
         className="my-4 mx-auto py-8 px-8 form 
-        grid grid-flow-row grid-cols-1 gap-y-2 gap-x-6
-        justify-center align-center 
+        flex flex-col
+        justify-stretch align-start
         w-full max-w-2xl
         text-white text-xl
         shadow-lg bg-lightBlue-700
@@ -83,66 +83,60 @@ export default function Register() {
         action="#"
         onSubmit={handleRegister}
       >
-        <div className="flex flex-col justify-center items-center  place-self-center sm:place-self-start  w-max">
-          <label htmlFor="email">Username</label>
-          <input
-            className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1 w-max  "
-            type="text"
-            name="username"
-            value={form.username}
-            onChange={handleFormChange}
-          />
-        </div>
+        <div className="flex flex-row justify-between space-x-8 flex-wrap sm:flex-nowrap">
+          <div className="flex flex-col space-y-4 justify-center items-stretch  place-self-start  w-80">
+            <div className="flex flex-col">
+              <label htmlFor="email">Username</label>
+              <input
+                className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1 w-48 "
+                type="text"
+                name="username"
+                value={form.username}
+                onChange={handleFormChange}
+              />
+            </div>
 
-        <div className="flex flex-col justify-center items-center place-self-center sm:place-self-end flex-1 w-max">
-          <label htmlFor="email">Email</label>
-          <input
-            className="text-gray-900 px-4 py-2 w-full focus:bg-gray-200 mt-1 w-max"
-            type="text"
-            placeholder="e.g. you@email.com"
-            name="email"
-            value={form.email}
-            onChange={handleFormChange}
-          />
+            <div className="flex flex-col">
+              <label htmlFor="email">Email</label>
+              <input
+                className="text-gray-900 px-4 py-2  focus:bg-gray-200 mt-1"
+                type="text"
+                placeholder="e.g. you@email.com"
+                name="email"
+                value={form.email}
+                onChange={handleFormChange}
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col space-y-4  justify-center items-stretch place-self-start w-80 max-w-full">
+            <div className="flex flex-col">
+              <label htmlFor="password">Password</label>
+              <input
+                className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1"
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleFormChange}
+              />
+            </div>
+            <div className="flex flex-col justify-center items-stretch place-self-start w-80 max-w-full">
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <input
+                className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1"
+                type="password"
+                name="confirmPassword"
+                value={form.confirmPassword}
+                onChange={handleFormChange}
+              />
+            </div>
+          </div>
         </div>
         {/* Horizontal Line */}
-        <div className="flex mx-4 my-6 border-b col-span-1 sm:col-span-2"></div>
+        {/* <div className="flex mx-4 my-6 border-b col-span-1 sm:col-span-2"></div> */}
 
-        <div className="flex flex-col justify-center items-stretch place-self-center w-80 max-w-full">
-          <label htmlFor="password">Password</label>
-          <input
-            className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1"
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleFormChange}
-          />
-        </div>
-        <div className="flex flex-col justify-center items-stretch place-self-center w-80 max-w-full">
-          <label htmlFor="confirmPassword">Confirm Password</label>
-          <input
-            className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1"
-            type="password"
-            name="confirmPassword"
-            value={form.confirmPassword}
-            onChange={handleFormChange}
-          />
-        </div>
-
-        <div className="flex h-0 mx-4 my-6 border-b col-span-1 justify-self-center  sm:col-span-2"></div>
-
-        <div className="flex flex-col justify-center items-stretch place-self-center col-span-1  sm:col-span-2 w-48 max-w-full">
-          <label htmlFor="birthdate">Birthdate</label>
-          <input
-            className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1 text-center w-max"
-            type="text"
-            name="birthdate"
-            value={form.birthdate}
-            placeholder="e.g. 1980-10-20"
-            onChange={handleFormChange}
-          />
-        </div>
-        <div className="flex flex-col justify-center items-stretch col-span-1 sm:col-span-2">
+        {/* <div className="flex h-0 mx-4 my-6 border-b col-span-1 justify-self-center  sm:col-span-2"></div> */}
+        <div className="flex flex-col justify-center items-stretch mt-4">
           <label htmlFor="confirmPassword">Bio (Optional)</label>
           <textarea
             className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1"
@@ -153,31 +147,62 @@ export default function Register() {
           ></textarea>
         </div>
 
-        <div className="flex mx-4 my-6 border-b col-span-1 sm:col-span-2"></div>
-        <Button
-          onClick={() => router.push("/login")}
-          type="button"
-          color="white"
-          className="text-2xl mt-4 col-span-1 sm:col-span-1"
-        >
-          Log In Instead
-        </Button>
+        <div className="flex flex-col justify-center items-stretch place-self-center mt-4 w-48 max-w-full">
+          <label htmlFor="birthdate">Birthdate</label>
+          <input
+            className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1 text-center w-max"
+            type="date"
+            name="birthdate"
+            value={form.birthdate}
+            placeholder="e.g. 1980-10-20"
+            onChange={handleFormChange}
+          />
+        </div>
 
-        <Button
-          type="submit"
-          color="green"
-          className="text-2xl mt-4 col-span-1 sm:col-span-1"
-          disabled={
-            form.username.length === 0 ||
-            form.email.length === 0 ||
-            !form.email.includes("@") ||
-            form.password.length === 0 ||
-            form.confirmPassword.length === 0 ||
-            form.password != form.confirmPassword
-          }
-        >
-          Register
-        </Button>
+        <div className="flex flex-col sm:flex-row space-y-4  -mb-8 mt-4 -mx-8">
+          <Button
+            onClick={() => router.push("/login")}
+            type="button"
+            color="transparent"
+            className="text-2xl mt-4 py-4"
+            fluid
+            addMargins={false}
+          >
+            Log In Instead
+          </Button>
+
+          <Button
+            type="submit"
+            color="green"
+            className="text-2xl mt-4 py-4"
+            fluid
+            addMargins={false}
+            disabled={
+              form.username.length === 0 ||
+              form.email.length === 0 ||
+              !form.email.includes("@") ||
+              form.password.length === 0 ||
+              form.confirmPassword.length === 0 ||
+              form.password != form.confirmPassword
+            }
+          >
+            Register
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+              />
+            </svg>
+          </Button>
+        </div>
       </form>
     </Layout>
   );
