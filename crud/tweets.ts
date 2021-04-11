@@ -1,7 +1,7 @@
 import { DEFAULT_TWEET_LIMIT } from "../constants/constants";
 import {
   APIResponse,
-  errorTextFromStatusCode,
+  APIResponseError,
   responseDidSucceed,
 } from "../schema/API";
 import {
@@ -34,7 +34,7 @@ export const getSingleTweetById = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };
@@ -71,7 +71,7 @@ export const getAllTweets = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };
@@ -95,7 +95,7 @@ export const createNewTweet = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };
@@ -120,7 +120,7 @@ export const updateTweet = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };
@@ -143,7 +143,7 @@ export const deleteTweet = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };
@@ -174,7 +174,7 @@ export const getLikedTweets = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };

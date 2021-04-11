@@ -24,7 +24,7 @@ export default function Tweets() {
       try {
         const { value, error } = await getAllTweets(user.id);
 
-        if (error) throw new Error(error);
+        if (error) throw new Error(error.errorMessageUI);
         setTweets(value);
       } catch (error) {
         sendError(error);

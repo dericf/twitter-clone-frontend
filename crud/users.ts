@@ -1,6 +1,6 @@
 import {
   APIResponse,
-  errorTextFromStatusCode,
+  APIResponseError,
   responseDidSucceed,
 } from "../schema/API";
 import { APIErrorResponse, EmptyResponse } from "../schema/General";
@@ -34,7 +34,7 @@ export const getUserById = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };
@@ -59,7 +59,7 @@ export const updateUser = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };
@@ -86,7 +86,7 @@ export const deleteUser = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };

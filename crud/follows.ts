@@ -1,4 +1,4 @@
-import { errorTextFromStatusCode, responseDidSucceed } from "../schema/API";
+import { APIResponseError, responseDidSucceed } from "../schema/API";
 import {
   Follows,
   FollowsCreateRequestBody,
@@ -29,7 +29,7 @@ export const getAllFollows = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };
@@ -53,7 +53,7 @@ export const createNewFollow = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };
@@ -77,7 +77,7 @@ export const deleteFollow = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };

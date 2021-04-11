@@ -1,4 +1,4 @@
-import { errorTextFromStatusCode, responseDidSucceed } from "../schema/API";
+import { APIResponseError, responseDidSucceed } from "../schema/API";
 import { EmptyResponse } from "../schema/General";
 import {
   TweetLike,
@@ -34,7 +34,7 @@ export const getAllTweetLikes = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };

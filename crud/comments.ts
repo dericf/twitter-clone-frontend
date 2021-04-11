@@ -1,4 +1,4 @@
-import { errorTextFromStatusCode, responseDidSucceed } from "../schema/API";
+import { APIResponseError, responseDidSucceed } from "../schema/API";
 import {
   CommentUpdateRequestBody,
   CommentUpdateResponse,
@@ -32,7 +32,7 @@ export const getAllCommentsForTweet = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };
@@ -59,7 +59,7 @@ export const getAllCommentsForUser = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };
@@ -87,7 +87,7 @@ export const createNewComment = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };
@@ -115,7 +115,7 @@ export const updateComment = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };
@@ -141,7 +141,7 @@ export const deleteComment = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };

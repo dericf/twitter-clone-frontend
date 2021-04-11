@@ -1,4 +1,4 @@
-import { errorTextFromStatusCode, responseDidSucceed } from "../schema/API";
+import { APIResponseError, responseDidSucceed } from "../schema/API";
 import {
   Follower,
   FollowerRequestParams,
@@ -26,7 +26,7 @@ export const getAllFollowers = async (
     };
   } else {
     return {
-      error: errorTextFromStatusCode(res.status),
+      error: new APIResponseError(res),
     };
   }
 };

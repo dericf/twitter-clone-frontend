@@ -61,9 +61,14 @@ export const Layout = ({
     }
     if (user === null) {
       (async () => {
-        const isAuth = await loadAuthState();
-        if (isAuth === false && isProtected === true) {
-          router.push(`/login?redirect=${router.asPath.toString()}`);
+        const { value: isAuth, error } = await loadAuthState();
+
+        if (error && isProtected === true) {
+          router
+            .push(`/login?redirect=${router.asPath.toString()}`)
+            .then((_) => {
+              sendError(error.errorMessageUI);
+            });
         } else {
           setLoading(false);
           if (!silentAuth) {
@@ -114,7 +119,7 @@ export const Layout = ({
           <button
             type="button"
             onClick={() => setSidebar(!sidebar)}
-            className="fixed bottom-4 left-4 z-50 px-2 py-2 bg-white shadow-lg hover:shadow:2xl  hover:opacity-30 cursor-pointer border-none ring-none focus:ring-none focus:outline-none"
+            className="hidden sm:flex fixed bottom-4 left-4 z-50 px-2 py-2 bg-white shadow-lg hover:shadow:2xl  hover:opacity-30 cursor-pointer border-none ring-none focus:ring-none focus:outline-none"
             title="Show/Hide Sidebar"
           >
             |||
@@ -129,7 +134,7 @@ export const Layout = ({
                   {pageTitle}
                 </h3>
               )}
-              <div className="flex flex-col w-full h-full items-center justify-items-center">
+              <div className="flex flex-col w-full h-full px-2 sm:px-4 max-w-6xl mx-auto items-center justify-items-center">
                 {isLoading ? <LoadingOverlay /> : children}
               </div>
 
