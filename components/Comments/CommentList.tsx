@@ -10,6 +10,8 @@ import { useAlert } from "../../hooks/useAlert";
 import { useAuth } from "../../hooks/useAuth";
 import { DeleteCommentModal } from "./DeleteCommentModal";
 import { EditCommentButton } from "./EditCommentModal";
+import { CommentLikeButton } from "./LikeCommentButton";
+import { dateFormat, timeFormat } from "../../utilities/dates";
 
 interface PropType extends JSX.IntrinsicAttributes {
   tweetId: number;
@@ -31,7 +33,7 @@ export const CommentList: FunctionComponent<PropType> = (props) => {
     // Try posting the comment
     try {
       const { value, error } = await createNewComment(tweetId, newComment);
-      if (error) throw new Error(error);
+      if (error) throw new Error(error.errorMessageUI);
 
       // Toast Notification
       sendAlert("Success. Your comment has been added");
@@ -49,7 +51,7 @@ export const CommentList: FunctionComponent<PropType> = (props) => {
   useEffect(() => {
     (async () => {
       const { value, error } = await getAllCommentsForTweet(tweetId);
-      if (error) throw new Error(error);
+      if (error) throw new Error(error.errorMessageUI);
       setComments(value);
     })().catch((err) => {
       console.error(err);
@@ -71,15 +73,21 @@ export const CommentList: FunctionComponent<PropType> = (props) => {
             className="flex bg-white text-blueGray-900 py-0 px-0 flex-col w-full mx-8 mb-4"
           >
             <div className="flex justify-between items-center px-4 py-1">
-              <Link
-                as={`/user/${comment.userId}`}
-                href={`/users/${comment.userId}`}
-              >
-                <span className="cursor-pointer hover:text-lightBlue-700 uppercase tracking-wide text-sm text-lightBlue-500 font-semibold">
-                  {comment.username}{" "}
-                  {comment.userId == user?.id && <>{"(me)"}</>}
+              <div className="flex flex-col">
+                <Link
+                  as={`/user/${comment.userId}`}
+                  href={`/users/${comment.userId}`}
+                >
+                  <span className="cursor-pointer hover:text-lightBlue-700 uppercase tracking-wide text-md text-lightBlue-500 font-semibold">
+                    {comment.username}{" "}
+                    {comment.userId == user?.id && <>{"(me)"}</>}
+                  </span>
+                </Link>
+                <span className="flex-1 text-xs text-trueGray-800">
+                  {timeFormat(comment.createdAt)} on{" "}
+                  {dateFormat(comment.createdAt)}
                 </span>
-              </Link>
+              </div>
               {comment.userId == user?.id && (
                 <div className="flex items-center">
                   <EditCommentButton
@@ -96,27 +104,12 @@ export const CommentList: FunctionComponent<PropType> = (props) => {
               )}
             </div>
 
-            <p className="text-md text-blueGray-800 font-normal px-4 py-2">
+            <p className="text-xl text-blueGray-800 font-normal px-4 py-2">
               {comment.content}
             </p>
 
             <div className="bg-blueGray-400 mt-2 px-2">
-              <Button color="white" className="w-max">
-                <svg
-                  className="w-4 h-4 cursor-pointer"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
-                  />
-                </svg>
-              </Button>
+              <CommentLikeButton commentId={comment.id} />
             </div>
           </div>
         ))}
