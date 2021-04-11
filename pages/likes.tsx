@@ -23,7 +23,7 @@ export default function Likes() {
       try {
         const { value: allTweetLikes, error } = await getLikedTweets();
 
-        if (error) throw new Error(error);
+        if (error) throw new Error(error.errorMessageUI);
         setLikedTweets(allTweetLikes);
       } catch (error) {
         sendError(error);
@@ -39,7 +39,7 @@ export default function Likes() {
       const { value: nextPage, error } = await getLikedTweets(
         tweetPage * DEFAULT_TWEET_LIMIT,
       );
-      if (error) throw new Error(error);
+      if (error) throw new Error(error.errorMessageUI);
       if (nextPage.length === 0) {
         // No more tweets
         sendInfo("There are no more likes to show.");

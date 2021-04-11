@@ -44,7 +44,7 @@ const EditCommentModal: FunctionComponent<EditCommentModalPropType> = (
     try {
       const { value, error } = await updateComment(newContent, comment.id);
       if (error) {
-        throw new Error(error);
+        throw new Error(error.errorMessageUI);
       }
 
       // No error - Update UI

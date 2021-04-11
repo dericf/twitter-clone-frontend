@@ -30,7 +30,7 @@ export default function Followers() {
       const { value: allFollowers, error } = await getAllFollowers({
         userId: user?.id,
       });
-      if (error) throw new Error(error);
+      if (error) throw new Error(error.errorMessageUI);
       setFollowers(allFollowers);
     })().catch((error) => {
       sendError(error);

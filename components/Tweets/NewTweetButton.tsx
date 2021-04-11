@@ -34,7 +34,7 @@ const NewTweetModal: FunctionComponent<NewTweetPropType> = (props) => {
     e.preventDefault();
     try {
       const { value, error } = await createNewTweet({ content });
-      if (error) throw new Error(error);
+      if (error) throw new Error(error.errorMessageUI);
       setTweets([{ ...value }, ...tweets]);
       props.setShowModal(false);
     } catch (error) {
@@ -139,7 +139,7 @@ export const NewTweetButton: FunctionComponent<PropType> = (props) => {
     <>
       <Button
         animated
-        color="green"
+        color="white"
         onClick={() => setShowModal(true)}
         className="flex items-center justify-between"
       >

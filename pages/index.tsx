@@ -27,7 +27,7 @@ export default function Discover() {
       try {
         const { value, error } = await getAllTweets();
 
-        if (error) throw new Error(error);
+        if (error) throw new Error(error.errorMessageUI);
         setTweets(value);
       } catch (error) {
         sendError(error);
@@ -37,7 +37,7 @@ export default function Discover() {
         try {
           const { value: follows, error } = await getAllFollows(user.id);
 
-          if (error) throw new Error(error);
+          if (error) throw new Error(error.errorMessageUI);
           setFollows(follows);
         } catch (error) {
           sendError(error);
