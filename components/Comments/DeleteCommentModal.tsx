@@ -32,7 +32,7 @@ export const DeleteCommentModal: FunctionComponent<PropType> = (props) => {
       const { value, error } = await deleteComment(commentId);
       if (error) {
         // Optimistically update UI to remove the tweet
-        throw new Error(error);
+        throw new Error(error.errorMessageUI);
       }
       // No error
       setComments(comments.filter((comment) => comment.id !== commentId));

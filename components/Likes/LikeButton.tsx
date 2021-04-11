@@ -38,7 +38,7 @@ export const LikeButton: FunctionComponent<PropType> = ({
     (async () => {
       const { value: likes, error } = await getAllTweetLikes(tweetId);
       setTweetLikes(likes);
-      if (error) throw new Error(error);
+      if (error) throw new Error(error.errorMessageUI);
 
       likes.forEach((like) => {
         if (like.userId === user.id) {
@@ -75,7 +75,6 @@ export const LikeButton: FunctionComponent<PropType> = ({
     </Button>
   ) : (
     <Button
-      animated
       className={`ml-0 ${
         tweetIsLikedByUser
           ? "text-white "
