@@ -2,9 +2,13 @@ import { useAuth } from "../../hooks/useAuth";
 import { EditUserInfoButton } from "./EditUserInfoModal";
 import { DeleteUserModal } from "./DeleteUserModal";
 import { dateFormat } from "../../utilities/dates";
+import { LoadingSpinner } from "../UI/LoadingSpinner";
 
 export const UserProfileCard = () => {
   const { user } = useAuth();
+
+  if (!user) return <LoadingSpinner />;
+
   return (
     <div className="mx-auto my-6 bg-white rounded-sm shadow-md overflow-hidden w-full max-w-xl">
       <div className="md:flex">
@@ -31,13 +35,13 @@ export const UserProfileCard = () => {
         <div className="p-8 flex-1">
           <div className="tracking-wide text-sm text-lightBlue-500 font-semibold flex flex-col sm:flex-row justify-between items-center">
             <div className="flex flex-col">
-              <span className="uppercase">{user.username}</span>
+              <span className="uppercase text-3xl">{user.username}</span>
 
-              <p className="block mt-1 text-sm leading-tight font-medium text-blueGray-700">
+              <p className="block mt-1 text-lg leading-tight font-medium text-blueGray-700">
                 {user.email}
               </p>
               <p className="block mt-1 text-xs leading-tight font-normal text-blueGray-400">
-                Born {dateFormat(user.birthdate)}
+                Born: {dateFormat(user.birthdate)}
               </p>
             </div>
             {user && (
