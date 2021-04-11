@@ -8,7 +8,8 @@ import {
   UserRegisterForm,
 } from "../schema/User";
 import { LoginResponseBody } from "../schema/Auth";
-import { APIErrorResponse } from "../schema/General";
+
+import { APIResponse, APIResponseError } from "../schema/API";
 export interface Auth {
   isAuthenticated: boolean;
   user: User;
@@ -18,7 +19,7 @@ export interface Auth {
     password: string,
     loginRedirect?: string,
   ) => Promise<boolean>;
-  loadAuthState: () => Promise<boolean>;
+  loadAuthState: () => Promise<APIResponse<boolean>>;
   logout: () => void;
   tryRegister: (_: UserCreateRequestBody) => Promise<UserCreateResponse>;
 }
@@ -128,7 +129,10 @@ export default function AuthProvider({ children }) {
     }
   };
 
-  const getAuthUserData = async (): Promise<User> => {
+  const getAuthUserData = async (): Promise<APIResponse<User>> => {
+    /**
+     * This function will succeed if the client's auth cookie is still valid.
+     */
     try {
       const res = await fetch(`http://localhost:8001/users/me`, {
         method: "GET",
@@ -142,12 +146,18 @@ export default function AuthProvider({ children }) {
         const user: User = await res.json();
         // console.log("user :>> ", user);
         // sendAlert("Successfully loaded user session");
-        return user;
+        return {
+          value: user,
+        };
       } else {
-        return null;
+        return {
+          error: new APIResponseError(res),
+        };
       }
     } catch (error) {
-      return null;
+      return {
+        error: new APIResponseError(null, error),
+      };
     }
   };
 
@@ -162,17 +172,21 @@ export default function AuthProvider({ children }) {
     });
   };
 
-  const loadAuthState = async (): Promise<boolean> => {
+  const loadAuthState = async (): Promise<APIResponse<boolean>> => {
     // Try and get the authenticated user data
-    const user: User = await getAuthUserData();
+    const { value: user, error } = await getAuthUserData();
     if (user) {
       setIsAuthenticated(true);
       setUser(user);
-      return true;
+      return {
+        value: true,
+      };
     } else {
       setIsAuthenticated(false);
       setUser(null);
-      return false;
+      return {
+        error: error,
+      };
     }
   };
 
