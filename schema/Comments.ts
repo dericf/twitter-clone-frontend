@@ -7,6 +7,7 @@ export interface Comment {
   tweetId: number;
   content: string;
   username: string;
+  createdAt: string;
 }
 
 export interface CommentResponse extends APIResponse<Array<Comment>> {
