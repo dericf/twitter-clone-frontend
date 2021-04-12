@@ -58,7 +58,7 @@ export default function AuthProvider({ children }) {
     formData.append("username", username);
     formData.append("password", password);
 
-    const res = await fetch(`http://localhost:8001/token`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/token`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -97,7 +97,7 @@ export default function AuthProvider({ children }) {
     const { username, email, bio, birthdate, password, confirmPassword } = args;
     try {
       console.log("args :>> ", args);
-      const res = await fetch(`http://localhost:8001/users`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -134,7 +134,7 @@ export default function AuthProvider({ children }) {
      * This function will succeed if the client's auth cookie is still valid.
      */
     try {
-      const res = await fetch(`http://localhost:8001/users/me`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
         method: "GET",
         headers: {
           Accept: "application/json",
@@ -162,7 +162,7 @@ export default function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    const res = await fetch(`http://localhost:8001/logout`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/logout`, {
       method: "GET",
       credentials: "include",
     });
@@ -175,6 +175,7 @@ export default function AuthProvider({ children }) {
   const loadAuthState = async (): Promise<APIResponse<boolean>> => {
     // Try and get the authenticated user data
     const { value: user, error } = await getAuthUserData();
+    console.log("User State: ", user);
     if (user) {
       setIsAuthenticated(true);
       setUser(user);

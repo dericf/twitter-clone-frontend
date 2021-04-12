@@ -18,7 +18,7 @@ import { getAllTweetLikes } from "./likes";
 export const getSingleTweetById = async (
   tweetId: number = null,
 ): Promise<APIResponse<Tweet>> => {
-  let url = new URL(`http://localhost:8001/tweets/one/${tweetId}`);
+  let url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/tweets/one/${tweetId}`);
   const res = await fetch(url.toString(), {
     method: "GET",
     headers: {
@@ -43,7 +43,7 @@ export const getAllTweets = async (
   userId = null,
   skip: number = 0,
 ): Promise<TweetResponse> => {
-  let url = new URL("http://localhost:8001/tweets");
+  let url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/tweets`);
 
   // Include Skip (for pagination)
   url.searchParams.set("skip", skip.toString());
@@ -79,7 +79,7 @@ export const getAllTweets = async (
 export const createNewTweet = async (
   requestBody: TweetCreateRequestBody,
 ): Promise<TweetCreateResponse> => {
-  const res = await fetch(`http://localhost:8001/tweets/`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tweets/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -104,15 +104,18 @@ export const updateTweet = async (
   requestBody: TweetUpdateRequestBody,
   tweetId: number,
 ): Promise<TweetUpdateResponse> => {
-  const res = await fetch(`http://localhost:8001/tweets/${tweetId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      accept: "application/json",
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/tweets/${tweetId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        accept: "application/json",
+      },
+      body: JSON.stringify(requestBody),
+      credentials: "include",
     },
-    body: JSON.stringify(requestBody),
-    credentials: "include",
-  });
+  );
   if (responseDidSucceed(res.status)) {
     const json: Tweet = await res.json();
     return {
@@ -128,14 +131,17 @@ export const updateTweet = async (
 export const deleteTweet = async (
   tweetId: number,
 ): Promise<TweetDeleteResponse> => {
-  const res = await fetch(`http://localhost:8001/tweets/${tweetId}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      accept: "application/json",
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/tweets/${tweetId}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        accept: "application/json",
+      },
+      credentials: "include",
     },
-    credentials: "include",
-  });
+  );
   if (responseDidSucceed(res.status)) {
     const json: TweetDeleteResponse = await res.json();
     return {
@@ -151,7 +157,7 @@ export const deleteTweet = async (
 export const getLikedTweets = async (
   skip: number = 0,
 ): Promise<TweetResponse> => {
-  let url = new URL(`http://localhost:8001/tweets/liked`);
+  let url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/tweets/liked`);
 
   // Include Skip (for pagination)
   url.searchParams.set("skip", skip.toString());

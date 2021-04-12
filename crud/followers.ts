@@ -10,7 +10,9 @@ import { TweetResponse } from "../schema/Tweet";
 export const getAllFollowers = async (
   params: FollowerRequestParams,
 ): Promise<FollowerResponse> => {
-  let url = new URL(`http://localhost:8001/followers/${params.userId}`);
+  let url = new URL(
+    `${process.env.NEXT_PUBLIC_API_URL}/followers/${params.userId}`,
+  );
   const res = await fetch(url.toString(), {
     method: "GET",
     headers: {

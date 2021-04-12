@@ -11,7 +11,7 @@ export const getAllTweetLikes = async (
   tweetId: number = null,
 ): Promise<TweetLikeResponse> => {
   // Base URL
-  let url = new URL("http://localhost:8001/tweet-likes");
+  let url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/tweet-likes`);
 
   // Include optional search params if present
   if (tweetId) {
@@ -43,7 +43,7 @@ export const createNewTweetLike = async (
   requestBody: TweetLikeCreateRequestBody,
 ): Promise<EmptyResponse> => {
   try {
-    const res = await fetch(`http://localhost:8001/tweet-likes/`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tweet-likes/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -70,7 +70,7 @@ export const deleteTweetLike = async (
   requestBody: TweetLikeDeleteRequestBody,
 ): Promise<EmptyResponse> => {
   try {
-    const res = await fetch(`http://localhost:8001/tweet-likes/`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tweet-likes/`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

@@ -16,7 +16,7 @@ import {
 export const getUserById = async (
   userId: number,
 ): Promise<APIResponse<User>> => {
-  let url = new URL(`http://localhost:8001/users`);
+  let url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/users`);
   url.searchParams.set("userId", userId.toString());
   const res = await fetch(url.toString(), {
     method: "GET",
@@ -43,7 +43,7 @@ export const updateUser = async (
   body: UserUpdateRequestBody,
 ): Promise<UserUpdateResponse> => {
   // Update the authenticated user's details (bio and/or username)
-  const res = await fetch(`http://localhost:8001/users`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -70,7 +70,7 @@ export const deleteUser = async (
   // User must be authenticated, but must also provide their password
   // for extra protection
 
-  const res = await fetch(`http://localhost:8001/users/`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",

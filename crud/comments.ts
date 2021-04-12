@@ -15,7 +15,9 @@ export const getAllCommentsForTweet = async (
   tweetId: number = null,
 ): Promise<CommentResponse> => {
   // Base URL
-  let url = new URL(`http://localhost:8001/comments/tweet/${tweetId}`);
+  let url = new URL(
+    `${process.env.NEXT_PUBLIC_API_URL}/comments/tweet/${tweetId}`,
+  );
 
   const res = await fetch(url.toString(), {
     method: "GET",
@@ -41,7 +43,9 @@ export const getAllCommentsForUser = async (
   userId: number = null,
 ): Promise<CommentResponse> => {
   // Base URL
-  let url = new URL(`http://localhost:8001/comments/user/${userId}`);
+  let url = new URL(
+    `${process.env.NEXT_PUBLIC_API_URL}/comments/user/${userId}`,
+  );
 
   const res = await fetch(url.toString(), {
     method: "GET",
@@ -68,7 +72,7 @@ export const createNewComment = async (
   tweetId: number,
   content: string,
 ): Promise<CommentCreateResponse> => {
-  const res = await fetch(`http://localhost:8001/comments/`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/comments/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -96,7 +100,7 @@ export const updateComment = async (
   newContent: string,
   commentId: number,
 ): Promise<CommentUpdateResponse> => {
-  const res = await fetch(`http://localhost:8001/comments/`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/comments/`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -123,7 +127,7 @@ export const updateComment = async (
 export const deleteComment = async (
   commentId: number,
 ): Promise<CommentDeleteResponse> => {
-  const res = await fetch(`http://localhost:8001/comments/`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/comments/`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",

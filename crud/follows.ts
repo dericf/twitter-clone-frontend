@@ -11,7 +11,7 @@ export const getAllFollows = async (
   userId: number,
 ): Promise<FollowsResponse> => {
   // Base URL
-  let url = new URL(`http://localhost:8001/follows/${userId}`);
+  let url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/follows/${userId}`);
 
   const res = await fetch(url.toString(), {
     method: "GET",
@@ -37,7 +37,7 @@ export const getAllFollows = async (
 export const createNewFollow = async (
   requestBody: FollowsCreateRequestBody,
 ): Promise<EmptyResponse> => {
-  const res = await fetch(`http://localhost:8001/follows`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/follows`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export const createNewFollow = async (
 export const deleteFollow = async (
   requestBody: FollowsDeleteRequestBody,
 ): Promise<EmptyResponse> => {
-  const res = await fetch(`http://localhost:8001/follows`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/follows`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",

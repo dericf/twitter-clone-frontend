@@ -11,7 +11,7 @@ export const getAllCommentLikes = async (
   commentId: number = null,
 ): Promise<CommentLikeResponse> => {
   // Base URL
-  let url = new URL("http://localhost:8001/comment-likes");
+  let url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/comment-likes`);
 
   // Include optional search params if present
   if (commentId) {
@@ -43,15 +43,18 @@ export const createNewCommentLike = async (
   requestBody: CommentLikeCreateRequestBody,
 ): Promise<EmptyResponse> => {
   try {
-    const res = await fetch(`http://localhost:8001/comment-likes/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        accept: "application/json",
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/comment-likes/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json",
+        },
+        body: JSON.stringify(requestBody),
+        credentials: "include",
       },
-      body: JSON.stringify(requestBody),
-      credentials: "include",
-    });
+    );
     if (res.status >= 200 && res.status < 300) {
       const json: EmptyResponse = await res.json();
       return json;
@@ -70,15 +73,18 @@ export const deleteCommentLike = async (
   requestBody: CommentLikeDeleteRequestBody,
 ): Promise<EmptyResponse> => {
   try {
-    const res = await fetch(`http://localhost:8001/comment-likes/`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        accept: "application/json",
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/comment-likes/`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json",
+        },
+        body: JSON.stringify(requestBody),
+        credentials: "include",
       },
-      body: JSON.stringify(requestBody),
-      credentials: "include",
-    });
+    );
     if (res.status >= 200 && res.status < 300) {
       const json: EmptyResponse = await res.json();
       return json;
