@@ -72,7 +72,8 @@ export default function AuthProvider({ children }) {
       const json: LoginResponseBody = await res.json();
 
       // Get the user data from server
-      const user: User = await getAuthUserData();
+      const { value: user, error } = await getAuthUserData();
+      if (error) throw new Error(error.errorMessageUI);
       setIsAuthenticated(true);
       setUser(user);
 
@@ -85,9 +86,7 @@ export default function AuthProvider({ children }) {
       }
       return true;
     } else {
-      const err: APIErrorResponse = await res.json();
-      // Bad response status
-      throw new Error(err.detail);
+      throw new Error("Error loggin you in.");
     }
   };
 
