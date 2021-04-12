@@ -24,6 +24,7 @@ import {
   getAllFollows,
 } from "../../crud/follows";
 import { Follows } from "../../schema/Follows";
+import { useStore } from "../../hooks/useStore";
 
 interface PropType extends JSX.IntrinsicAttributes {
   followUserId: number;
@@ -34,26 +35,38 @@ export const FollowButton: FunctionComponent<PropType> = ({
   ...props
 }) => {
   const { user } = useAuth();
+  const { follows, setFollows, updateFollowState } = useStore();
 
   const router = useRouter;
   const [loading, setLoading] = useState(true);
   const [isFollowedByUser, setIsFollowedByUser] = useState(false);
-  const [follows, setFollows] = useState<Array<Follows>>([]);
+  // const [follows, setFoll] = useState<Array<Follows>>([]);
 
   useEffect(() => {
+    // On component load - get all the followers
     (async () => {
-      const allFollows = await getAllFollows(user?.id);
-      allFollows.forEach((follow) => {
+      let isFollowed = false;
+      follows.forEach((follow) => {
         if (follow.userId === followUserId) {
-          setIsFollowedByUser(true);
+          isFollowed = true;
         }
       });
-      setFollows(allFollows);
-			setLoading(false);
-    })().catch((err) => {
-      console.error(err);
-    });
+      setIsFollowedByUser(isFollowed);
+      setLoading(false);
+    })();
   }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    let isFollowed = false;
+    follows.forEach((follow) => {
+      if (follow.userId === followUserId) {
+        isFollowed = true;
+      }
+    });
+    setIsFollowedByUser(isFollowed);
+    setLoading(false);
+  }, [follows]);
 
   const followUser = async () => {
     if (isFollowedByUser === true) {
@@ -61,20 +74,20 @@ export const FollowButton: FunctionComponent<PropType> = ({
       await deleteFollow({ followUserId });
       setIsFollowedByUser(false);
       setFollows([...follows.filter((follow) => follow.userId !== user.id)]);
+      updateFollowState(false, followUserId);
     } else {
       // Like the tweet
       await createNewFollow({ followUserId });
       setIsFollowedByUser(true);
-      setFollows([
-        ...follows,
-        {
-          userId: user.id,
-          username: user.username,
-          email: user.email,
-          bio: user.bio,
-          birthdate: user.birthdate,
-        },
-      ]);
+      const newFollow: Follows = {
+        userId: user.id,
+        username: user.username,
+        email: user.email,
+        bio: user.bio,
+        birthdate: user.birthdate,
+      };
+      setFollows([...follows, newFollow]);
+      updateFollowState(true, followUserId);
     }
   };
 
@@ -93,7 +106,7 @@ export const FollowButton: FunctionComponent<PropType> = ({
       {isFollowedByUser === true ? (
         <span className="flex justify-between">
           <svg
-						className="h-6 w-6 mr-2"
+            className="h-6 w-6 mr-2"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -105,7 +118,7 @@ export const FollowButton: FunctionComponent<PropType> = ({
       ) : (
         <span className="flex justify-between">
           <svg
-						className="h-6 w-6 mr-2"
+            className="h-6 w-6 mr-2"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"

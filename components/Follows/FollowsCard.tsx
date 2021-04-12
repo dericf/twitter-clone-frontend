@@ -23,7 +23,7 @@ export const FollowCard = (props: Props) => {
     if (!user) return;
     (async () => {
       const { value, error } = await getAllTweets(follow.userId);
-      if (error) throw new Error(error);
+      if (error) throw new Error(error.errorMessageUI);
       setUserTweets(value);
     })().catch((err) => {
       console.error(err);
