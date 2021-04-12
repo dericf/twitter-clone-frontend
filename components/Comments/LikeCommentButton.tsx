@@ -77,12 +77,12 @@ export const CommentLikeButton: FunctionComponent<PropType> = ({
     </Button>
   ) : (
     <Button
-      animated
       className={`ml-0 ${
         commentIsLikedByUser
           ? "text-white "
           : "text-blueGray-700 hover:text-white"
-      } `}
+      } 
+      hover:animate-pulse	`}
       color={commentIsLikedByUser ? "blue" : "white"}
       title="Like Comment"
       onClick={likeComment}
