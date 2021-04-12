@@ -44,7 +44,7 @@ export const Button: FunctionComponent<Props> = ({
       colorClasses = `text-white bg-lightBlue-700 focus:ring-lightBlue-900 hover:bg-lightBlue-800`;
       break;
     case "white":
-      colorClasses = `text-blueGray-700 bg-white border focus:ring-blueGray-100 hover:bg-blueGray-800 hover:text-white`;
+      colorClasses = `text-blueGray-700 bg-white border focus:ring-blueGray-100 hover:bg-blueGray-800 hover:text-white hover:border-blueGray-800`;
       break;
     case "green":
       colorClasses = `text-white bg-emerald-500 focus:ring-emerald-400 hover:bg-emerald-700`;
