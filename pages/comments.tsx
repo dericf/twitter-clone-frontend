@@ -14,6 +14,7 @@ import { Comment } from "../schema/Comments";
 import { DeleteCommentModal } from "../components/Comments/DeleteCommentModal";
 import { EditCommentButton } from "../components/Comments/EditCommentModal";
 import Link from "next/link";
+import { CommentLikeButton } from "../components/Comments/LikeCommentButton";
 
 export default function Home() {
   const { sendAlert, sendError } = useAlert();
@@ -28,7 +29,7 @@ export default function Home() {
     (async () => {
       const { value, error } = await getAllCommentsForUser(user.id);
 
-      if (error) throw new Error(error);
+      if (error) throw new Error(error.errorMessageUI);
       setComments(value);
     })().catch((error) => {
       sendError(error);
@@ -74,29 +75,10 @@ export default function Home() {
             </p>
 
             <div className="bg-blueGray-400 mt-2 px-2">
-              <Button color="white" className="w-max">
-                <svg
-                  className="w-4 h-4 cursor-pointer"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
-                  />
-                </svg>
-              </Button>
+              <CommentLikeButton commentId={comment.id} />
             </div>
           </div>
         ))}
-
-        {comments.length === 0 && (
-          <h2 className="text-lg text-blueGray-800 mb-2">No Comments Yet</h2>
-        )}
 
         {comments?.length === 0 && (
           <div className="text-xl text-white ">You haven't commented yet.</div>

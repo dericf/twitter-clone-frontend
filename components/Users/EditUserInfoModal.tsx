@@ -49,7 +49,7 @@ const EditUserInfoModal: FunctionComponent<EditUserInfoModalPropType> = (
         newBio: newBio === user.bio ? null : newBio,
         newUsername: newUsername === user.username ? null : newUsername,
       });
-      if (error) throw new Error(error);
+      if (error) throw new Error(error.errorMessageUI);
 
       // No error
       setUser({ ...user, bio: newBio, username: newUsername });

@@ -31,7 +31,7 @@ export const DeleteUserModal: FunctionComponent<PropType> = (props) => {
   const tryDeleteUser = async () => {
     try {
       const { value, error } = await deleteUser(password);
-      if (error) throw new Error(error);
+      if (error) throw new Error(error.errorMessageUI);
       sendAlert("Success. Your account has been deleted.");
       await logout();
     } catch (error) {

@@ -74,13 +74,11 @@ export default function StoreContextProvider({ children }) {
         ? [
             ...follows,
             {
-              ...{
-                userId: userId,
-                bio: "",
-                email: "",
-                birthdate: "",
-                username: "",
-              },
+              userId: userId,
+              bio: "",
+              email: "",
+              birthdate: "",
+              username: "",
             },
           ] // Add
         : follows.filter((f) => f.userId === userId), // Remove
@@ -103,7 +101,7 @@ export default function StoreContextProvider({ children }) {
   const refreshTweets = async () => {
     // ! Depricated - do not use anymore
     const { value: allTweets, error } = await getAllTweets(user?.id);
-    if (error) throw new Error(error);
+    if (error) throw new Error(error.errorMessageUI);
     setTweets(allTweets);
   };
 

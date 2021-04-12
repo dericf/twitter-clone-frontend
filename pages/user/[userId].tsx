@@ -8,20 +8,22 @@ import { getUserById } from "../../crud/users";
 import { User } from "../../schema/User";
 import { useStore } from "../../hooks/useStore";
 
-export default function Home() {
+export default function PublicUserPage() {
   const { sendAlert, sendError } = useAlert();
   const router = useRouter();
 
   const [user, setUser] = useState<User>(null);
   const { tweets, setTweets } = useStore();
 
-  let userId = null;
-
-  // const { userId } = router.query;
+  let userId: number = null;
 
   useEffect(() => {
     if (!router.isReady) return;
-    userId = router.query["userId"];
+
+    // parse from query string as number
+    userId = Number.parseInt(router.query["userId"]?.toString());
+
+    // Get user information from backend
     (async () => {
       if (userId) {
         const { value: user, error } = await getUserById(
@@ -30,7 +32,7 @@ export default function Home() {
         setUser(user);
         try {
           const { value: userTweets, error } = await getAllTweets(userId);
-          if (error) throw new Error(error);
+          if (error) throw new Error(error.errorMessageUI);
           setTweets(userTweets);
         } catch (error) {
           sendError(error);
@@ -42,10 +44,11 @@ export default function Home() {
   return (
     <Layout
       isProtected={true}
-      pageTitle={`${user.username.toUpperCase()}'s Tweets`}
+      pageTitle={`${user ? user.username.toUpperCase() + " 's Tweets" : "..."}`}
     >
       <div className="flex flex-col w-full h-full items-center justify-items-center">
         {tweets &&
+          user &&
           tweets.map((tweet) => (
             <TweetCard key={tweet.tweetId.toString()} tweet={tweet} />
           ))}

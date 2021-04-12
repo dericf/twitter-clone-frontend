@@ -24,7 +24,7 @@ const TweetPage: NextPage = () => {
         const { value, error } = await getSingleTweetById(
           Number.parseInt(tweetId?.toString()),
         );
-        if (error) throw new Error(error);
+        if (error) throw new Error(error.errorMessageUI);
         setTweet(value);
       }
     })().catch((error) => {
