@@ -61,7 +61,7 @@ export const Button: FunctionComponent<Props> = ({
   return (
     <button
       disabled={disabled}
-      className={`flex justify-center align-middle 
+      className={`flex justify-center items-center 
       ${disabled === true ? "opacity-30 cursor-not-allowed disabled" : ""}
       ${animated ? "transform hover:-translate-y-0.5" : ""}
       text-sm py-2 px-4 ${
