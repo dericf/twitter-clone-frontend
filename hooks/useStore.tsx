@@ -16,6 +16,8 @@ import { PageId } from "../schema/Navigation";
 export interface StoreContextI {
   tweets: Array<Tweet>;
   setTweets: (_: Array<Tweet>) => void;
+  myTweets: Array<Tweet>;
+  setMyTweets: (_: Array<Tweet>) => void;
   follows: Array<Follows>;
   setFollows: (_: Array<Follows>) => void;
   followers: Array<Follower>;
@@ -35,6 +37,7 @@ export default function StoreContextProvider({ children }) {
   // Initialize Store State
   //
   const [tweets, setTweets] = useState<Array<Tweet>>([]);
+  const [myTweets, setMyTweets] = useState<Array<Tweet>>([]);
   const [followers, setFollowers] = useState<Array<Follower>>([]);
   const [follows, setFollows] = useState<Array<Follows>>([]);
   const [activePage, setActivePage] = useState<PageId>("discover");
@@ -114,6 +117,8 @@ export default function StoreContextProvider({ children }) {
       value={{
         tweets,
         setTweets,
+        myTweets,
+        setMyTweets,
         followers,
         setFollowers,
         follows,
