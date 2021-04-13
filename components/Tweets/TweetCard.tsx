@@ -31,8 +31,9 @@ export const TweetCard = ({ tweet }: Props) => {
                   {tweet.username} {tweet.userId == user?.id && <>{"(me)"}</>}
                 </span>
               </Link>
-              <span className="block mt-1 text-sm leading-tight font-medium text-black">
-                {dateFormat(tweet.createdAt)} at {timeFormat(tweet.createdAt)}
+
+              <span className="flex-1 mt-1 text-xs text-trueGray-800">
+                {timeFormat(tweet.createdAt)} on {dateFormat(tweet.createdAt)}
               </span>
             </div>
 
