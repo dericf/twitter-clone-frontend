@@ -15,6 +15,7 @@ import { DeleteCommentModal } from "../components/Comments/DeleteCommentModal";
 import { EditCommentButton } from "../components/Comments/EditCommentModal";
 import Link from "next/link";
 import { CommentLikeButton } from "../components/Comments/LikeCommentButton";
+import { dateFormat, timeFormat, timeFromNow } from "../utilities/dates";
 
 export default function Home() {
   const { sendAlert, sendError } = useAlert();
@@ -46,16 +47,40 @@ export default function Home() {
             className="flex bg-white text-blueGray-900 py-0 px-0 flex-col w-full mx-8"
           >
             <div className="flex justify-between items-center px-4 py-1">
-              <Link
-                as={`/tweets/${comment.tweetId}`}
-                href={`/tweets/${comment.tweetId}`}
-              >
-                <span className="cursor-pointer hover:text-lightBlue-700 uppercase tracking-wide text-sm text-lightBlue-500 font-semibold">
-                  Show Tweet
+              <div className="flex flex-col justify-start items-start flex-grow flex-shrink-0">
+                <Link
+                  as={`/tweets/${comment.tweetId}`}
+                  href={`/tweets/${comment.tweetId}`}
+                >
+                  <span className="cursor-pointer hover:text-lightBlue-700 uppercase tracking-wide text-sm text-lightBlue-500 font-semibold">
+                    Show Tweet
+                  </span>
+                </Link>
+                <span className="flex items-center flex-1 mt-1 text-xs text-trueGray-600">
+                  {timeFromNow(comment.createdAt)}{" "}
+                  <span
+                    className="cursor-default text-trueGray-500 hover:text-trueGray-700 ml-1"
+                    title={`${timeFormat(comment.createdAt)} on ${dateFormat(
+                      comment.createdAt,
+                    )}`}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </span>
                 </span>
-              </Link>
+              </div>
               {comment.userId == user?.id && (
-                <div className="flex items-center">
+                <div className="flex items-center flex-wrap justify-end">
                   <EditCommentButton
                     comment={comment}
                     comments={comments}
