@@ -22,6 +22,8 @@ export interface StoreContextI {
   setFollows: (_: Array<Follows>) => void;
   followers: Array<Follower>;
   setFollowers: (_: Array<Follower>) => void;
+  showSidebar: boolean;
+  setShowSidebar: (_: boolean) => void;
   createTweet: (body: TweetCreateRequestBody) => void;
   updateTweetContent: (body: TweetUpdateRequestBody, tweetId: number) => void;
   updateFollowState: (newState: boolean, userId: number) => void;
@@ -41,6 +43,7 @@ export default function StoreContextProvider({ children }) {
   const [followers, setFollowers] = useState<Array<Follower>>([]);
   const [follows, setFollows] = useState<Array<Follows>>([]);
   const [activePage, setActivePage] = useState<PageId>("discover");
+  const [showSidebar, setShowSidebar] = useState<boolean>(true);
 
   // Auth context
   const { user } = useAuth();
@@ -123,6 +126,8 @@ export default function StoreContextProvider({ children }) {
         setFollowers,
         follows,
         setFollows,
+        showSidebar,
+        setShowSidebar,
         updateTweetContent,
         updateFollowState,
         createTweet,

@@ -25,13 +25,12 @@ export const Layout = ({
   tabTitle = pageTitle,
   onAuthSuccess = () => {},
   loading = false,
-  showSidebar = true,
 }) => {
   const { user, isAuthenticated, loadAuthState } = useAuth();
   const { sendError, sendAlert } = useAlert();
   const [isLoading, setLoading] = useState(loading || !user);
-  const { activePage, setActivePage } = useStore();
-  const [sidebar, setSidebar] = useState<boolean>(showSidebar);
+  const { activePage, setActivePage, showSidebar, setShowSidebar } = useStore();
+
   const router = useRouter();
 
   useEffect(() => {
@@ -111,14 +110,14 @@ export const Layout = ({
         </div>
 
         <div className="flex-1 flex overflow-hidden ">
-          {sidebar && (
+          {showSidebar && (
             <nav className="hidden sm:flex flex-col w-24 sm:w-40 md:w-52 flex-shrink-0 justify-center px-0.5 sm:px-3 md:px-6 py-6 bg-white shadow-lg">
               <LeftSidebar />
             </nav>
           )}
           <button
             type="button"
-            onClick={() => setSidebar(!sidebar)}
+            onClick={() => setShowSidebar(!showSidebar)}
             className="hidden sm:flex fixed bottom-0 left-0 z-50 px-2 py-2 bg-white shadow-lg hover:shadow:2xl  hover:opacity-30 cursor-pointer border-none ring-none focus:ring-none focus:outline-none"
             title="Show/Hide Sidebar"
           >
