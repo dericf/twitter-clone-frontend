@@ -11,7 +11,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { DeleteCommentModal } from "./DeleteCommentModal";
 import { EditCommentButton } from "./EditCommentModal";
 import { CommentLikeButton } from "./LikeCommentButton";
-import { dateFormat, timeFormat } from "../../utilities/dates";
+import { dateFormat, timeFormat, timeFromNow } from "../../utilities/dates";
 
 interface PropType extends JSX.IntrinsicAttributes {
   tweetId: number;
@@ -83,9 +83,27 @@ export const CommentList: FunctionComponent<PropType> = (props) => {
                     {comment.userId == user?.id && <>{"(me)"}</>}
                   </span>
                 </Link>
-                <span className="flex-1 text-xs text-trueGray-800">
-                  {timeFormat(comment.createdAt)} on{" "}
-                  {dateFormat(comment.createdAt)}
+                <span className="flex items-center flex-1 text-xs text-trueGray-600">
+                  {timeFromNow(comment.createdAt)}{" "}
+                  <span
+                    className="cursor-default text-trueGray-500 hover:text-trueGray-700 ml-1"
+                    title={`${timeFormat(comment.createdAt)} on ${dateFormat(
+                      comment.createdAt,
+                    )}`}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </span>
                 </span>
               </div>
               {comment.userId == user?.id && (
@@ -145,10 +163,11 @@ export const CommentList: FunctionComponent<PropType> = (props) => {
           <Button
             type="submit"
             color="white"
-            className="mx-0"
+            className="my-2"
             disabled={newComment.length === 0}
+            addMargins={false}
           >
-            <svg
+            {/* <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-4 w-4 mr-1"
               fill="none"
@@ -161,7 +180,7 @@ export const CommentList: FunctionComponent<PropType> = (props) => {
                 strokeWidth={2}
                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"
               />
-            </svg>{" "}
+            </svg>{" "} */}
             Comment
           </Button>
         </form>
