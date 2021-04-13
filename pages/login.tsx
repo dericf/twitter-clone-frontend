@@ -81,16 +81,18 @@ export default function Login() {
             onClick={() => router.push("/register")}
             type="button"
             color="transparent"
-            className="text-2xl items-center flex-1 mx-0 my-0 py-4 text-trueGray-300"
+            className="text-sm items-center flex-1 mx-0 my-0 py-4 text-trueGray-300"
+            addMargins={false}
           >
             Register New Account
           </Button>
 
           <Button
             type="submit"
-            color="transparent"
-            className="flex-1 items-center mx-0 my-0 py-4 text-white"
+            color="white"
+            className="flex-1 items-center mx-0 my-0 py-4 text-white text-md"
             disabled={username.length === 0 || password.length === 0}
+            addMargins={false}
           >
             Login
             <svg
