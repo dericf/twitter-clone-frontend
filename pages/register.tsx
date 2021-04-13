@@ -23,11 +23,11 @@ export default function Register() {
 
   const [form, setForm] = useState<UserRegisterForm>({
     username: "",
-    email: "@email.com",
-    password: "123456",
-    confirmPassword: "123456",
-    bio: "A Bio...",
-    birthdate: "1980-10-21",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    bio: "",
+    birthdate: "",
   });
 
   const handleFormChange = (e) => {
@@ -73,7 +73,7 @@ export default function Register() {
         className="my-4 mx-auto py-8 px-8 form 
         flex flex-col
         justify-stretch align-start
-        w-full max-w-2xl
+        w-full max-w-sm md:max-w-lg lg:max-w-xl
         text-white text-xl
         shadow-lg bg-lightBlue-700
         rounded-sm 
@@ -83,9 +83,9 @@ export default function Register() {
         action="#"
         onSubmit={handleRegister}
       >
-        <div className="flex flex-row justify-between space-x-8 flex-wrap sm:flex-nowrap">
+        <div className="flex flex-row justify-center md:justify-between md:space-x-8 space-y-4 md:space-y-0 flex-wrap md:flex-nowrap">
           <div className="flex flex-col space-y-4 justify-center items-stretch  place-self-start  w-80">
-            <div className="flex flex-col">
+            <div className="flex flex-col self-center sm:self-start">
               <label htmlFor="email">Username</label>
               <input
                 className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1 w-48 "
@@ -109,7 +109,7 @@ export default function Register() {
             </div>
           </div>
 
-          <div className="flex flex-col space-y-4  justify-center items-stretch place-self-start w-80 max-w-full">
+          <div className="flex flex-col space-y-4  justify-center items-stretch place-self-start max-w-full">
             <div className="flex flex-col">
               <label htmlFor="password">Password</label>
               <input
@@ -120,7 +120,7 @@ export default function Register() {
                 onChange={handleFormChange}
               />
             </div>
-            <div className="flex flex-col justify-center items-stretch place-self-start w-80 max-w-full">
+            <div className="flex flex-col justify-center items-stretch place-self-start  max-w-full">
               <label htmlFor="confirmPassword">Confirm Password</label>
               <input
                 className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1"
@@ -164,7 +164,7 @@ export default function Register() {
             onClick={() => router.push("/login")}
             type="button"
             color="transparent"
-            className="text-2xl mt-4 py-4"
+            className="text-xs mt-4 py-4"
             fluid
             addMargins={false}
           >
@@ -173,8 +173,8 @@ export default function Register() {
 
           <Button
             type="submit"
-            color="green"
-            className="text-2xl mt-4 py-4"
+            color="white"
+            className="mt-4 py-4"
             fluid
             addMargins={false}
             disabled={
