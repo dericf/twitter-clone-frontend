@@ -14,7 +14,7 @@ export default function Tweets() {
   const { sendAlert, sendError } = useAlert();
   const { user } = useAuth();
 
-  const { tweets, setTweets } = useStore();
+  const { myTweets, setMyTweets } = useStore();
 
   useEffect(() => {
     if (!user) {
@@ -25,7 +25,7 @@ export default function Tweets() {
         const { value, error } = await getAllTweets(user.id);
 
         if (error) throw new Error(error.errorMessageUI);
-        setTweets(value);
+        setMyTweets(value);
       } catch (error) {
         sendError(error);
       }
@@ -34,15 +34,14 @@ export default function Tweets() {
 
   return (
     <Layout pageTitle="My Tweets" isProtected={true}>
-      {tweets &&
-        tweets.map((tweet) => (
+      {myTweets &&
+        myTweets.map((tweet) => (
           <TweetCard key={tweet.tweetId.toString()} tweet={tweet} />
         ))}
 
-      {tweets?.length === 0 && (
+      {myTweets?.length === 0 && (
         <div className="text-xl text-white ">You have no Tweets yet</div>
       )}
-      {/* <div key={tweet.tweetId.toString()}>{JSON.stringify(tweet, null, 4)}</div> */}
     </Layout>
   );
 }
