@@ -31,7 +31,7 @@ export const FollowCard = (props: Props) => {
   }, [user]);
 
   return (
-    <div className="mx-auto my-6 bg-trueGray-100 rounded-sm shadow-md w-full max-w-xl">
+    <div className="mx-auto my-6 bg-trueGray-100 rounded-sm shadow-md sm:w-full sm:max-w-xl">
       <div className="flex">
         <div className="p-4 md:p-8 flex flex-col justify-center items-start flex-grow">
           <Link href={`/user/${follow.userId}/`} as={`/user/${follow.userId}`}>
