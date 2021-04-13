@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useAuth } from "../../hooks/useAuth";
 import { Tweet } from "../../schema/Tweet";
-import { dateFormat, timeFormat } from "../../utilities/dates";
+import { dateFormat, timeFormat, timeFromNow } from "../../utilities/dates";
 import { LikeButton } from "../Likes/LikeButton";
 import { Button } from "../UI/Button";
 import { EditTweetButton } from "./EditTweetModal";
@@ -32,17 +32,36 @@ export const TweetCard = ({ tweet }: Props) => {
                 </span>
               </Link>
 
-              <span className="flex-1 mt-1 text-xs text-trueGray-800">
-                {timeFormat(tweet.createdAt)} on {dateFormat(tweet.createdAt)}
+              <span className="flex flex-1 items-center mt-1 text-xs text-trueGray-600">
+                {timeFromNow(tweet.createdAt)}{" "}
+                <span
+                  className="cursor-default text-trueGray-500 hover:text-trueGray-700 ml-1"
+                  title={`${timeFormat(tweet.createdAt)} on ${dateFormat(
+                    tweet.createdAt,
+                  )}`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </span>
               </span>
             </div>
 
             {user && (
-              <div className="px-2">
+              <div className="px-2 ">
                 {user.id !== tweet.userId ? (
                   <FollowButton followUserId={tweet.userId} />
                 ) : (
-                  <div className="flex items-center">
+                  <div className="flex items-center justify-end flex-wrap">
                     <EditTweetButton tweet={tweet} />
                     <DeleteTweetModal tweetId={tweet.tweetId} />
                   </div>
