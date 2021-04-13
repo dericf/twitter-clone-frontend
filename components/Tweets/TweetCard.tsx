@@ -67,7 +67,7 @@ export const TweetCard = ({ tweet }: Props) => {
             )}
           </div>
 
-          <p className="mt-2 text-blueGray-500 text-2xl px-4 py-4">
+          <p className="mt-2 flex-shrink max-w-full text-blueGray-500 text-2xl px-4 py-4  break-all ">
             {tweet.content}
           </p>
 
