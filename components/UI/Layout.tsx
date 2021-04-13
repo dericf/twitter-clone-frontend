@@ -119,10 +119,23 @@ export const Layout = ({
           <button
             type="button"
             onClick={() => setSidebar(!sidebar)}
-            className="hidden sm:flex fixed bottom-4 left-4 z-50 px-2 py-2 bg-white shadow-lg hover:shadow:2xl  hover:opacity-30 cursor-pointer border-none ring-none focus:ring-none focus:outline-none"
+            className="hidden sm:flex fixed bottom-0 left-0 z-50 px-2 py-2 bg-white shadow-lg hover:shadow:2xl  hover:opacity-30 cursor-pointer border-none ring-none focus:ring-none focus:outline-none"
             title="Show/Hide Sidebar"
           >
-            |||
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 transform rotate-90"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
           </button>
 
           {/* Scroll Wrapper */}
@@ -138,7 +151,7 @@ export const Layout = ({
                 {isLoading ? <LoadingOverlay /> : children}
               </div>
 
-              <nav className="fixed sm:hidden flex justify-between items-center  bottom-0 w-screen h-12 flex-grow flex-shrink-0 -mx-4">
+              <nav className="fixed sm:hidden flex justify-between items-center  bottom-0 w-screen h-12 flex-grow flex-shrink-0 ">
                 <MobileBottomNav />
               </nav>
             </div>
