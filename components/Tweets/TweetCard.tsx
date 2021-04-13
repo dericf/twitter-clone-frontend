@@ -23,10 +23,7 @@ export const TweetCard = ({ tweet }: Props) => {
         <div className="px-0 pt-4 flex-grow">
           <div className="flex justify-between items-center">
             <div className="flex flex-col px-4">
-              <Link
-                as={`/user/${tweet.userId}`}
-                href={`/users/${tweet.userId}`}
-              >
+              <Link as={`/user/${tweet.userId}`} href={`/user/${tweet.userId}`}>
                 <span className="cursor-pointer hover:text-lightBlue-700 uppercase tracking-wide text-sm text-lightBlue-500 font-semibold">
                   {tweet.username} {tweet.userId == user?.id && <>{"(me)"}</>}
                 </span>
