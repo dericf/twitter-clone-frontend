@@ -6,12 +6,13 @@ import React, {
 
 import Link from "next/link";
 import { useStore } from "../../../hooks/useStore";
+import { PageId } from "../../../schema/Navigation";
 
 type PropType = JSX.IntrinsicAttributes &
   React.ButtonHTMLAttributes<HTMLButtonElement> &
   React.AnchorHTMLAttributes<HTMLAnchorElement>;
 interface Props extends PropType {
-  pageId: string;
+  pageId: PageId;
 }
 
 export const SidebarLink: FunctionComponent<Props> = ({
