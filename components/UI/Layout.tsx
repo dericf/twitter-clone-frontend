@@ -142,7 +142,7 @@ export const Layout = ({
             {/* Main Content */}
             <div className="flex-1 overflow-y-auto justify-between ">
               {pageTitle && (
-                <h3 className="text-4xl text-center text-white my-4">
+                <h3 className=" text-3xl md:text-4xl text-center text-white my-4">
                   {pageTitle}
                 </h3>
               )}
