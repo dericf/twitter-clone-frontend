@@ -138,10 +138,9 @@ export const NewTweetButton: FunctionComponent<PropType> = (props) => {
   return (
     <>
       <Button
-        animated
         color="white"
         onClick={() => setShowModal(true)}
-        className="flex items-center justify-between"
+        className="flex items-center justify-between hover:animate-pulse"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

@@ -145,7 +145,6 @@ export const EditTweetButton: FunctionComponent<PropType> = (props) => {
   return (
     <>
       <Button
-        animated
         color="green"
         onClick={() => setShowModal(true)}
         className="flex justify-between items-center"

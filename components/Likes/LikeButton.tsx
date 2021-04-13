@@ -75,7 +75,7 @@ export const LikeButton: FunctionComponent<PropType> = ({
     </Button>
   ) : (
     <Button
-      className={`ml-0 ${
+      className={`ml-0 hover:animate-pulse ${
         tweetIsLikedByUser
           ? "text-white "
           : "text-blueGray-700 hover:text-white"
