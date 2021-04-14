@@ -9,7 +9,7 @@ import { ToastProvider } from "react-toast-notifications";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <ToastProvider placement="bottom-right">
+    <ToastProvider placement="top-left">
       <AuthProvider>
         <StoreProvider>
           <Component {...pageProps} />
