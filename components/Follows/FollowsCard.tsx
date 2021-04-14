@@ -36,7 +36,7 @@ export const FollowCard = (props: Props) => {
         <div className="p-4 md:p-8 flex flex-col justify-center items-start flex-grow">
           <Link href={`/user/${follow.userId}/`} as={`/user/${follow.userId}`}>
             <div className="uppercase tracking-wide cursor-pointer text-sm text-lightBlue-500 hover:text-lightBlue-700 font-semibold">
-              {follow.username}
+              @{follow.username}
             </div>
           </Link>
 
@@ -61,7 +61,7 @@ export const FollowCard = (props: Props) => {
             fluid
             onClick={() => router.push(`/user/${follow.userId}`)}
           >
-            See all tweets by {follow.username}
+            See all tweets by @{follow.username}
           </Button>
         </div>
       </div>

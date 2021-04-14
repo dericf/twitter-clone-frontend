@@ -10,7 +10,7 @@ export const FollowerCard = (props: Props) => {
   const { follower } = props;
   const { user } = useAuth();
   return (
-    <div className="mx-auto my-6 bg-white rounded-xl shadow-md overflow-hidden w-full max-w-xl">
+    <div className="mx-auto my-6 bg-white rounded-sm shadow-md overflow-hidden w-full max-w-xl">
       <div className="md:flex">
         <div className="flex md:flex-shrink-0 justify-center pl-8 items-center">
           {/* <img
@@ -38,7 +38,7 @@ export const FollowerCard = (props: Props) => {
             as={`/user/${follower.userId}`}
           >
             <span className="uppercase tracking-wide cursor-pointer text-sm text-lightBlue-500 font-semibold">
-              {follower.username}
+              @{follower.username}
             </span>
           </Link>
 

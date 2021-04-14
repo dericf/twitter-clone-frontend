@@ -25,7 +25,7 @@ export const TweetCard = ({ tweet }: Props) => {
             <div className="flex flex-col px-4">
               <Link as={`/user/${tweet.userId}`} href={`/user/${tweet.userId}`}>
                 <span className="cursor-pointer hover:text-lightBlue-700 uppercase tracking-wide text-sm text-lightBlue-500 font-semibold">
-                  {tweet.username} {tweet.userId == user?.id && <>{"(me)"}</>}
+                  @{tweet.username} {tweet.userId == user?.id && <>{"(me)"}</>}
                 </span>
               </Link>
 
