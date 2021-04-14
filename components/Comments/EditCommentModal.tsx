@@ -91,9 +91,8 @@ const EditCommentModal: FunctionComponent<EditCommentModalPropType> = (
             fixed 
             left-0 md:left-1/4 
             right-0 md:right-1/4
-            bottom-1/4 
             top-1/4 
-            h-1/2 max-h-screen 
+            max-h-screen 
             z-20 shadow-xl 
             backdrop-filter
             bg-white"
@@ -119,12 +118,13 @@ const EditCommentModal: FunctionComponent<EditCommentModalPropType> = (
               }}
               rows={5}
             ></textarea>
-            <div className="flex justify-between py-4">
+            <div className="flex justify-between mt-8 -mx-8 -mb-8">
               <Button
-                className="flex-grow"
+                className="flex-grow rounded-none border-none"
                 color="white"
                 onClick={() => props.setShowModal(false)}
                 type="submit"
+                addMargins={false}
               >
                 Cancel
               </Button>
@@ -132,11 +132,12 @@ const EditCommentModal: FunctionComponent<EditCommentModalPropType> = (
               <Button
                 color="blue"
                 type="submit"
-                className="flex-grow"
+                className="flex-grow rounded-none"
                 disabled={
                   newContent.length === 0 ||
                   newContent.length > MAX_COMMENT_LENGTH
                 }
+                addMargins={false}
               >
                 Confirm
               </Button>
