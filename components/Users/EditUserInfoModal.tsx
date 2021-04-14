@@ -96,7 +96,7 @@ const EditUserInfoModal: FunctionComponent<EditUserInfoModalPropType> = (
           <form
             action="post"
             onSubmit={handleSubmit}
-            className="flex flex-col w-full max-w-lg space-y-4"
+            className="flex flex-col w-full max-w-lg"
           >
             <div className="flex flex-col">
               <label
@@ -118,7 +118,7 @@ const EditUserInfoModal: FunctionComponent<EditUserInfoModalPropType> = (
               ></textarea>
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col mt-4">
               <label
                 className="font-semibold text-black normal-case "
                 htmlFor="password"
@@ -136,11 +136,7 @@ const EditUserInfoModal: FunctionComponent<EditUserInfoModalPropType> = (
               />
             </div>
 
-            <div>
-              <div className="flex mx-4 my-2 border-b "></div>
-            </div>
-
-            <div className="flex flex-col">
+            <div className="flex flex-col self-center mt-4">
               <label
                 className="font-semibold text-black normal-case "
                 htmlFor="password"
@@ -158,12 +154,13 @@ const EditUserInfoModal: FunctionComponent<EditUserInfoModalPropType> = (
               />
             </div>
 
-            <div className="flex justify-between py-4">
+            <div className="flex justify-between mt-8 -mx-8 -mb-8">
               <Button
-                className="flex-grow"
+                className="flex-grow rounded-none border-none"
                 color="white"
                 onClick={() => props.setShowModal(false)}
                 type="submit"
+                addMargins={false}
               >
                 Cancel
               </Button>
@@ -171,11 +168,12 @@ const EditUserInfoModal: FunctionComponent<EditUserInfoModalPropType> = (
               <Button
                 color="blue"
                 type="submit"
-                className="flex-grow"
+                className="flex-grow rounded-none"
                 disabled={
                   (newBio === user.bio && newUsername === user.username) ||
                   password.length === 0
                 }
+                addMargins={false}
               >
                 Confirm
               </Button>
