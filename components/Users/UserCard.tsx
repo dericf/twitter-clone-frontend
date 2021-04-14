@@ -35,7 +35,7 @@ export const UserProfileCard = () => {
         <div className="p-8 flex-1">
           <div className="tracking-wide text-sm text-lightBlue-500 font-semibold flex flex-col sm:flex-row justify-between items-center">
             <div className="flex flex-col">
-              <span className="uppercase text-2xl">{user.username}</span>
+              <span className="uppercase text-2xl">@{user.username}</span>
 
               <p className="block mt-1 text-lg leading-tight font-medium text-blueGray-700">
                 {user.email}
