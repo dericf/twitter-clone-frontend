@@ -24,7 +24,14 @@ interface NewTweetPropType {
 
 const NewTweetModal: FunctionComponent<NewTweetPropType> = (props) => {
   const [content, setContent] = useState("");
-  const { tweets, setTweets, createTweet } = useStore();
+  const {
+    tweets,
+    myTweets,
+    setTweets,
+    setMyTweets,
+    createTweet,
+    updateTweetContent,
+  } = useStore();
   const router = useRouter();
   const { sendAlert, sendError } = useAlert();
 
@@ -35,7 +42,10 @@ const NewTweetModal: FunctionComponent<NewTweetPropType> = (props) => {
     try {
       const { value, error } = await createNewTweet({ content });
       if (error) throw new Error(error.errorMessageUI);
+      // Update for the discover page
+
       setTweets([{ ...value }, ...tweets]);
+      setMyTweets([{ ...value }, ...myTweets]);
       props.setShowModal(false);
     } catch (error) {
       sendError(error);
