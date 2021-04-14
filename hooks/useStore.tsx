@@ -67,8 +67,18 @@ export default function StoreContextProvider({ children }) {
   };
 
   const updateSingleTweetContent = (newContent: string, tweetId: number) => {
+    // note: This isn't really the best way of handling this but perhaps
+    // I'm using the wrong paradigm from the beginning... must think about this.
+
+    // Update for the discover page
     setTweets(
       tweets.map((tweet) =>
+        tweet.tweetId === tweetId ? { ...tweet, content: newContent } : tweet,
+      ),
+    );
+    // Update for the /tweets page
+    setMyTweets(
+      myTweets.map((tweet) =>
         tweet.tweetId === tweetId ? { ...tweet, content: newContent } : tweet,
       ),
     );
