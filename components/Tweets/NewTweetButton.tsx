@@ -72,9 +72,8 @@ const NewTweetModal: FunctionComponent<NewTweetPropType> = (props) => {
             fixed 
             left-0 md:left-1/4 
             right-0 md:right-1/4
-            bottom-1/4 
             top-1/4 
-            h-1/2 max-h-screen 
+            max-h-screen 
             z-20 shadow-xl 
             backdrop-filter
             bg-white"
@@ -100,12 +99,13 @@ const NewTweetModal: FunctionComponent<NewTweetPropType> = (props) => {
               }}
               rows={5}
             ></textarea>
-            <div className="flex justify-between py-4">
+            <div className="flex justify-between mt-8 -mx-8 -mb-8">
               <Button
-                className="flex-grow"
+                className="flex-grow rounded-none border-none"
                 color="white"
                 onClick={() => props.setShowModal(false)}
                 type="submit"
+                addMargins={false}
               >
                 Cancel
               </Button>
@@ -113,10 +113,11 @@ const NewTweetModal: FunctionComponent<NewTweetPropType> = (props) => {
               <Button
                 color="blue"
                 type="submit"
-                className="flex-grow"
+                className="flex-grow rounded-none"
                 disabled={
                   content.length === 0 || content.length > MAX_TWEET_LENGTH
                 }
+                addMargins={false}
               >
                 Confirm
               </Button>
