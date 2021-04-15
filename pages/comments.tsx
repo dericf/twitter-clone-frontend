@@ -95,7 +95,7 @@ export default function Home() {
               )}
             </div>
 
-            <p className="text-md text-blueGray-800 font-normal px-4 py-2">
+            <p className="text-md text-blueGray-800 font-normal px-4 py-2  whitespace-pre-line">
               {comment.content}
             </p>
 
