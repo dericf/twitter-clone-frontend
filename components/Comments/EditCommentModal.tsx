@@ -165,7 +165,7 @@ export const EditCommentButton: FunctionComponent<PropType> = (props) => {
   return (
     <>
       <Button
-        color="green"
+        color="white"
         onClick={() => setShowModal(true)}
         className="flex justify-between items-center"
       >
