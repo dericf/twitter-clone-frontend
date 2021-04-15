@@ -4,20 +4,18 @@
 
 This is a NextJS Application built to work with this backend server [ (twitter-clone-server-fastapi)](https://github.com/dericf/twitter-clone-server-fastapi) that I built.
 
-Everything was written in Typescript from the start and uses async/await wherever possible.
+Everything was written in Typescript from the start and uses `async`/`await` wherever possible.
 
 ### User Authentication/Authorization
 
-The server is set up to handle JWT Tokens via http-only cookies or Authorization header
-so I chose to use cookies to keep things simple.
+The server is set up to handle JWT Tokens via http-only cookies or Authorization header.
+Cookies are used to keep things simple.
 
-Every fetch request that requires authorization sends the `credentials: "include"` option.
+Every `fetch` request that requires authorization sends the `credentials: "include"` option.
 
 ### Schema
 
 I used Typescript to define a strict schema for data flowing to and from the server.
-
-Every Response
 
 An example of a schema is as follows for a tweet
 
@@ -74,6 +72,12 @@ and to eliminate any guessing.
 
 ---
 
+## Testing
+
+### Component Testing
+
+TODO
+
 ## Technologies
 
 ### NextJS
@@ -94,6 +98,12 @@ and to eliminate any guessing.
 
 ## Local Development
 
+create a `.env` file and add the following variable:
+
+```
+NEXT_PUBLIC_API_URL="http://localhost:<SERVER_PORT>"
+```
+
 run `npm install` then run `npm run dev` to start the next development server
 
 Make sure your backend server is running (default port 8001)
@@ -101,4 +111,6 @@ Make sure your backend server is running (default port 8001)
 ## Deploy
 
 Easiest way to deploy is on Vercel.
-Just git push to master for a production deploy or push to any non-master branch for a preview deployment.
+Just create a new Vercel project linked to the git repo and add the NEXT_PUBLIC_API_URL that points to your hosted API server.
+
+To deploy a new version just git push to master/main for a production deployment or push to any non-master/main branch for a preview/staging deployment.
