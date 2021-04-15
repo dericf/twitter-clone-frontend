@@ -95,7 +95,6 @@ export default function AuthProvider({ children }) {
   ): Promise<UserCreateResponse> => {
     const { username, email, bio, birthdate, password, confirmPassword } = args;
     try {
-      console.log("args :>> ", args);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
         method: "POST",
         headers: {
@@ -117,7 +116,6 @@ export default function AuthProvider({ children }) {
         //   router.push("/ ");
         // }, 1000);
       } else {
-        console.log("Error: ", res.status);
         sendError("Error registering user. Please try again.");
         return null;
       }
@@ -174,7 +172,6 @@ export default function AuthProvider({ children }) {
   const loadAuthState = async (): Promise<APIResponse<boolean>> => {
     // Try and get the authenticated user data
     const { value: user, error } = await getAuthUserData();
-    console.log("User State: ", user);
     if (user) {
       setIsAuthenticated(true);
       setUser(user);

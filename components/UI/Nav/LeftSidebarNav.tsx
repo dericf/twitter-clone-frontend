@@ -161,9 +161,7 @@ export const LeftSidebar: FunctionComponent<PropType> = (props) => {
   const router = useRouter();
   const { activePage, setActivePage } = useStore();
 
-  useEffect(() => {
-    console.log("router :>> ", router.asPath);
-  }, [router.isReady]);
+  useEffect(() => {}, [router.isReady]);
 
   return (
     <>

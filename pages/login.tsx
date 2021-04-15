@@ -22,7 +22,6 @@ export default function Login() {
   useEffect(() => {
     if (router.query["redirect"]) {
       redirect = router.query["redirect"].toString();
-      console.log("Redirect String", redirect);
     }
   }, [router.isReady]);
 
@@ -44,7 +43,6 @@ export default function Login() {
             // Success
             sendAlert("Welcome");
           } catch (error) {
-            console.log("login error", error.message);
             sendError(`Error logging in. ${error.message}`);
           }
         }}

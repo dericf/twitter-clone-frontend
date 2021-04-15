@@ -39,14 +39,6 @@ export default function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    console.log("Registering :>> ", {
-      username: form.username,
-      password: form.password,
-      confirmPassword: form.confirmPassword,
-      email: form.email,
-      bio: form.bio,
-      birthdate: form.birthdate,
-    });
 
     if (form.password !== form.confirmPassword) {
       sendError("Passwords do not match!");
@@ -86,7 +78,7 @@ export default function Register() {
         <div className="flex flex-row justify-center md:justify-between md:space-x-8 space-y-4 md:space-y-0 flex-wrap md:flex-nowrap">
           <div className="flex flex-col space-y-4 justify-center items-stretch  place-self-start  w-80">
             <div className="flex flex-col self-center sm:self-start">
-              <label htmlFor="email">Username</label>
+              <label htmlFor="username">Username</label>
               <input
                 className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1 w-48 "
                 type="text"
@@ -150,7 +142,7 @@ export default function Register() {
         <div className="flex flex-col justify-center items-stretch place-self-center mt-4 w-48 max-w-full">
           <label htmlFor="birthdate">Birthdate</label>
           <input
-            className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1 text-center w-max"
+            className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1 text-center"
             type="date"
             name="birthdate"
             value={form.birthdate}
