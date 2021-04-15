@@ -67,16 +67,15 @@ export const TweetCard = ({ tweet }: Props) => {
             )}
           </div>
 
-          <p className="mt-2 flex-shrink max-w-full text-blueGray-500 text-2xl px-4 py-4  break-all ">
+          <p className="mt-2 flex-shrink max-w-lg text-blueGray-500 text-2xl px-4 py-4 overflow-hidden overflow-ellipsis  whitespace-pre-line ">
             {tweet.content}
           </p>
 
           {isAuthenticated === true && (
-            <div className="flex flex-col justify-center items-start mt-3 bg-blueGray-300 px-4 py-2 ">
-              <div className="flex space-x-4">
+            <div className="flex flex-col justify-center items-start mt-3 bg-blueGray-300 px-2 sm:px-4 py-2 ">
+              <div className="flex space-x-4 w-full">
                 {/* Like button */}
                 <LikeButton tweetId={tweet.tweetId} />
-
                 {/* Comments */}
                 <Button
                   color="white"
@@ -101,7 +100,7 @@ export const TweetCard = ({ tweet }: Props) => {
                       </svg>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4 transform -translate-x-1 -translate-y-1"
+                        className="h-4 w-4 transform -translate-y-1"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -131,6 +130,11 @@ export const TweetCard = ({ tweet }: Props) => {
                     </svg>
                   )}
                 </Button>
+                {/* <div className="flex flex-grow space-x-4 flex-wrap justify-end items-center text-xs sm:text-sm">
+                  <span>Followers: 126</span>
+
+                  <span>Following: 201</span>
+                </div> */}
               </div>
               {showComments && <CommentList tweetId={tweet.tweetId} />}
             </div>
