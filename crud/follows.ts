@@ -1,4 +1,8 @@
-import { APIResponseError, responseDidSucceed } from "../schema/API";
+import {
+  APIResponse,
+  APIResponseError,
+  responseDidSucceed,
+} from "../schema/API";
 import {
   Follows,
   FollowsCreateRequestBody,
@@ -36,7 +40,7 @@ export const getAllFollows = async (
 
 export const createNewFollow = async (
   requestBody: FollowsCreateRequestBody,
-): Promise<EmptyResponse> => {
+): Promise<APIResponse<EmptyResponse>> => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/follows`, {
     method: "POST",
     headers: {
@@ -60,7 +64,7 @@ export const createNewFollow = async (
 
 export const deleteFollow = async (
   requestBody: FollowsDeleteRequestBody,
-): Promise<EmptyResponse> => {
+): Promise<APIResponse<EmptyResponse>> => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/follows`, {
     method: "DELETE",
     headers: {

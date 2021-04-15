@@ -1,4 +1,4 @@
-import React, { useState, useContext, createContext } from "react";
+import React, { useState, useContext, createContext, useEffect } from "react";
 import { useAlert } from "./useAlert";
 import { useRouter } from "next/router";
 import {
@@ -12,6 +12,7 @@ import { useAuth } from "./useAuth";
 import { Follower } from "../schema/Followers";
 import { Follows } from "../schema/Follows";
 import { PageId } from "../schema/Navigation";
+import { getAllFollows } from "../crud/follows";
 
 export interface StoreContextI {
   tweets: Array<Tweet>;
@@ -26,7 +27,6 @@ export interface StoreContextI {
   setShowSidebar: (_: boolean) => void;
   createTweet: (body: TweetCreateRequestBody) => void;
   updateTweetContent: (body: TweetUpdateRequestBody, tweetId: number) => void;
-  updateFollowState: (newState: boolean, userId: number) => void;
   refreshTweets: () => void;
   activePage: string;
   setActivePage: (_: PageId) => void;
@@ -84,23 +84,6 @@ export default function StoreContextProvider({ children }) {
     );
   };
 
-  const updateFollowState = (newState: boolean, userId: number) => {
-    setFollows(
-      newState === true
-        ? [
-            ...follows,
-            {
-              userId: userId,
-              bio: "",
-              email: "",
-              birthdate: "",
-              username: "",
-            },
-          ] // Add
-        : follows.filter((f) => f.userId === userId), // Remove
-    );
-  };
-
   const updateTweetContent = async (
     body: TweetUpdateRequestBody,
     tweetId: number,
@@ -125,6 +108,17 @@ export default function StoreContextProvider({ children }) {
     // ! Depricated - do not use anymore
   };
 
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { value, error } = await getAllFollows(user?.id);
+      if (error) return;
+      setFollows(value);
+    })().catch((err) => {
+      console.error(err);
+    });
+  }, [user]);
+
   return (
     <StoreContext.Provider
       value={{
@@ -139,7 +133,6 @@ export default function StoreContextProvider({ children }) {
         showSidebar,
         setShowSidebar,
         updateTweetContent,
-        updateFollowState,
         createTweet,
         refreshTweets,
         activePage,
