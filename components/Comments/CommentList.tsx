@@ -78,7 +78,7 @@ export const CommentList: FunctionComponent<PropType> = (props) => {
                   as={`/user/${comment.userId}`}
                   href={`/users/${comment.userId}`}
                 >
-                  <span className="cursor-pointer hover:text-lightBlue-700 uppercase tracking-wide text-md text-lightBlue-500 font-semibold">
+                  <span className="cursor-pointer hover:text-lightBlue-700 uppercase tracking-wide text-sm text-lightBlue-500 font-semibold">
                     @{comment.username}{" "}
                     {comment.userId == user?.id && <>{"(me)"}</>}
                   </span>
