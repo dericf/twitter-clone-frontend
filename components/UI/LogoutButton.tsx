@@ -1,11 +1,16 @@
+import { useRouter } from "next/router";
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "./Button";
 
 export const LogoutButton = () => {
-  const { logout } = useAuth();
+  const router = useRouter();
 
   return (
-    <Button color="transparent" onClick={logout} className="text-white">
+    <Button
+      color="transparent"
+      onClick={() => router.push("/logout")}
+      className="text-white"
+    >
       Logout
     </Button>
   );
