@@ -1,7 +1,7 @@
 // Each API return type should extend this
 export interface APIResponse<T> {
   value?: T;
-  error?: APIResponseError;
+  error?: APIResponseError | null;
 }
 
 type ApiResponseErrorCode =
@@ -17,9 +17,11 @@ export class APIResponseError {
    * facing message (i.e. for use in toast-notifications).
    * TODO: Still needs a lot of design and implementation
    */
-  public errorMessageUI: string;
+  public errorMessageUI: string = "Error";
   constructor(private response: Response | null, private error = null) {
-    console.log("Creating new API response Object");
+    if (response && response.status === 401) {
+      this.errorMessageUI = "You must be logged in to access that page";
+    }
     if (!response) {
       this.errorMessageUI = "An Unknown Error Ocurred. We Apologize.";
     }
