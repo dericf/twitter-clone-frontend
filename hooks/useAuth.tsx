@@ -160,7 +160,7 @@ export default function AuthProvider({ children }) {
 
   const logout = async () => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/logout`, {
-      method: "GET",
+      method: "POST",
       credentials: "include",
     });
     setIsAuthenticated(false);
