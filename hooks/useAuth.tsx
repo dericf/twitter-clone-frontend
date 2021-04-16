@@ -163,10 +163,11 @@ export default function AuthProvider({ children }) {
       method: "GET",
       credentials: "include",
     });
-    router.push("/login").then(() => {
-      setIsAuthenticated(false);
-      setUser(null);
-    });
+    setIsAuthenticated(false);
+    setUser(null);
+    setTimeout(() => {
+      router.push("/").then(() => {});
+    }, 200);
   };
 
   const loadAuthState = async (): Promise<APIResponse<boolean>> => {
