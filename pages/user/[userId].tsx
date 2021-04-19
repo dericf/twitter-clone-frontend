@@ -47,6 +47,7 @@ export default function PublicUserPage() {
       pageTitle={`${user ? user.username.toUpperCase() + " 's Tweets" : "..."}`}
     >
       <div className="flex flex-col w-full h-full items-center justify-items-center">
+        <h3 className="text-lg text-white whitespace-pre-line">{user?.bio}</h3>
         {tweets &&
           user &&
           tweets.map((tweet) => (
