@@ -31,7 +31,13 @@ export interface UserDeleteRequestBody {
   password: string;
 }
 
+export interface UserAccountConfirmationRequestBody {
+  confirmationKey: string;
+}
+
 export type UserResponse = APIResponse<Array<User>>;
 export type UserUpdateResponse = APIResponse<User>;
 export type UserCreateResponse = APIResponse<User>;
 export type UserDeleteResponse = APIResponse<EmptyResponse>;
+
+export type UserAccountConfirmationResponse = APIResponse<EmptyResponse>;
