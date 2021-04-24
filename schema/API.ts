@@ -17,8 +17,10 @@ export class APIResponseError {
    * facing message (i.e. for use in toast-notifications).
    * TODO: Still needs a lot of design and implementation
    */
-  public errorMessageUI: string = "Error";
+  public errorMessageUI: string = "";
+  public statusCode: number = 0;
   constructor(private response: Response | null, private error = null) {
+    this.statusCode = response.status;
     if (response && response.status === 401) {
       this.errorMessageUI = "You must be logged in to access that page";
     }
