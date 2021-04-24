@@ -55,14 +55,20 @@ export const Layout = ({
     }
 
     if (noAuth === true) {
+      // Skip user auth check - return right away
       setLoading(false);
       return () => {};
     }
     if (user === null) {
+      // Try and load the user if credentials exist and are still valid
       (async () => {
         const { value: isAuth, error } = await loadAuthState();
 
         if (error && isProtected === true) {
+          // Auth is required and the current user object could not be fetched
+          // credentials are either missing or expired
+          //
+          // Redirect to /login and save the redirect url to come back
           router
             .push(`/login?redirect=${router.asPath.toString()}`)
             .then((_) => {
@@ -111,7 +117,7 @@ export const Layout = ({
 
         <div className="flex-1 flex overflow-hidden ">
           {showSidebar && (
-            <nav className="hidden sm:flex flex-col w-24 sm:w-40 md:w-52 flex-shrink-0 justify-center px-0.5 sm:px-3 md:px-6 py-6 bg-white shadow-lg">
+            <nav className="hidden sm:flex flex-col w-28 sm:w-44 md:w-56 flex-shrink-0 justify-center px-0.5 sm:px-3 md:px-6 py-6 bg-white shadow-lg">
               <LeftSidebar />
             </nav>
           )}
