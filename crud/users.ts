@@ -6,6 +6,7 @@ import {
 import { APIErrorResponse, EmptyResponse } from "../schema/General";
 import {
   User,
+  UserAccountConfirmationRequestBody,
   UserDeleteRequestBody,
   UserDeleteResponse,
   UserResponse,
@@ -87,6 +88,40 @@ export const deleteUser = async (
   } else {
     return {
       error: new APIResponseError(res),
+    };
+  }
+};
+
+export const confirmAccount = async (
+  requestBody: UserAccountConfirmationRequestBody,
+): Promise<APIResponse<EmptyResponse>> => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/confirm-account/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json",
+        },
+        body: JSON.stringify(requestBody),
+        credentials: "include",
+      },
+    );
+
+    if (responseDidSucceed(res.status)) {
+      const json: EmptyResponse = await res.json();
+      return {
+        value: json,
+      };
+    } else {
+      return {
+        error: new APIResponseError(res),
+      };
+    }
+  } catch (error) {
+    return {
+      error: new APIResponseError(null, error),
     };
   }
 };
