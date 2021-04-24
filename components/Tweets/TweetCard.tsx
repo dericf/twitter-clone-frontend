@@ -1,23 +1,33 @@
+import React, { useEffect, useState } from "react";
+// NextJS
 import Link from "next/link";
-import { useAuth } from "../../hooks/useAuth";
+
+// Components
 import { Tweet } from "../../schema/Tweet";
-import { dateFormat, timeFormat, timeFromNow } from "../../utilities/dates";
 import { LikeButton } from "../Likes/LikeButton";
-import { Button } from "../UI/Button";
 import { EditTweetButton } from "./EditTweetModal";
 import { DeleteTweetModal } from "./DeleteTweetModal";
 import { FollowButton } from "./FollowButton";
-import React, { useEffect, useState } from "react";
 import { CommentList } from "../Comments/CommentList";
+
+// UI Components
+import { Button } from "../UI/Button";
+import { dateFormat, timeFormat, timeFromNow } from "../../utilities/dates";
+import { LoadingSpinner } from "../UI/LoadingSpinner";
+
+// Custom Hooks
+import { useAuth } from "../../hooks/useAuth";
+import { useAlert } from "../../hooks/useAlert";
+
+// Crud Methods
 import {
   getCommentCountForTweet,
   getFollowersCount,
   getFollowsCount,
 } from "../../crud/counts";
-import { useAlert } from "../../hooks/useAlert";
+
+// Helper Methods
 import { getRandomInt } from "../../utilities/randomNumbers";
-import { COMMENT_COUNT_UPDATE_INTERVAL_BASE } from "../../constants/constants";
-import { LoadingSpinner } from "../UI/LoadingSpinner";
 interface Props {
   tweet: Tweet;
 }
