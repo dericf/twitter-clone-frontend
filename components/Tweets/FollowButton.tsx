@@ -126,7 +126,7 @@ export const FollowButton: FunctionComponent<PropType> = ({
     <Button
       className="ml-0 sm:min-w-min border-none hover:animate-pulse"
       color={isFollowedByUser ? "blue" : "white"}
-      title="Like Tweet"
+      title={`${isFollowedByUser ? "Unfollow User" : "Follow User"}`}
       onClick={handleClick}
     >
       {/* ({tweetIsLikedByUser && <span>Is Liked</span>}) */}
