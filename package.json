@@ -12,9 +12,8 @@
     "moment": "^2.29.1",
     "next": "^10.0.9",
     "react": "^17.0.2",
-    "react-toast-notifications": "^2.4.3",
-    "slate": "^0.62.0",
-    "slate-react": "^0.62.0"
+    "react-dom": "^17.0.2",
+    "react-toast-notifications": "^2.4.3"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.3.2",
