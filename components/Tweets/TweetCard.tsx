@@ -45,35 +45,42 @@ export const TweetCard = ({ tweet }: Props) => {
 
   const { sendError } = useAlert();
 
-  const updateCommentCount = async () => {
+  const updateCounts = async () => {
     try {
-      const { value, error } = await getCommentCountForTweet(tweet.tweetId);
-      if (error) throw new Error(error.errorMessageUI);
-      setCommentCount(value.count);
-    } catch (error) {
-      sendError(error);
-    }
+      const {
+        value: commentCount,
+        error: commentCountError,
+      } = await getCommentCountForTweet(tweet.tweetId);
+      if (commentCountError) throw new Error(commentCountError.errorMessageUI);
+      setCommentCount(commentCount.count);
 
-    try {
-      const { value, error } = await getFollowsCount(tweet.userId);
-      if (error) throw new Error(error.errorMessageUI);
-      setFollowsCount(value.count);
-    } catch (error) {
-      sendError(error);
-    }
+      const {
+        value: followsCountValue,
+        error: followsCountError,
+      } = await getFollowsCount(tweet.userId);
+      if (followsCountError) throw new Error(followsCountError.errorMessageUI);
+      setFollowsCount(followsCountValue.count);
 
-    try {
-      const { value, error } = await getFollowersCount(tweet.userId);
-      if (error) throw new Error(error.errorMessageUI);
-      setFollowerCount(value.count);
+      const {
+        value: followersCountValue,
+        error: followersCountError,
+      } = await getFollowersCount(tweet.userId);
+      if (followersCountError)
+        throw new Error(followersCountError.errorMessageUI);
+      setFollowerCount(followersCountValue.count);
     } catch (error) {
       sendError(error);
     }
   };
 
+  const changeCommentState = async () => {
+    await updateCounts();
+    setShowComments(!showComments);
+  };
+
   useEffect(() => {
     (async () => {
-      await updateCommentCount();
+      await updateCounts();
     })().catch((err) => {
       console.error(err);
     });
@@ -142,7 +149,7 @@ export const TweetCard = ({ tweet }: Props) => {
                 <Button
                   color="white"
                   title={showComments ? "Hide Comments" : "Show Comments"}
-                  onClick={() => setShowComments(!showComments)}
+                  onClick={changeCommentState}
                   className={`${
                     commentCountChanged === true
                       ? "animate-bounce bg-warmGray-800 text-white"
