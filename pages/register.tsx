@@ -76,11 +76,11 @@ export default function Register() {
         onSubmit={handleRegister}
       >
         <div className="flex flex-row justify-center md:justify-between md:space-x-8 space-y-4 md:space-y-0 flex-wrap md:flex-nowrap">
-          <div className="flex flex-col space-y-4 justify-center items-stretch  place-self-start  w-80">
-            <div className="flex flex-col self-center sm:self-start">
+          <div className="flex flex-col space-y-4 justify-center items-stretch  place-self-start w-full max-w-lg ">
+            <div className="flex flex-col self-center sm:self-stretch">
               <label htmlFor="username">Username</label>
               <input
-                className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1 w-48 "
+                className="text-gray-900 px-4 py-2 focus:bg-gray-200 mt-1 "
                 type="text"
                 name="username"
                 value={form.username}
@@ -91,7 +91,7 @@ export default function Register() {
             <div className="flex flex-col">
               <label htmlFor="email">Email</label>
               <input
-                className="text-gray-900 px-4 py-2  focus:bg-gray-200 mt-1"
+                className="text-gray-900 px-4 py-2  focus:bg-gray-200 mt-1 "
                 type="text"
                 placeholder="e.g. you@email.com"
                 name="email"
@@ -101,7 +101,7 @@ export default function Register() {
             </div>
           </div>
 
-          <div className="flex flex-col space-y-4  justify-center items-stretch place-self-start max-w-full">
+          <div className="flex flex-col space-y-4  justify-center items-stretch place-self-start max-w-full border-none  pl-0 sm:border-l-2 sm:pl-8  sm:border-gray-700">
             <div className="flex flex-col">
               <label htmlFor="password">Password</label>
               <input

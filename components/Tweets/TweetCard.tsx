@@ -7,8 +7,17 @@ import { Button } from "../UI/Button";
 import { EditTweetButton } from "./EditTweetModal";
 import { DeleteTweetModal } from "./DeleteTweetModal";
 import { FollowButton } from "./FollowButton";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CommentList } from "../Comments/CommentList";
+import {
+  getCommentCountForTweet,
+  getFollowersCount,
+  getFollowsCount,
+} from "../../crud/counts";
+import { useAlert } from "../../hooks/useAlert";
+import { getRandomInt } from "../../utilities/randomNumbers";
+import { COMMENT_COUNT_UPDATE_INTERVAL_BASE } from "../../constants/constants";
+import { LoadingSpinner } from "../UI/LoadingSpinner";
 interface Props {
   tweet: Tweet;
 }
@@ -16,6 +25,49 @@ interface Props {
 export const TweetCard = ({ tweet }: Props) => {
   const { isAuthenticated, user } = useAuth();
   const [showComments, setShowComments] = useState<boolean>(false);
+
+  const [commentCount, setCommentCount] = useState<number>(null);
+  const [followsCount, setFollowsCount] = useState<number>(null);
+  const [followerCount, setFollowerCount] = useState<number>(null);
+  const [commentCountChanged, setCommentCountChanged] = useState<boolean>(
+    false,
+  );
+
+  const { sendError } = useAlert();
+
+  const updateCommentCount = async () => {
+    try {
+      const { value, error } = await getCommentCountForTweet(tweet.tweetId);
+      if (error) throw new Error(error.errorMessageUI);
+      setCommentCount(value.count);
+    } catch (error) {
+      sendError(error);
+    }
+
+    try {
+      const { value, error } = await getFollowsCount(tweet.userId);
+      if (error) throw new Error(error.errorMessageUI);
+      setFollowsCount(value.count);
+    } catch (error) {
+      sendError(error);
+    }
+
+    try {
+      const { value, error } = await getFollowersCount(tweet.userId);
+      if (error) throw new Error(error.errorMessageUI);
+      setFollowerCount(value.count);
+    } catch (error) {
+      sendError(error);
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      await updateCommentCount();
+    })().catch((err) => {
+      console.error(err);
+    });
+  }, []);
 
   return (
     <div className="mx-auto my-6 w-full  sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl  bg-white rounded-sm shadow-md">
@@ -81,6 +133,11 @@ export const TweetCard = ({ tweet }: Props) => {
                   color="white"
                   title={showComments ? "Hide Comments" : "Show Comments"}
                   onClick={() => setShowComments(!showComments)}
+                  className={`${
+                    commentCountChanged === true
+                      ? "animate-bounce bg-warmGray-800 text-white"
+                      : ""
+                  }`}
                 >
                   {showComments ? (
                     <>
@@ -95,7 +152,7 @@ export const TweetCard = ({ tweet }: Props) => {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                          d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
                         />
                       </svg>
                       <svg
@@ -109,32 +166,45 @@ export const TweetCard = ({ tweet }: Props) => {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
+                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                        />
+                      </svg>
+
+                      {commentCount && (
+                        <span className={`ml-1`}>{commentCount}</span>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-8 w-8 transform"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
                           d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
                         />
                       </svg>
+                      {commentCount && <span>{commentCount}</span>}
                     </>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-8 w-8 transform"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
-                      />
-                    </svg>
                   )}
                 </Button>
-                {/* <div className="flex flex-grow space-x-4 flex-wrap justify-end items-center text-xs sm:text-sm">
-                  <span>Followers: 126</span>
+                <div className="flex flex-grow space-x-4 flex-wrap justify-end items-center text-xs sm:text-sm text-lightBlue-900 text-semibold">
+                  {followsCount === null || followerCount === null ? (
+                    <LoadingSpinner />
+                  ) : (
+                    <>
+                      <span>Followers: {followerCount}</span>
 
-                  <span>Following: 201</span>
-                </div> */}
+                      <span>Following: {followsCount}</span>
+                    </>
+                  )}
+                </div>
               </div>
               {showComments && <CommentList tweetId={tweet.tweetId} />}
             </div>
