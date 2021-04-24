@@ -86,7 +86,8 @@ export default function AuthProvider({ children }) {
       }
       return true;
     } else {
-      throw new Error("Error loggin you in.");
+      const json = await res.json();
+      throw new Error(json.detail);
     }
   };
 
@@ -108,13 +109,14 @@ export default function AuthProvider({ children }) {
       if (res.status >= 200 && res.status < 300) {
         const json = await res.json();
         // console.log("json :>> ", json);
-        await tryAuthenticateWithUsernamePassword(username, password);
-        setIsAuthenticated(true);
+        // await tryAuthenticateWithUsernamePassword(username, password);
+        // setIsAuthenticated(true);
         // const user: User = await getAuthUserData();
         // setUser(user);
         // setTimeout(() => {
         //   router.push("/ ");
         // }, 1000);
+        router.push("/confirm-email");
       } else {
         sendError("Error registering user. Please try again.");
         return null;
@@ -161,7 +163,12 @@ export default function AuthProvider({ children }) {
   const logout = async () => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/logout`, {
       method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
       credentials: "include",
+      body: JSON.stringify({}),
     });
     setIsAuthenticated(false);
     setUser(null);
