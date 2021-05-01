@@ -1,5 +1,6 @@
+// TODO: organize imports
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "./Button";
 import { LoginButton } from "./LoginButton";
@@ -15,7 +16,13 @@ import { LoadingOverlay } from "./LoadingOverlay";
 import { useAlert } from "../../hooks/useAlert";
 import Head from "next/head";
 import { useStore } from "../../hooks/useStore";
+import { useEmitter } from "../../hooks/useEmitter";
+import { WSMessage } from "../../schema/WebSockets";
 
+import WSC from "../../websocket/client";
+import { Message } from "../../schema/Messages";
+
+// TODO: Add proper Prop Types
 export const Layout = ({
   children,
   isProtected = false,
@@ -31,7 +38,16 @@ export const Layout = ({
   const [isLoading, setLoading] = useState(loading || !user);
   const { activePage, setActivePage, showSidebar, setShowSidebar } = useStore();
 
+  const [showNewMessageAlert, setShowNewMessageAlert] = useState(false);
+
   const router = useRouter();
+
+  const { emitter } = useEmitter();
+
+  const newMessageAlert = (data: WSMessage<Message>) => {
+    sendAlert(`You have a new message from ${data.body.userFromUsername}`);
+    activePage !== "messages" && setShowNewMessageAlert(true);
+  };
 
   useEffect(() => {
     const path = router.asPath;
@@ -46,6 +62,8 @@ export const Layout = ({
       setActivePage("profile");
     } else if (path === "/comments") {
       setActivePage("comments");
+    } else if (path.startsWith("/messages")) {
+      setActivePage("messages");
     } else if (path === "/following") {
       setActivePage("following");
     } else if (path === "/followers") {
@@ -90,7 +108,20 @@ export const Layout = ({
         }
       });
     }
-  }, [router.isReady]);
+
+    if (user) {
+      // Connect to the websocket
+      if (!WSC.isAlreadyConnected()) {
+        WSC.connect(user.id, emitter);
+      }
+      // listen for new messages
+      emitter.on("messages.new", newMessageAlert);
+    }
+    return () => {
+      // remove the listener.
+      emitter.off("messages.new", newMessageAlert);
+    };
+  }, [router.isReady, user]);
 
   return (
     <>
@@ -118,7 +149,7 @@ export const Layout = ({
         <div className="flex-1 flex overflow-hidden ">
           {showSidebar && (
             <nav className="hidden sm:flex flex-col w-28 sm:w-44 md:w-56 flex-shrink-0 justify-center px-0.5 sm:px-3 md:px-6 py-6 bg-white shadow-lg">
-              <LeftSidebar />
+              <LeftSidebar showNewMessageAlert={showNewMessageAlert} />
             </nav>
           )}
           <button
@@ -157,7 +188,7 @@ export const Layout = ({
               </div>
 
               <nav className="fixed sm:hidden flex justify-between items-center  bottom-0 w-screen h-12 flex-grow flex-shrink-0 ">
-                <MobileBottomNav />
+                <MobileBottomNav showNewMessageAlert={showNewMessageAlert} />
               </nav>
             </div>
           </div>
