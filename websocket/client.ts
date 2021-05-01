@@ -32,11 +32,23 @@ class WebSocketClient {
 
     this.socketRef.onmessage = (e: MessageEvent) => {
       // this.socketNewMessage(e.data);
-      console.log("Got a new message. It was: ");
+      let data: WSMessage<any> = null;
+      try {
+        data = JSON.parse(e.data);
+      } catch (error) {
+        data = e.data;
+      }
+      try {
+        data.body = JSON.parse(data.body);
+      } catch (error) {
+        console.log("Error; can't parse");
+      }
 
-      const data: WSMessage<any> =
-        e.data && typeof e.data === "string" ? JSON.parse(e.data) : e.data;
-      console.log(data);
+      if (process.env.NODE_ENV == "development") {
+        console.log("Got a new websocket message. It was: ");
+        console.log(data);
+      }
+      // Forward the message (this is probably the wrong way)
       this.mittRef.emit(data.action, data);
     };
 
@@ -51,6 +63,11 @@ class WebSocketClient {
   };
 
   state = () => this.socketRef.readyState;
+
+  isAlreadyConnected = (): boolean => {
+    if (!this.socketRef) return false;
+    return this.socketRef.readyState === this.socketRef.OPEN;
+  };
 
   waitForSocketConnection = (callback) => {
     const socket = this.socketRef;
