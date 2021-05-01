@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { useStore } from "../../../hooks/useStore";
 import { SidebarLinkI } from "../../../schema/Navigation";
-
-interface PropType extends JSX.IntrinsicAttributes {}
+import { useEmitter } from "../../../hooks/useEmitter";
+import { useAlert } from "../../../hooks/useAlert";
 
 const SIDEBAR_LINKS: Array<SidebarLinkI> = [
   {
@@ -178,16 +178,35 @@ const SIDEBAR_LINKS: Array<SidebarLinkI> = [
   },
 ];
 
-export const LeftSidebar: FunctionComponent<PropType> = (props) => {
+const NewMessageAlertSVG = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-6 w-6 shadow-lg animate-bounce text-amber-600"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
+      />
+    </svg>
+  );
+};
+
+interface Props extends JSX.IntrinsicAttributes {
+  showNewMessageAlert: boolean;
+}
+
+export const LeftSidebar: FunctionComponent<Props> = (props) => {
   const router = useRouter();
   const { activePage, setActivePage } = useStore();
 
-  useEffect(() => {}, [router.isReady]);
-
   return (
     <>
-      {/* Left Sidebar */}
-
       {SIDEBAR_LINKS.map((link) => (
         <SidebarLink
           key={link.href}
@@ -196,7 +215,11 @@ export const LeftSidebar: FunctionComponent<PropType> = (props) => {
           onClick={() => setActivePage(link.id)}
         >
           {link.text}
-          {link.svg}
+          {link.id === "messages" && props.showNewMessageAlert ? (
+            <NewMessageAlertSVG />
+          ) : (
+            link.svg
+          )}
         </SidebarLink>
       ))}
     </>
