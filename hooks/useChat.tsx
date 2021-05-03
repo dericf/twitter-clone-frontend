@@ -4,8 +4,8 @@ import React, {
   useContext,
   createContext,
   useEffect,
-  Ref,
-  useRef,
+  SetStateAction,
+  Dispatch,
 } from "react";
 
 // Next JS
@@ -17,28 +17,49 @@ import { useAuth } from "./useAuth";
 import { useEmitter } from "./useEmitter";
 
 // CRUD
-import { createNewMessage, deleteMessage } from "../crud/messages";
+import {
+  createNewMessage,
+  deleteMessage,
+  getAllMessages,
+} from "../crud/messages";
 
 // Schema
 import {
-  Tweet,
-  TweetCreateRequestBody,
-  TweetUpdateRequestBody,
-} from "../schema/Tweet";
-import { Conversation, Conversations, Message } from "../schema/Messages";
+  Conversation,
+  Conversations,
+  Message,
+  MessageDeleteRequestBody,
+  MessageDeleteWSAlert,
+} from "../schema/Messages";
 import { User } from "../schema/User";
+import { WSMessage } from "../schema/WebSockets";
+
+// Utils
+import {
+  getConversationUserId,
+  getConversationUsername,
+  groupMessagesByConversation,
+} from "../components/Chat/utils";
+import { isEmpty } from "../utilities/objects";
+
+// Websocket Client Singleton
+import WSC from "../websocket/client";
 
 export interface ChatContextI {
   conversations: Conversations;
-  setConversations: (_: Conversations) => void;
+  setConversations: Dispatch<SetStateAction<Conversations>>;
+  loading: boolean;
+  setLoading: Dispatch<SetStateAction<boolean>>;
+  newChatAlert: boolean;
+  setNewChatAlert: Dispatch<SetStateAction<boolean>>;
   selectedUser: User;
-  setSelectedUser: (_: User) => void;
+  setSelectedUser: Dispatch<SetStateAction<User>>;
   delegateDeleteMessage: (_: number) => void;
   delegateCreateMessage: (_: string, __: number) => void;
   activeConversation: Conversation;
-  setActiveConversation: (_: Conversation) => void;
+  setActiveConversation: Dispatch<SetStateAction<Conversation>>;
   showChatModal: boolean;
-  setShowChatModal: (_: boolean) => void;
+  setShowChatModal: Dispatch<SetStateAction<boolean>>;
   goBack: () => void;
   closeModal: () => void;
 }
@@ -50,7 +71,7 @@ export default function ChatContextProvider({ children }) {
   const { user } = useAuth();
 
   // Toast notifications
-  const { sendAlert, sendError } = useAlert();
+  const { sendAlert, sendError, sendInfo } = useAlert();
 
   // Next router
   const router = useRouter();
@@ -60,6 +81,8 @@ export default function ChatContextProvider({ children }) {
   //
   // Initialize Store State
   //
+  const [loading, setLoading] = useState(true);
+  const [newChatAlert, setNewChatAlert] = useState(false);
   const [conversations, setConversations] = useState<Conversations>([]);
   const [activeConversation, setActiveConversation] = useState<Conversation>(
     null,
@@ -75,26 +98,30 @@ export default function ChatContextProvider({ children }) {
     const { value, error } = await deleteMessage(messageId);
     if (error) throw new Error(error.errorMessageUI);
 
-    // Update state
-    let newMessages = activeConversation.messages.filter(
-      (message) => message.id !== messageId,
-    );
-    setActiveConversation({ ...activeConversation, messages: newMessages });
-
     let convoId = activeConversation.userId;
 
-    let updatedConvos = { ...conversations };
+    // Update state
+    setActiveConversation((prev) => {
+      let newMessages = prev.messages.filter(
+        (message) => message.id !== messageId,
+      );
+      return { ...prev, messages: newMessages };
+    });
 
-    updatedConvos[convoId].messages = updatedConvos[convoId]?.messages?.filter(
-      (message) => message.id !== messageId,
-    );
+    setConversations((prev) => {
+      let updatedConvos = { ...prev };
 
-    // Check if we've deleted the last message in the conversation
-    // If so - remove the conversation
-    if (updatedConvos[convoId]?.messages.length === 0) {
-      delete updatedConvos[convoId];
-    }
-    setConversations(updatedConvos);
+      updatedConvos[convoId].messages = updatedConvos[
+        convoId
+      ]?.messages?.filter((message) => message.id !== messageId);
+
+      // Check if we've deleted the last message in the conversation
+      // If so - remove the conversation
+      if (updatedConvos[convoId]?.messages.length === 0) {
+        delete updatedConvos[convoId];
+      }
+      return updatedConvos;
+    });
   };
   const delegateCreateMessage = async (content: string, toUserId: number) => {
     /**
@@ -106,31 +133,42 @@ export default function ChatContextProvider({ children }) {
       content,
     );
     // console.log("before", activeConversation);
-    setActiveConversation({
-      ...activeConversation,
-      messages: [...(activeConversation?.messages || []), newMessage],
+    setActiveConversation((prev) => {
+      if (conversations[toUserId]) {
+        return {
+          userId: toUserId,
+          username: getConversationUsername(newMessage, user.id),
+          messages: [...(conversations[toUserId].messages || []), newMessage],
+        };
+      } else {
+        return {
+          ...prev,
+          messages: [...(prev?.messages || []), newMessage],
+        };
+      }
     });
 
     let updatedMessages: Message[];
     if (!conversations[toUserId]) {
       // This is the first message for this conversation
-      updatedMessages = [newMessage];
-      setConversations({
-        ...conversations,
-        [toUserId]: {
-          messages: updatedMessages,
-          userId: toUserId,
-          username: "",
-        },
+      setConversations((prev) => {
+        updatedMessages = [newMessage];
+        return {
+          ...prev,
+          [toUserId]: {
+            messages: updatedMessages,
+            userId: toUserId,
+            username: "",
+          },
+        };
       });
     } else {
-      updatedMessages = [
-        ...(conversations[toUserId].messages || []),
-        newMessage,
-      ];
-      setConversations({
-        ...conversations,
-        [toUserId]: { ...conversations[toUserId], messages: updatedMessages },
+      setConversations((prev) => {
+        updatedMessages = [...(prev[toUserId].messages || []), newMessage];
+        return {
+          ...prev,
+          [toUserId]: { ...prev[toUserId], messages: updatedMessages },
+        };
       });
     }
   };
@@ -140,28 +178,134 @@ export default function ChatContextProvider({ children }) {
     setActiveConversation(null);
   };
 
-  const closeOnEscape = async (e) => {
-    // Closes the modal when escape key is pressed
-    if (e.key === "Escape") {
-      setShowChatModal(false);
-    }
-  };
-
   const closeModal = () => {
     setShowChatModal(false);
   };
 
-  // On modal shown
-  useEffect(() => {
-    if (document && showChatModal) {
-      document?.addEventListener("keydown", closeOnEscape, false);
+  const newMessageAlert = ({ body: message }: WSMessage<Message>) => {
+    setNewChatAlert(true);
+    sendInfo(
+      `You have a new message from @${message.userFromUsername.toUpperCase()}`,
+    );
+    let convoId = getConversationUserId(message, user.id);
+    // Check if this is the very first message the user receives
+    if (!conversations) {
+      setConversations({
+        [convoId]: {
+          userId: convoId,
+          username: getConversationUsername(message, user.id),
+          messages: [message],
+        },
+      });
+    } else {
+      // Add this message to the correct conversation
+      setConversations((prev) => {
+        let updatedConversations: Conversations = {
+          ...prev,
+          [convoId]: {
+            userId: convoId,
+            username: getConversationUsername(message, user.id),
+            messages: [...(prev[convoId]?.messages || []), message],
+          } as Conversation,
+        };
+        return { ...updatedConversations };
+      });
+    }
+    // !Bug here sometimes activeConversatiosn is null when it shouldn't be...
+    // Update the active conversation if there is one.
+    if (activeConversation && activeConversation.userId === convoId) {
+      setActiveConversation((prev) => {
+        return {
+          ...prev,
+          messages: [...(prev?.messages || []), message],
+        };
+      });
+    }
+  };
+
+  const deletedMessageAlert = (
+    wsMessage: WSMessage<MessageDeleteWSAlert>,
+    retries = 2,
+  ) => {
+    const { body } = wsMessage;
+    let convoId = body.userId;
+    let messageId = body.messageId;
+
+    console.log("convoId", convoId);
+    console.log("mesageId", messageId);
+
+    if (!activeConversation && retries > 0) {
+      setTimeout(() => {
+        deletedMessageAlert(wsMessage, retries - 1);
+      }, 500);
+      return;
     }
 
+    if (activeConversation.userId === convoId) {
+      // Update state
+      setActiveConversation((prev) => {
+        let newMessages = prev.messages.filter(
+          (message) => message.id !== messageId,
+        );
+        return { ...prev, messages: newMessages };
+      });
+    }
+
+    setConversations((prev) => {
+      let updatedConvos = { ...prev };
+      console.log("convo...", updatedConvos);
+      updatedConvos[convoId].messages = updatedConvos[
+        convoId
+      ]?.messages?.filter((message) => message.id !== messageId);
+
+      // Check if we've deleted the last message in the conversation
+      // If so - remove the conversation
+      if (updatedConvos[convoId]?.messages.length === 0) {
+        delete updatedConvos[convoId];
+      }
+      return updatedConvos;
+    });
+  };
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+    if (isEmpty(conversations)) {
+      (async () => {
+        const { value, error } = await getAllMessages(user.id);
+        if (error) throw new Error(error.errorMessageUI);
+        let grouped = groupMessagesByConversation(user.id, value);
+        setConversations(grouped);
+      })()
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+
+    // Connect to the websocket
+    // console.log("Is Websocket already connected? ", WSC.isAlreadyConnected());
+    if (!WSC.isAlreadyConnected()) {
+      // console.log("Connecting to Websocket...");
+      WSC.connect(user.id, emitter);
+    }
+    // listen for new messages
+    emitter.off("messages.new", newMessageAlert);
+    emitter.on("messages.new", newMessageAlert);
+
+    // listen for deleted messages
+    emitter.off("messages.deleted", deletedMessageAlert);
+    emitter.on("messages.deleted", deletedMessageAlert);
+
     return () => {
-      if (document)
-        document?.removeEventListener("keydown", closeOnEscape, false);
+      // remove the listeners.
+      emitter.off("messages.new", newMessageAlert);
+      emitter.off("messages.deleted", deletedMessageAlert);
     };
-  }, [showChatModal]);
+  }, [user, conversations, activeConversation]);
 
   return (
     <ChatContext.Provider
@@ -178,6 +322,10 @@ export default function ChatContextProvider({ children }) {
         selectedUser,
         setSelectedUser,
         closeModal,
+        loading,
+        setLoading,
+        newChatAlert,
+        setNewChatAlert,
       }}
     >
       {children}
