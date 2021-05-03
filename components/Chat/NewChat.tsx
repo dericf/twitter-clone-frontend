@@ -8,7 +8,7 @@ import { useChat } from "../../hooks/useChat";
 import { Button } from "../UI/Button";
 
 // App Components
-import { NewConversationSearch } from "./NewConversationSearch";
+import { NewChatSearch } from "./NewChatSearch";
 
 interface Props {}
 export const NewChat: FunctionComponent<Props> = (props) => {
@@ -45,7 +45,7 @@ export const NewChat: FunctionComponent<Props> = (props) => {
           </Button>
         </>
       )}
-      {showUserSearch && <NewConversationSearch />}
+      {showUserSearch && <NewChatSearch />}
 
       {selectedUser && (
         <div className="flex justify-center items-stretch w-full">
