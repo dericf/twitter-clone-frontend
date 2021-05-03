@@ -3,6 +3,7 @@ import {
   LegacyRef,
   TextareaHTMLAttributes,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -31,6 +32,7 @@ export const ActiveChatView = (props: Props) => {
 
   // Refs
   const chatBoxRef = useRef<HTMLTextAreaElement>();
+  const messagesEndRef = useRef<HTMLDivElement>();
 
   // Methods
   const sendMessage = async () => {
@@ -39,6 +41,7 @@ export const ActiveChatView = (props: Props) => {
     setMessageText("");
     // Put focus back on the chat message textarea
     chatBoxRef.current?.focus();
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
   const deleteMessage = async (messageId: number) => {
@@ -49,15 +52,42 @@ export const ActiveChatView = (props: Props) => {
   // Lifecycle Methods
   // TODO: Add logic to always scroll to the bottom when a new message is added
 
+  useEffect(() =>
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" }),
+  );
+
+  useEffect(() => {
+    // Check if there is a saved message
+    chatBoxRef.current?.focus();
+    if (localStorage) {
+      try {
+        const savedMessageConvoId = JSON.parse(
+          localStorage.getItem("activeConversation"),
+        );
+        if (
+          savedMessageConvoId &&
+          savedMessageConvoId === activeConversation.userId
+        ) {
+          const savedMessage = localStorage.getItem("messageText");
+          savedMessage && setMessageText(savedMessage);
+          chatBoxRef.current?.focus();
+          // Clear the saved message
+          localStorage.removeItem("messageText");
+          localStorage.removeItem("activeConversation");
+        }
+      } catch (error) {}
+    }
+  }, []);
+
   return (
     <div className="flex flex-col w-full justify-between h-5/6">
       <div
-        className="flex justify-start self-start w-full max-h-full px-8 text-trueGray-900 cursor-pointer"
+        className="flex justify-start self-start items-center w-full max-h-full px-2 text-trueGray-900 cursor-pointer mb-2 text-sm"
         onClick={() => goBack()}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
+          className="h-5 w-5"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -76,14 +106,17 @@ export const ActiveChatView = (props: Props) => {
           {/* Message to me */}
 
           {activeConversation.messages.map((message) => {
+            // THere is a bug that causes message to be undefined here...
+            // Only when sending the second message to a new message convo
+            if (!message) return;
             if (message.userFromId === user.id) {
               // Message we sent
               return (
                 <div
                   key={message.id}
-                  className="flex justify-end text-white group shadow-md"
+                  className="flex justify-end text-white group"
                 >
-                  <div className="flex flex-col self-start bg-gray-600 rounded-md m-4 p-2">
+                  <div className="flex flex-col self-start bg-gray-600 rounded-md m-4 p-2 shadow-md">
                     <div className="text-md">{message.content}</div>
                     <span className="text-xs mt-1">
                       {timeFromNow(message.createdAt)}
@@ -109,11 +142,8 @@ export const ActiveChatView = (props: Props) => {
             } else {
               // Message we received
               return (
-                <div
-                  key={message.id}
-                  className="flex justify-self-stretch shadow-md"
-                >
-                  <div className="flex flex-col self-start bg-lightBlue-200 rounded-md m-4 p-2">
+                <div key={message.id} className="flex justify-self-stretch">
+                  <div className="flex flex-col self-start bg-lightBlue-300 rounded-md m-4 p-2 shadow-md">
                     <div className="text-md under">{message.content}</div>
                     <span className="text-xs mt-1">
                       {timeFromNow(message.createdAt)}
@@ -123,6 +153,7 @@ export const ActiveChatView = (props: Props) => {
               );
             }
           })}
+          <div ref={messagesEndRef} />
         </div>
         <div className="flex justify-center items-stretch border-t-2 h-24 w-full">
           <textarea
