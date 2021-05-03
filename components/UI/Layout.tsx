@@ -1,6 +1,6 @@
 // TODO: organize imports
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "./Button";
 import { LoginButton } from "./LoginButton";
@@ -21,6 +21,8 @@ import { WSMessage } from "../../schema/WebSockets";
 
 import WSC from "../../websocket/client";
 import { Message } from "../../schema/Messages";
+import { ChatBar } from "../Chat/ChatBar";
+import ChatContextProvider from "../../hooks/useChat";
 
 // TODO: Add proper Prop Types
 export const Layout = ({
@@ -43,11 +45,6 @@ export const Layout = ({
   const router = useRouter();
 
   const { emitter } = useEmitter();
-
-  const newMessageAlert = (data: WSMessage<Message>) => {
-    sendAlert(`You have a new message from ${data.body.userFromUsername}`);
-    activePage !== "messages" && setShowNewMessageAlert(true);
-  };
 
   useEffect(() => {
     const path = router.asPath;
@@ -108,19 +105,12 @@ export const Layout = ({
         }
       });
     }
-
     if (user) {
       // Connect to the websocket
       if (!WSC.isAlreadyConnected()) {
         WSC.connect(user.id, emitter);
       }
-      // listen for new messages
-      emitter.on("messages.new", newMessageAlert);
     }
-    return () => {
-      // remove the listener.
-      emitter.off("messages.new", newMessageAlert);
-    };
   }, [router.isReady, user]);
 
   return (
@@ -186,7 +176,11 @@ export const Layout = ({
               <div className="flex flex-col w-full h-full px-2 sm:px-4 max-w-6xl mx-auto items-center justify-items-center">
                 {isLoading ? <LoadingOverlay /> : children}
               </div>
-
+              {user && (
+                <ChatContextProvider>
+                  <ChatBar />
+                </ChatContextProvider>
+              )}
               <nav className="fixed sm:hidden flex justify-between items-center  bottom-0 w-screen h-12 flex-grow flex-shrink-0 ">
                 <MobileBottomNav showNewMessageAlert={showNewMessageAlert} />
               </nav>
