@@ -77,8 +77,8 @@ export const ChatModal = (props: Props) => {
         className="
       	flex flex-col justify-start items-center
 				max-w-2xl max-h-screen 
-				mx-auto p-8
-				fixed left-8 md:left-1/4 right-8 md:right-1/4 top-8 bottom-8
+				mx-auto p-4 sm:p-8
+				fixed left-4 md:left-1/4 right-4 md:right-1/4 top-4 bottom-4
 				z-20
 				bg-white 
 				shadow-xl
