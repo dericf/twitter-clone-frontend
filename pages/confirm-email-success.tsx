@@ -6,7 +6,6 @@ import { Layout } from "../components/UI/Layout";
 const ConfirmEmailPage: NextPage = () => {
   return (
     <Layout pageTitle="Success! Your email is confirmed">
-      <p>Success! Your email is confirmed</p>
       <Button>
         <Link href="/login" as="/login">
           <span>Login</span>
