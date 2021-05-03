@@ -43,7 +43,11 @@ export const ChatBar = () => {
           }}
         >
           Chat
-          {newChatAlert ? <NewMessageAlertSVG /> : <MessageIcon />}
+          {newChatAlert && !showChatModal ? (
+            <NewMessageAlertSVG />
+          ) : (
+            <MessageIcon />
+          )}
         </Button>
       </div>
       {/* Render the modal here */}
