@@ -24,6 +24,8 @@ import { Message } from "../../schema/Messages";
 import { ChatBar } from "../Chat/ChatBar";
 import ChatContextProvider from "../../hooks/useChat";
 
+import { HamburgerIcon } from "../ui/Icons/HamburgerIcon";
+
 // TODO: Add proper Prop Types
 export const Layout = ({
   children,
@@ -130,33 +132,28 @@ export const Layout = ({
           )}
         </div>
 
-        <div className="flex-1 flex overflow-hidden ">
+        <div className="flex-1 flex overflow-hidden z-20 ">
           {showSidebar && (
             <nav className="hidden sm:flex flex-col w-28 sm:w-44 md:w-56 flex-shrink-0 justify-center px-0.5 sm:px-3 md:px-6 py-6 bg-white shadow-lg">
               <LeftSidebar showNewMessageAlert={showNewMessageAlert} />
             </nav>
           )}
-          <button
-            type="button"
-            onClick={() => setShowSidebar(!showSidebar)}
-            className="hidden sm:flex fixed bottom-0 left-0 z-50 px-2 py-2 bg-white shadow-lg hover:shadow:2xl  hover:opacity-30 cursor-pointer border-none ring-none focus:ring-none focus:outline-none"
-            title="Show/Hide Sidebar"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 transform rotate-90"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div className="flex items-center fixed bottom-12 left-0 sm:bottom-0">
+            <Button
+              addMargins={false}
+              className="hidden sm:flex"
+              onClick={() => setShowSidebar(!showSidebar)}
+              title="Show/Hide Sidebar"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
+              <HamburgerIcon />
+            </Button>
+
+            {user && (
+              <ChatContextProvider>
+                <ChatBar />
+              </ChatContextProvider>
+            )}
+          </div>
 
           {/* Scroll Wrapper */}
           <div className="flex flex-1 pb-12 sm:pb-0 bg-blueGray-700">
@@ -170,11 +167,7 @@ export const Layout = ({
               <div className="flex flex-col w-full h-full px-2 sm:px-4 max-w-6xl mx-auto items-center justify-items-center">
                 {isLoading ? <LoadingOverlay /> : children}
               </div>
-              {user && (
-                <ChatContextProvider>
-                  <ChatBar />
-                </ChatContextProvider>
-              )}
+
               <nav className="fixed sm:hidden flex justify-between items-center  bottom-0 w-screen h-12 flex-grow flex-shrink-0 ">
                 <MobileBottomNav showNewMessageAlert={showNewMessageAlert} />
               </nav>
