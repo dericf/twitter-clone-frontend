@@ -132,6 +132,16 @@ export default function ChatContextProvider({ children }) {
       toUserId,
       content,
     );
+    if (error) {
+      localStorage.setItem("messageText", content);
+      localStorage.setItem(
+        "activeConversation",
+        JSON.stringify(activeConversation.userId),
+      );
+      if (error.statusCode === 401) {
+        router.push(`/login?redirect=${router.asPath}`);
+      }
+    }
     // console.log("before", activeConversation);
     setActiveConversation((prev) => {
       if (conversations[toUserId]) {
@@ -231,9 +241,6 @@ export default function ChatContextProvider({ children }) {
     let convoId = body.userId;
     let messageId = body.messageId;
 
-    console.log("convoId", convoId);
-    console.log("mesageId", messageId);
-
     if (!activeConversation && retries > 0) {
       setTimeout(() => {
         deletedMessageAlert(wsMessage, retries - 1);
@@ -253,7 +260,6 @@ export default function ChatContextProvider({ children }) {
 
     setConversations((prev) => {
       let updatedConvos = { ...prev };
-      console.log("convo...", updatedConvos);
       updatedConvos[convoId].messages = updatedConvos[
         convoId
       ]?.messages?.filter((message) => message.id !== messageId);
