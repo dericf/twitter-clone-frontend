@@ -33,9 +33,6 @@ import {
 } from "./utils";
 import { isEmpty } from "../../utilities/objects";
 
-// Websocket Client Singleton
-import WSC from "../../websocket/client";
-
 interface Props {}
 
 export const ChatModal = (props: Props) => {
@@ -47,81 +44,32 @@ export const ChatModal = (props: Props) => {
   const { emitter } = useEmitter();
   const { sendAlert, sendError } = useAlert();
   const {
-    conversations,
-    setConversations,
     activeConversation,
-    setActiveConversation,
     showChatModal,
+    setShowChatModal,
     closeModal,
   } = useChat();
 
-  // Local State
-  const [loading, setLoading] = useState(true);
-
-  const newMessageAlert = ({ body: message }: WSMessage<Message>) => {
-    let convoId = getConversationUserId(message, user.id);
-    if (!conversations) {
-      setConversations({
-        [convoId]: {
-          userId: convoId,
-          username: getConversationUsername(message, user.id),
-          messages: [message],
-        },
-      });
-    } else {
-      let updatedConversations: Conversations = {
-        ...conversations,
-        [convoId]: {
-          userId: convoId,
-          username: getConversationUsername(message, user.id),
-          messages: [...(conversations[convoId]?.messages || []), message],
-        } as Conversation,
-      };
-      // Update state
-      setConversations({ ...updatedConversations });
-    }
-
-    // Update the active conversation if there is one.
-    if (activeConversation && activeConversation.userId === convoId) {
-      setActiveConversation({
-        ...activeConversation,
-        messages: [...(activeConversation.messages || []), message],
-      });
+  // Methods
+  const closeOnEscape = async (e) => {
+    // Closes the modal when escape key is pressed
+    if (e.key === "Escape") {
+      setShowChatModal(false);
     }
   };
 
+  // Lifecycles
   useEffect(() => {
-    if (!user) {
-      return;
+    if (document && showChatModal) {
+      // On modal shown
+      document?.addEventListener("keydown", closeOnEscape, false);
     }
-    if (isEmpty(conversations)) {
-      (async () => {
-        const { value, error } = await getAllMessages(user.id);
-        if (error) throw new Error(error.errorMessageUI);
-        let grouped = groupMessagesByConversation(user.id, value);
-        setConversations(grouped);
-      })()
-        .catch((err) => {
-          console.error(err);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-
-    // Connect to the websocket
-    if (!WSC.isAlreadyConnected()) {
-      WSC.connect(user.id, emitter);
-    }
-    // listen for new messages
-    emitter.off("messages.new", newMessageAlert);
-    emitter.on("messages.new", newMessageAlert);
 
     return () => {
-      // remove the listener.
-      emitter.off("messages.new", newMessageAlert);
+      if (document)
+        document?.removeEventListener("keydown", closeOnEscape, false);
     };
-  }, [user, conversations]);
+  }, [showChatModal]);
 
   return (
     <div className="fixed bottom-0 left-0 top-0 right-0 px-4 backdrop-blur-md z-10 rounded-sm">

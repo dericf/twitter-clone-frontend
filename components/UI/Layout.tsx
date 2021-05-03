@@ -105,12 +105,6 @@ export const Layout = ({
         }
       });
     }
-    if (user) {
-      // Connect to the websocket
-      if (!WSC.isAlreadyConnected()) {
-        WSC.connect(user.id, emitter);
-      }
-    }
   }, [router.isReady, user]);
 
   return (
