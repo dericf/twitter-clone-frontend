@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { CloseIcon } from "../UI/Icons/CloseIcon";
 
 // App Components
-import { ActiveConversationView } from "./ActiveConversationView";
+import { ActiveChatView } from "./ActiveChatView";
 import { ConversationList } from "./ConversationList";
 import { NewChat } from "./NewChat";
 
@@ -151,7 +151,7 @@ export const ChatModal = (props: Props) => {
         </div>
         {/* Main Modal Body */}
         {activeConversation ? (
-          <ActiveConversationView />
+          <ActiveChatView />
         ) : (
           <>
             <NewChat />
