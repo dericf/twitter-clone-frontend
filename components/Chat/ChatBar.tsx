@@ -33,9 +33,10 @@ export const ChatBar = () => {
 
   return (
     <>
-      <div className="fixed bottom-10 sm:-bottom-2 right-4 flex justify-end items-center flex-1  sm:mb-0 ">
+      <div className="flex justify-end items-center flex-1  sm:mb-0 ">
         {/* Render the modal trigger */}
         <Button
+          addMargins={false}
           className=""
           onClick={() => {
             setShowChatModal(!showChatModal);
