@@ -39,25 +39,26 @@ class WebSocketClient {
         data = e.data;
       }
       try {
+        //try and parse the body...
         data.body = JSON.parse(data.body);
       } catch (error) {
-        console.log("Error; can't parse");
+        // console.log("Error; can't parse");
       }
 
       if (process.env.NODE_ENV == "development") {
-        console.log("Got a new websocket message. It was: ");
-        console.log(data);
+        // console.log("Got a new websocket message. It was: ");
+        // console.log(data);
       }
       // Forward the message (this is probably the wrong way)
       this.mittRef.emit(data.action, data);
     };
 
     this.socketRef.onerror = (e: ErrorEvent) => {
-      console.log(e.message);
+      // console.log(e.message);
     };
 
     this.socketRef.onclose = () => {
-      console.log("WebSocket closed let's reopen");
+      // console.log("WebSocket closed let's reopen");
       this.connect(this.userId, this.mittRef);
     };
   };
@@ -74,13 +75,13 @@ class WebSocketClient {
     const recursion = this.waitForSocketConnection;
     setTimeout(() => {
       if (socket.readyState === 1) {
-        console.log("Connection is made");
+        // console.log("Connection is made");
         if (callback != null) {
           callback();
         }
         return;
       } else {
-        console.log("wait for connection...");
+        // console.log("wait for connection...");
         recursion(callback);
       }
     }, 1);
