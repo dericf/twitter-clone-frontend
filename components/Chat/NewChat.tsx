@@ -19,10 +19,10 @@ export const NewChat: FunctionComponent<Props> = (props) => {
 
   const sendMessage = async () => {
     // Call the delegate function to actually send the message
-    await delegateCreateMessage(messageText, selectedUser.id);
-    // Reset the form
-    setSelectedUser(null);
     setMessageText("");
+    await delegateCreateMessage(messageText, selectedUser.id);
+    setSelectedUser(null);
+    // Reset the form
   };
 
   const handleCancel = () => {
@@ -33,7 +33,7 @@ export const NewChat: FunctionComponent<Props> = (props) => {
   };
 
   return (
-    <div className="self-start my-4">
+    <div className="self-start my-4 w-full">
       {showUserSearch ? (
         <Button onClick={handleCancel} addMargins={false}>
           Cancel
