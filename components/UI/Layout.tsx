@@ -28,13 +28,13 @@ import { NewTweetButton } from "../Tweets/NewTweetButton";
 import { ChatBar } from "../Chat/ChatBar";
 
 interface Props {
-  isProtected: boolean;
-  noAuth: boolean;
-  silentAuth: boolean;
-  pageTitle: string;
-  tabTitle: string;
-  onAuthSuccess: () => void;
-  loading: boolean;
+  isProtected?: boolean;
+  noAuth?: boolean;
+  silentAuth?: boolean;
+  pageTitle?: string;
+  tabTitle?: string;
+  onAuthSuccess?: () => void;
+  loading?: boolean;
 }
 export const Layout: FunctionComponent<Props> = (props) => {
   const {
@@ -47,17 +47,21 @@ export const Layout: FunctionComponent<Props> = (props) => {
     onAuthSuccess = () => {},
     loading = false,
   } = props;
-  const { user, isAuthenticated, loadAuthState } = useAuth();
-  const { sendError, sendAlert } = useAlert();
-  const [isLoading, setLoading] = useState(loading || !user);
-  const { activePage, setActivePage, showSidebar, setShowSidebar } = useStore();
 
-  const [showNewMessageAlert, setShowNewMessageAlert] = useState(false);
-
+  // Lib Hooks
   const router = useRouter();
 
+  // Hooks
+  const { user, isAuthenticated, loadAuthState } = useAuth();
+  const { sendError, sendAlert } = useAlert();
   const { emitter } = useEmitter();
 
+  // Local State
+  const [isLoading, setLoading] = useState(loading || !user);
+  const { activePage, setActivePage, showSidebar, setShowSidebar } = useStore();
+  const [showNewMessageAlert, setShowNewMessageAlert] = useState(false);
+
+  // LifeCycle
   useEffect(() => {
     const path = router.asPath;
 
