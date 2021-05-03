@@ -33,7 +33,7 @@ export const UserProfileCard = () => {
           </svg>
         </div>
         <div className="p-8 flex-1">
-          <div className="tracking-wide text-sm text-lightBlue-500 font-semibold flex flex-col sm:flex-row justify-between items-center">
+          <div className="tracking-wide text-sm text-lightBlue-500 font-semibold flex flex-col sm:flex-row justify-between items-center flex-wrap">
             <div className="flex flex-col">
               <span className="uppercase text-2xl">@{user.username}</span>
 
