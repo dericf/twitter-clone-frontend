@@ -133,12 +133,13 @@ export default function ChatContextProvider({ children }) {
       content,
     );
     if (error) {
-      localStorage.setItem("messageText", content);
-      localStorage.setItem(
-        "activeConversation",
-        JSON.stringify(activeConversation.userId),
-      );
+      // User session has expired and needs to re-authenticate
       if (error.statusCode === 401) {
+        localStorage.setItem("messageText", content);
+        localStorage.setItem(
+          "activeConversation",
+          JSON.stringify(activeConversation.userId),
+        );
         router.push(`/login?redirect=${router.asPath}`);
       }
     }
@@ -152,14 +153,16 @@ export default function ChatContextProvider({ children }) {
         };
       } else {
         return {
-          ...prev,
-          messages: [...(prev?.messages || []), newMessage],
+          username: getConversationUsername(newMessage, user.id),
+          userId: toUserId,
+          messages: [newMessage],
         };
       }
     });
 
     let updatedMessages: Message[];
     if (!conversations[toUserId]) {
+      console.log("first message for this conversation");
       // This is the first message for this conversation
       setConversations((prev) => {
         updatedMessages = [newMessage];
@@ -168,7 +171,7 @@ export default function ChatContextProvider({ children }) {
           [toUserId]: {
             messages: updatedMessages,
             userId: toUserId,
-            username: "",
+            username: getConversationUsername(newMessage, user.id),
           },
         };
       });
@@ -189,6 +192,7 @@ export default function ChatContextProvider({ children }) {
   };
 
   const closeModal = () => {
+    setSelectedUser(null);
     setShowChatModal(false);
   };
 
