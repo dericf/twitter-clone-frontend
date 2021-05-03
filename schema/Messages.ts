@@ -49,3 +49,8 @@ export interface MessageDeleteRequestBody {
 export interface MessageDeleteResponse extends APIResponse<EmptyResponse> {
   //
 }
+
+export interface MessageDeleteWSAlert {
+  messageId: number;
+  userId: number;
+}
