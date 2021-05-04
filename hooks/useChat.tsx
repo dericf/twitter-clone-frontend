@@ -89,6 +89,7 @@ export default function ChatContextProvider({ children }) {
   );
   const [showChatModal, setShowChatModal] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User>(null);
+  const [userHasNoMessages, setUserHasNoMessages] = useState(false);
 
   const delegateDeleteMessage = async (messageId: number) => {
     /**
@@ -281,10 +282,16 @@ export default function ChatContextProvider({ children }) {
     if (!user) {
       return;
     }
-    if (isEmpty(conversations)) {
+    if (isEmpty(conversations) && !userHasNoMessages) {
+      // ! Bug here where it keeps fetching messages if response comes back
+      // with an empty array
       (async () => {
         const { value, error } = await getAllMessages(user.id);
         if (error) throw new Error(error.errorMessageUI);
+        if (value.length === 0) {
+          // prevent from constantly querying for messages. Not the best solution but works for nwo
+          setUserHasNoMessages(true);
+        }
         let grouped = groupMessagesByConversation(user.id, value);
         setConversations(grouped);
       })()
