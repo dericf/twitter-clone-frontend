@@ -84,10 +84,7 @@ export const ChatModal = (props: Props) => {
             {/* Modal Title */}
             <h3 className="text-xl">
               {activeConversation
-                ? `Conversation with ${getConversationUsername(
-                    activeConversation[0],
-                    user.id,
-                  )}`
+                ? `Conversation with ${activeConversation.username}`
                 : "Conversations"}
             </h3>
             <CloseIcon handleClick={closeModal} />
