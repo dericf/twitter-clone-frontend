@@ -45,37 +45,44 @@ export const TweetCard = ({ tweet }: Props) => {
 
   const { sendError } = useAlert();
 
+  const updateCommentCount = async () => {
+    const { value, error } = await getCommentCountForTweet(tweet.tweetId);
+    if (error) throw new Error(error.errorMessageUI);
+    setCommentCount(value.count);
+  };
+
+  const updateFollowsCount = async () => {
+    const {
+      value: followsCountValue,
+      error: followsCountError,
+    } = await getFollowsCount(tweet.userId);
+    if (followsCountError) throw new Error(followsCountError.errorMessageUI);
+    setFollowsCount(followsCountValue.count);
+  };
+
+  const updateFollowersCount = async () => {
+    const {
+      value: followersCountValue,
+      error: followersCountError,
+    } = await getFollowersCount(tweet.userId);
+    if (followersCountError)
+      throw new Error(followersCountError.errorMessageUI);
+    setFollowerCount(followersCountValue.count);
+  };
+
   const updateCounts = async () => {
     try {
-      const {
-        value: commentCount,
-        error: commentCountError,
-      } = await getCommentCountForTweet(tweet.tweetId);
-      if (commentCountError) throw new Error(commentCountError.errorMessageUI);
-      setCommentCount(commentCount.count);
-
-      const {
-        value: followsCountValue,
-        error: followsCountError,
-      } = await getFollowsCount(tweet.userId);
-      if (followsCountError) throw new Error(followsCountError.errorMessageUI);
-      setFollowsCount(followsCountValue.count);
-
-      const {
-        value: followersCountValue,
-        error: followersCountError,
-      } = await getFollowersCount(tweet.userId);
-      if (followersCountError)
-        throw new Error(followersCountError.errorMessageUI);
-      setFollowerCount(followersCountValue.count);
+      await updateCommentCount();
+      await updateFollowsCount();
+      await updateFollowersCount();
     } catch (error) {
       sendError(error);
     }
   };
 
   const changeCommentState = async () => {
-    await updateCounts();
     setShowComments(!showComments);
+    await updateCommentCount();
   };
 
   useEffect(() => {

@@ -40,6 +40,34 @@ export const getUserById = async (
   }
 };
 
+export const searchUserByUsername = async (
+  username: string,
+): Promise<APIResponse<Array<User>>> => {
+  let url = new URL(
+    `${process.env.NEXT_PUBLIC_API_URL}/users/search/${username}`,
+  );
+
+  const res = await fetch(url.toString(), {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  // console.log("res.json :>> ", res.status);
+  if (responseDidSucceed(res.status)) {
+    const users: Array<User> = await res.json();
+    return {
+      value: users,
+    };
+  } else {
+    return {
+      error: new APIResponseError(res),
+    };
+  }
+};
+
 export const updateUser = async (
   body: UserUpdateRequestBody,
 ): Promise<UserUpdateResponse> => {

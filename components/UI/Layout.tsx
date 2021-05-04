@@ -1,38 +1,67 @@
+// React
+import React, { FunctionComponent, useEffect, useRef, useState } from "react";
+
+// NextJS
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import Head from "next/head";
+
+// Hooks
 import { useAuth } from "../../hooks/useAuth";
+import { useAlert } from "../../hooks/useAlert";
+import { useStore } from "../../hooks/useStore";
+import { useEmitter } from "../../hooks/useEmitter";
+import ChatContextProvider from "../../hooks/useChat";
+
+// UI Components
 import { Button } from "./Button";
+import { MobileBottomNav } from "./Nav/MobileBottomNav";
+import { LeftSidebar } from "./Nav/LeftSidebarNav";
+import { LoadingOverlay } from "./LoadingOverlay";
+import { HamburgerIcon } from "./Icons/HamburgerIcon";
+
+// App Components
 import { LoginButton } from "./LoginButton";
 import { RegisterButton } from "./RegisterButton";
 import { LogoutButton } from "./LogoutButton";
 import { MainTitle } from "./MainAppTitle";
-import Link from "next/link";
-
-import { MobileBottomNav } from "./Nav/MobileBottomNav";
-import { LeftSidebar } from "./Nav/LeftSidebarNav";
 import { NewTweetButton } from "../Tweets/NewTweetButton";
-import { LoadingOverlay } from "./LoadingOverlay";
-import { useAlert } from "../../hooks/useAlert";
-import Head from "next/head";
-import { useStore } from "../../hooks/useStore";
+import { ChatBar } from "../Chat/ChatBar";
 
-export const Layout = ({
-  children,
-  isProtected = false,
-  noAuth = false,
-  silentAuth = true,
-  pageTitle = null,
-  tabTitle = pageTitle,
-  onAuthSuccess = () => {},
-  loading = false,
-}) => {
-  const { user, isAuthenticated, loadAuthState } = useAuth();
-  const { sendError, sendAlert } = useAlert();
-  const [isLoading, setLoading] = useState(loading || !user);
-  const { activePage, setActivePage, showSidebar, setShowSidebar } = useStore();
+interface Props {
+  isProtected?: boolean;
+  noAuth?: boolean;
+  silentAuth?: boolean;
+  pageTitle?: string;
+  tabTitle?: string;
+  onAuthSuccess?: () => void;
+  loading?: boolean;
+}
+export const Layout: FunctionComponent<Props> = (props) => {
+  const {
+    children,
+    isProtected = false,
+    noAuth = false,
+    silentAuth = true,
+    pageTitle = null,
+    tabTitle = pageTitle,
+    onAuthSuccess = () => {},
+    loading = false,
+  } = props;
 
+  // Lib Hooks
   const router = useRouter();
 
+  // Hooks
+  const { user, isAuthenticated, loadAuthState } = useAuth();
+  const { sendError, sendAlert } = useAlert();
+  const { emitter } = useEmitter();
+
+  // Local State
+  const [isLoading, setLoading] = useState(loading || !user);
+  const { activePage, setActivePage, showSidebar, setShowSidebar } = useStore();
+  const [showNewMessageAlert, setShowNewMessageAlert] = useState(false);
+
+  // LifeCycle
   useEffect(() => {
     const path = router.asPath;
 
@@ -46,6 +75,8 @@ export const Layout = ({
       setActivePage("profile");
     } else if (path === "/comments") {
       setActivePage("comments");
+    } else if (path.startsWith("/messages")) {
+      setActivePage("messages");
     } else if (path === "/following") {
       setActivePage("following");
     } else if (path === "/followers") {
@@ -90,7 +121,7 @@ export const Layout = ({
         }
       });
     }
-  }, [router.isReady]);
+  }, [router.isReady, user]);
 
   return (
     <>
@@ -115,33 +146,28 @@ export const Layout = ({
           )}
         </div>
 
-        <div className="flex-1 flex overflow-hidden ">
+        <div className="flex-1 flex overflow-hidden z-20 ">
           {showSidebar && (
             <nav className="hidden sm:flex flex-col w-28 sm:w-44 md:w-56 flex-shrink-0 justify-center px-0.5 sm:px-3 md:px-6 py-6 bg-white shadow-lg">
-              <LeftSidebar />
+              <LeftSidebar showNewMessageAlert={showNewMessageAlert} />
             </nav>
           )}
-          <button
-            type="button"
-            onClick={() => setShowSidebar(!showSidebar)}
-            className="hidden sm:flex fixed bottom-0 left-0 z-50 px-2 py-2 bg-white shadow-lg hover:shadow:2xl  hover:opacity-30 cursor-pointer border-none ring-none focus:ring-none focus:outline-none"
-            title="Show/Hide Sidebar"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 transform rotate-90"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div className="flex items-center fixed bottom-12 left-0 sm:bottom-0">
+            <Button
+              addMargins={false}
+              className="hidden sm:flex"
+              onClick={() => setShowSidebar(!showSidebar)}
+              title="Show/Hide Sidebar"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
+              <HamburgerIcon />
+            </Button>
+
+            {user && (
+              <ChatContextProvider>
+                <ChatBar />
+              </ChatContextProvider>
+            )}
+          </div>
 
           {/* Scroll Wrapper */}
           <div className="flex flex-1 pb-12 sm:pb-0 bg-blueGray-700">
@@ -157,7 +183,7 @@ export const Layout = ({
               </div>
 
               <nav className="fixed sm:hidden flex justify-between items-center  bottom-0 w-screen h-12 flex-grow flex-shrink-0 ">
-                <MobileBottomNav />
+                <MobileBottomNav showNewMessageAlert={showNewMessageAlert} />
               </nav>
             </div>
           </div>

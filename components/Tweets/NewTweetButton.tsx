@@ -75,7 +75,7 @@ const NewTweetModal: FunctionComponent<NewTweetPropType> = (props) => {
 
   return (
     <>
-      <div className="modal-backdrop fixed bottom-0 left-0 top-0 right-0 px-4 backdrop-blur-md z-10">
+      <div className="modal-backdrop fixed bottom-0 left-0 top-0 right-0 px-4 backdrop-blur-md z-30">
         <div
           className="flex flex-col justify-center items-center
             mx-auto p-8 

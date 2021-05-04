@@ -37,7 +37,7 @@ export const SidebarLink: FunctionComponent<Props> = ({
         hover:bg-lightBlue-800 
 
         text-xs sm:text-sm md:text-lg 
-        flex justify-between flex-none justify-self-start align-middle`}
+        flex justify-between flex-none justify-self-start align-middle items-center`}
         type="button"
         onClick={onClick}
         {...props}

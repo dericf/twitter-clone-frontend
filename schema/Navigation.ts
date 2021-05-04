@@ -6,6 +6,7 @@ export type PageId =
   | "followers"
   | "following"
   | "comments"
+  | "messages"
   | "profile";
 
 export interface SidebarLinkI {
