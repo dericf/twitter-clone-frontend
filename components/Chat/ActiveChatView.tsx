@@ -15,6 +15,10 @@ import { useChat } from "../../hooks/useChat";
 // Utils
 import { timeFromNow } from "../../utilities/dates";
 
+// const mobile = require('is-mobile');
+
+// const ShowMobile = dynamic(() => mobile() ? import('./ShowMobile.mobile') : import('./ShowMobile'), { ssr: false })
+
 interface Props {}
 
 export const ActiveChatView = (props: Props) => {
@@ -39,7 +43,8 @@ export const ActiveChatView = (props: Props) => {
     // Call the delegate function to actually send the message
     await delegateCreateMessage(messageText, activeConversation.userId);
     setMessageText("");
-    // Put focus back on the chat message textarea
+    // ! remove re-focus on mobile Put focus back on the chat message textarea
+    // TODO implement the show-mobile check here
     chatBoxRef.current?.focus();
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
   };
@@ -50,8 +55,6 @@ export const ActiveChatView = (props: Props) => {
   };
 
   // Lifecycle Methods
-  // TODO: Add logic to always scroll to the bottom when a new message is added
-
   useEffect(() =>
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" }),
   );
@@ -81,25 +84,24 @@ export const ActiveChatView = (props: Props) => {
 
   return (
     <div className="flex flex-col w-full justify-between h-5/6">
-      <div
-        className="flex justify-start self-start items-center w-full max-h-full px-2 text-trueGray-900 cursor-pointer mb-2 text-sm"
-        onClick={() => goBack()}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
-        Back to Conversations
+      <div className="flex justify-start self-start items-center w-full max-h-full px-2 text-trueGray-900 cursor-pointer mb-2 text-sm">
+        <span onClick={() => goBack()}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          Back to Conversations
+        </span>
       </div>
       <div className="flex flex-col justify-between h-full">
         <div className="h-auto overflow-y-auto">
@@ -122,21 +124,23 @@ export const ActiveChatView = (props: Props) => {
                       {timeFromNow(message.createdAt)}
                     </span>
                   </div>
-                  <svg
-                    onClick={async (e) => await deleteMessage(message.id)}
-                    xmlns="http://www.w3.org/2000/svg"
-                    className=" h-6 w-6 text-gray-800 self-center cursor-pointer mr-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    />
-                  </svg>
+                  <div className="flex-shrink-0 flex-grow-0 mr-4">
+                    <svg
+                      onClick={async (e) => await deleteMessage(message.id)}
+                      xmlns="http://www.w3.org/2000/svg"
+                      className=" h-6 w-6 text-gray-800 self-center cursor-pointer "
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  </div>
                 </div>
               );
             } else {
