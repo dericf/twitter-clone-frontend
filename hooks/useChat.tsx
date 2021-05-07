@@ -32,7 +32,7 @@ import {
   MessageDeleteWSAlert,
 } from "../schema/Messages";
 import { User } from "../schema/User";
-import { WSMessage } from "../schema/WebSockets";
+import { WSMessage, WSMessageCode, WSSubscription } from "../schema/WebSockets";
 
 // Utils
 import {
@@ -238,18 +238,18 @@ export default function ChatContextProvider({ children }) {
     }
   };
 
-  const deletedMessageAlert = (
-    wsMessage: WSMessage<MessageDeleteWSAlert>,
-    retries = 2,
-  ) => {
+  const deletedMessageAlert = (wsMessage: WSMessage<MessageDeleteWSAlert>) => {
     const { body } = wsMessage;
     let convoId = body.userId;
     let messageId = body.messageId;
 
-    if (!activeConversation && retries > 0) {
-      setTimeout(() => {
-        deletedMessageAlert(wsMessage, retries - 1);
-      }, 500);
+    // if (!activeConversation && retries > 0) {
+    //   setTimeout(() => {
+    //     deletedMessageAlert(wsMessage, retries - 1);
+    //   }, 500);
+    //   return;
+    // }
+    if (!activeConversation) {
       return;
     }
 
@@ -277,14 +277,14 @@ export default function ChatContextProvider({ children }) {
       return updatedConvos;
     });
   };
-
+  //
+  // Life Cycle
+  //
   useEffect(() => {
     if (!user) {
       return;
     }
     if (isEmpty(conversations) && !userHasNoMessages) {
-      // ! Bug here where it keeps fetching messages if response comes back
-      // with an empty array
       (async () => {
         const { value, error } = await getAllMessages(user.id);
         if (error) throw new Error(error.errorMessageUI);
@@ -303,24 +303,32 @@ export default function ChatContextProvider({ children }) {
         });
     }
 
+    const wsSubscriptions: WSSubscription = new Map();
+    wsSubscriptions.set("messages.new", newMessageAlert);
+    wsSubscriptions.set("messages.deleted", deletedMessageAlert);
+    //
     // Connect to the websocket
     // console.log("Is Websocket already connected? ", WSC.isAlreadyConnected());
+    //
     if (!WSC.isAlreadyConnected()) {
       // console.log("Connecting to Websocket...");
       WSC.connect(user.id, emitter);
     }
-    // listen for new messages
-    emitter.off("messages.new", newMessageAlert);
-    emitter.on("messages.new", newMessageAlert);
-
+    //
+    // subscribe for new messages
+    //
+    wsSubscriptions.forEach((callback, code) => {
+      emitter.off(code, callback);
+      emitter.on(code, callback);
+    });
+    //
     // listen for deleted messages
-    emitter.off("messages.deleted", deletedMessageAlert);
-    emitter.on("messages.deleted", deletedMessageAlert);
-
+    //
     return () => {
       // remove the listeners.
-      emitter.off("messages.new", newMessageAlert);
-      emitter.off("messages.deleted", deletedMessageAlert);
+      wsSubscriptions.forEach((callback, code) => {
+        emitter.off(code, callback);
+      });
     };
   }, [user, conversations, activeConversation]);
 
