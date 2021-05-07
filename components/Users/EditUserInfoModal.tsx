@@ -159,7 +159,7 @@ const EditUserInfoModal: FunctionComponent<EditUserInfoModalPropType> = (
                 className="flex-grow rounded-none border-none"
                 color="white"
                 onClick={() => props.setShowModal(false)}
-                type="submit"
+                type="button"
                 addMargins={false}
               >
                 Cancel
