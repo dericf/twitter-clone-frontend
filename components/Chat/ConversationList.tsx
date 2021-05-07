@@ -38,7 +38,7 @@ export const ConversationList = (props: Props) => {
             {Object.keys(conversations).map((convoId) => (
               <div
                 key={convoId}
-                className="flex justify-between p-4 group bg-white text-blueGray-900 hover:text-lightBlue-800 hover:bg-trueGray-200 rounded-sm shadow-lg hover:shadow-xl cursor-pointer transform hover:animate-pulse"
+                className="flex justify-between p-4 group bg-white text-blueGray-900 hover:text-lightBlue-800 hover:bg-trueGray-200 rounded-sm transition delay-150 shadow-lg hover:shadow-xl cursor-pointer transform hover:animate-pulse"
                 onClick={() => {
                   setActiveConversation(conversations[convoId]);
                 }}

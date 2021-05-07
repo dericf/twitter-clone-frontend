@@ -41,19 +41,19 @@ export const Button: FunctionComponent<Props> = ({
   const { key } = props;
   switch (color) {
     case "blue":
-      colorClasses = `text-white bg-lightBlue-700 focus:ring-lightBlue-900 hover:bg-lightBlue-800`;
+      colorClasses = `text-white bg-lightBlue-700 focus:ring-lightBlue-900 transition delay-75 hover:bg-lightBlue-800`;
       break;
     case "white":
-      colorClasses = `text-blueGray-700 bg-white border focus:ring-blueGray-100 hover:bg-blueGray-800 hover:text-white hover:border-blueGray-800`;
+      colorClasses = `text-blueGray-700 bg-white border focus:ring-blueGray-100 transition delay-75 hover:bg-blueGray-800 hover:text-white hover:border-blueGray-800`;
       break;
     case "green":
-      colorClasses = `text-white bg-emerald-500 focus:ring-emerald-400 hover:bg-emerald-700`;
+      colorClasses = `text-white bg-emerald-500 focus:ring-emerald-400 transition delay-75 hover:bg-emerald-700`;
       break;
     case "red":
-      colorClasses = `text-white bg-red-500 focus:ring-red-400 hover:bg-red-700`;
+      colorClasses = `text-white bg-red-500 focus:ring-red-400 transition delay-75 hover:bg-red-700`;
       break;
     case "transparent":
-      colorClasses = `focus:ring-white hover:bg-trueGray-800 hover:text-white`;
+      colorClasses = `focus:ring-white hover:bg-trueGray-800 transition delay-75 hover:text-white`;
       break;
     default:
       break;
