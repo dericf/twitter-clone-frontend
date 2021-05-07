@@ -1,5 +1,5 @@
 // React
-import {
+import React, {
   LegacyRef,
   TextareaHTMLAttributes,
   useEffect,
@@ -13,7 +13,8 @@ import { useAuth } from "../../hooks/useAuth";
 import { useChat } from "../../hooks/useChat";
 
 // Utils
-import { timeFromNow } from "../../utilities/dates";
+import { dateFormat, timeFormat, timeFromNow } from "../../utilities/dates";
+import { BackToConversationsButton } from "./BackToConversationsButton";
 
 // const mobile = require('is-mobile');
 
@@ -84,25 +85,7 @@ export const ActiveChatView = (props: Props) => {
 
   return (
     <div className="flex flex-col w-full justify-between h-5/6">
-      <div className="flex justify-start self-start items-center w-full max-h-full px-2 text-trueGray-900 cursor-pointer mb-2 text-sm">
-        <span onClick={() => goBack()}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-          Back to Conversations
-        </span>
-      </div>
+      <BackToConversationsButton />
       <div className="flex flex-col justify-between h-full">
         <div className="h-auto overflow-y-auto">
           {/* Message to me */}
@@ -119,8 +102,15 @@ export const ActiveChatView = (props: Props) => {
                   className="flex justify-end text-white group"
                 >
                   <div className="flex flex-col self-start bg-gray-600 rounded-md m-4 p-2 shadow-md">
-                    <div className="text-md">{message.content}</div>
-                    <span className="text-xs mt-1">
+                    <div className="text-md whitespace-pre-line">
+                      {message.content}
+                    </div>
+                    <span
+                      className="text-xs mt-1"
+                      title={`${dateFormat(message.createdAt)} ${timeFormat(
+                        message.createdAt,
+                      )}`}
+                    >
                       {timeFromNow(message.createdAt)}
                     </span>
                   </div>
@@ -148,8 +138,15 @@ export const ActiveChatView = (props: Props) => {
               return (
                 <div key={message.id} className="flex justify-self-stretch">
                   <div className="flex flex-col self-start bg-lightBlue-300 rounded-md m-4 p-2 shadow-md">
-                    <div className="text-md under">{message.content}</div>
-                    <span className="text-xs mt-1">
+                    <div className="text-md whitespace-pre-line">
+                      {message.content}
+                    </div>
+                    <span
+                      className="text-xs mt-1"
+                      title={`${dateFormat(message.createdAt)} ${timeFormat(
+                        message.createdAt,
+                      )}`}
+                    >
                       {timeFromNow(message.createdAt)}
                     </span>
                   </div>
