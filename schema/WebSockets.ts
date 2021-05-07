@@ -11,3 +11,9 @@ export interface WSResponse<T> {
   status?: number;
   body?: T | null;
 }
+
+export type WSMessageCode = "messages.new" | "messages.deleted";
+
+export type EmitterCallback = (message: WSMessage<any>) => void;
+
+export type WSSubscription = Map<WSMessageCode, EmitterCallback>;
