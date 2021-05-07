@@ -47,6 +47,7 @@ export const ConfirmModal: FunctionComponent<ConfirmModalProps> = (props) => {
   // On Submit
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+    setShowModal(false);
     await handleConfirm();
   };
 
