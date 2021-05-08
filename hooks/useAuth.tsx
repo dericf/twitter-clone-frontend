@@ -1,4 +1,10 @@
-import React, { useState, useContext, createContext } from "react";
+import React, {
+  useState,
+  useContext,
+  createContext,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { useAlert } from "./useAlert";
 import { useRouter } from "next/router";
 import {
@@ -13,7 +19,7 @@ import { APIResponse, APIResponseError } from "../schema/API";
 export interface Auth {
   isAuthenticated: boolean;
   user: User;
-  setUser: (user: User) => void;
+  setUser: Dispatch<SetStateAction<User>>;
   tryAuthenticateWithUsernamePassword: (
     username: string,
     password: string,
