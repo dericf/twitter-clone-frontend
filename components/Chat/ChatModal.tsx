@@ -26,6 +26,8 @@ import { getAllMessages } from "../../crud/messages";
 // Utils
 import { getConversationUsername } from "./utils";
 import { isEmpty } from "../../utilities/objects";
+import { UsernameSpan } from "../Typography/Username";
+import { formatUsername } from "../../utilities/formating";
 
 interface Props {}
 
@@ -84,7 +86,9 @@ export const ChatModal = (props: Props) => {
             {/* Modal Title */}
             <h3 className="text-xl">
               {activeConversation
-                ? `Conversation with ${activeConversation.username}`
+                ? `Conversation with ${formatUsername(
+                    activeConversation.username,
+                  )}`
                 : "Conversations"}
             </h3>
             <CloseIcon handleClick={closeModal} />
