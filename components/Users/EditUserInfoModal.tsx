@@ -32,7 +32,6 @@ const EditUserInfoModal: FunctionComponent<EditUserInfoModalPropType> = (
   const [password, setPassword] = useState("");
 
   // Use Store/Context
-  // const { createTweet, updateTweetContent } = useStore();
 
   // Toast Notif.
   const { sendAlert, sendError } = useAlert();

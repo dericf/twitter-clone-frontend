@@ -20,9 +20,6 @@ export default function Followers() {
 
   const [followers, setFollowers] = useState<Array<Follower>>();
 
-  // const [tweets, setTweets] = useState<TweetResponse>([]);
-  // const { createTweet, refreshTweets, tweets } = useStore();
-
   useEffect(() => {
     (async () => {
       // await refreshTweets();

@@ -37,7 +37,6 @@ export interface StoreContextI {
   setFollowers: (_: Array<Follower>) => void;
   showSidebar: boolean;
   setShowSidebar: (_: boolean) => void;
-  createTweet: (body: TweetCreateRequestBody) => void;
   updateTweetContent: (body: TweetUpdateRequestBody, tweetId: number) => void;
   refreshTweets: () => void;
   activePage: string;
@@ -67,18 +66,6 @@ export default function StoreContextProvider({ children }) {
   const router = useRouter();
 
   const { emitter } = useEmitter();
-
-  const createTweet = async (body: TweetCreateRequestBody) => {
-    // ! Depricated - do not use anymore
-    try {
-      const resp = await createNewTweet(body);
-      sendAlert("Success !");
-      await refreshTweets();
-    } catch (error) {
-      console.log("Create Tweet Error :>> ", error);
-      sendError("Error: " + error);
-    }
-  };
 
   const updateSingleTweetContent = (newContent: string, tweetId: number) => {
     // note: This isn't really the best way of handling this but perhaps
@@ -153,7 +140,6 @@ export default function StoreContextProvider({ children }) {
         showSidebar,
         setShowSidebar,
         updateTweetContent,
-        createTweet,
         refreshTweets,
         activePage,
         setActivePage,

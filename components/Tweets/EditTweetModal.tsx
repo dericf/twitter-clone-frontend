@@ -31,7 +31,7 @@ const EditTweetModal: FunctionComponent<EditTweetModalPropType> = (props) => {
   const [newContent, setNewContent] = useState(tweet.content);
 
   // Use Store/Context
-  const { createTweet, updateTweetContent } = useStore();
+  const { updateTweetContent } = useStore();
 
   // Toast Notif.
   const { sendAlert, sendError } = useAlert();
