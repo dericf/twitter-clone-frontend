@@ -24,9 +24,6 @@ import { useEmitter } from "../../hooks/useEmitter";
 import { getAllMessages } from "../../crud/messages";
 
 // Utils
-import { getConversationUsername } from "./utils";
-import { isEmpty } from "../../utilities/objects";
-import { UsernameSpan } from "../Typography/Username";
 import { formatUsername } from "../../utilities/formating";
 
 interface Props {}
