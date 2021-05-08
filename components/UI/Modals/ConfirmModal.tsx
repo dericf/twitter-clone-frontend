@@ -1,14 +1,22 @@
-import {
+//  React
+import React, {
   FormEventHandler,
   FunctionComponent,
   useEffect,
   useRef,
   useState,
 } from "react";
-import { useRouter } from "next/router";
-import { Button } from "../UI/Button";
 
-import { useAlert } from "../../hooks/useAlert";
+// NextJS
+import { useRouter } from "next/router";
+
+// Hooks
+import { useAlert } from "../../../hooks/useAlert";
+
+// UI Components
+import { ModalPortalWrapper } from "./ModalPortalWrapper";
+import { ModalBackdrop } from "./ModalBackdrop";
+import { Button } from "../Button";
 
 interface ConfirmModalProps {
   showModal: boolean;
@@ -67,8 +75,8 @@ export const ConfirmModal: FunctionComponent<ConfirmModalProps> = (props) => {
   }, []);
 
   return (
-    <>
-      <div className="fixed bottom-0 left-0 top-0 right-0 backdrop-blur-md z-10">
+    <ModalPortalWrapper>
+      <ModalBackdrop closeModal={handleCancel}>
         <div
           className="
             mx-auto p-0 rounded-sm 
@@ -78,9 +86,13 @@ export const ConfirmModal: FunctionComponent<ConfirmModalProps> = (props) => {
             left-0 sm:left-[25%]
             right-0 sm:right-[25%]
             max-h-60
-            z-20 shadow-xl
+            shadow-xl
             backdrop-filter
             bg-white"
+          onClick={(e) => {
+            // do not close modal if anything inside modal content is clicked
+            e.stopPropagation();
+          }}
         >
           <form
             action="post"
@@ -124,7 +136,7 @@ export const ConfirmModal: FunctionComponent<ConfirmModalProps> = (props) => {
             </div>
           </form>
         </div>
-      </div>
-    </>
+      </ModalBackdrop>
+    </ModalPortalWrapper>
   );
 };

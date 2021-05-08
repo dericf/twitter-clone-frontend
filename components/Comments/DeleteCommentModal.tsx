@@ -9,7 +9,7 @@ import { Button } from "../UI/Button";
 
 import { useAlert } from "../../hooks/useAlert";
 
-import { ConfirmModal } from "../Modals/ConfirmModal";
+import { ConfirmModal } from "../UI/Modals/ConfirmModal";
 import { deleteComment } from "../../crud/comments";
 import { Comment } from "../../schema/Comments";
 

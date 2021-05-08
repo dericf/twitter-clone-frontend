@@ -11,7 +11,7 @@ import { useAlert } from "../../hooks/useAlert";
 
 import { useAuth } from "../../hooks/useAuth";
 
-import { ConfirmModal } from "../Modals/ConfirmModal";
+import { ConfirmModal } from "../UI/Modals/ConfirmModal";
 import { deleteTweet } from "../../crud/tweets";
 import { useStore } from "../../hooks/useStore";
 
