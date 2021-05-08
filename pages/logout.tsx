@@ -3,6 +3,8 @@ import { GetServerSideProps, NextPage } from "next";
 import { useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useAlert } from "../hooks/useAlert";
+import WSC from "../websocket/client";
+
 interface Props {}
 
 export default function Discover(props: Props) {
@@ -12,6 +14,10 @@ export default function Discover(props: Props) {
     (async () => {
       await logout();
       sendAlert("You have been logged out.");
+
+      WSC.waitForSocketConnection((socket) => {
+        socket.close();
+      });
     })().catch((err) => {
       console.error(err);
       sendError("There was an error logging you out. Please try again.");
