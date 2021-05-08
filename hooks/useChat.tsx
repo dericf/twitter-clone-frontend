@@ -32,7 +32,7 @@ import {
   MessageDeleteWSAlert,
 } from "../schema/Messages";
 import { User } from "../schema/User";
-import { WSMessage, WSMessageCode, WSSubscription } from "../schema/WebSockets";
+import { WSMessage, WSSubscription } from "../schema/WebSockets";
 
 // Utils
 import {
@@ -44,25 +44,8 @@ import { isEmpty } from "../utilities/objects";
 
 // Websocket Client Singleton
 import WSC from "../websocket/client";
-
-export interface ChatContextI {
-  conversations: Conversations;
-  setConversations: Dispatch<SetStateAction<Conversations>>;
-  loading: boolean;
-  setLoading: Dispatch<SetStateAction<boolean>>;
-  newChatAlert: boolean;
-  setNewChatAlert: Dispatch<SetStateAction<boolean>>;
-  selectedUser: User;
-  setSelectedUser: Dispatch<SetStateAction<User>>;
-  delegateDeleteMessage: (_: number) => void;
-  delegateCreateMessage: (_: string, __: number) => void;
-  activeConversation: Conversation;
-  setActiveConversation: Dispatch<SetStateAction<Conversation>>;
-  showChatModal: boolean;
-  setShowChatModal: Dispatch<SetStateAction<boolean>>;
-  goBack: () => void;
-  closeModal: () => void;
-}
+import { ChatContextI, ChatUserOnlineResponseBody } from "../schema/Chat";
+import { formatUsername } from "../utilities/formating";
 
 export const ChatContext = createContext({} as ChatContextI);
 
@@ -198,10 +181,12 @@ export default function ChatContextProvider({ children }) {
   };
 
   const newMessageAlert = ({ body: message }: WSMessage<Message>) => {
-    setNewChatAlert(true);
-    sendInfo(
-      `You have a new message from @${message.userFromUsername.toUpperCase()}`,
-    );
+    if (!activeConversation || !showChatModal) {
+      setNewChatAlert(true);
+      sendInfo(
+        `You have a new message from @${message.userFromUsername.toUpperCase()}`,
+      );
+    }
     let convoId = getConversationUserId(message, user.id);
     // Check if this is the very first message the user receives
     if (!conversations) {
@@ -277,6 +262,22 @@ export default function ChatContextProvider({ children }) {
       return updatedConvos;
     });
   };
+
+  const handleUserIsOnline = ({
+    body,
+  }: WSMessage<ChatUserOnlineResponseBody>) => {
+    // console.log("User is online? ", message);
+    body.username &&
+      sendInfo(
+        `${formatUsername(body.username)} is ${
+          body.isOnline ? "Online" : "Offline"
+        }`,
+      );
+  };
+  const handleWSAuthRequired = (message: WSMessage<any>) => {
+    // TODO: oNce the login modal is built - should just show modal instead of redirect
+    router.push(`/login?redirect=${router.asPath}`);
+  };
   //
   // Life Cycle
   //
@@ -304,8 +305,10 @@ export default function ChatContextProvider({ children }) {
     }
 
     const wsSubscriptions: WSSubscription = new Map();
-    wsSubscriptions.set("messages.new", newMessageAlert);
-    wsSubscriptions.set("messages.deleted", deletedMessageAlert);
+    wsSubscriptions.set("auth.required", handleWSAuthRequired);
+    wsSubscriptions.set("chat.message.new", newMessageAlert);
+    wsSubscriptions.set("chat.message.deleted", deletedMessageAlert);
+    wsSubscriptions.set("chat.user.online", handleUserIsOnline);
     //
     // Connect to the websocket
     // console.log("Is Websocket already connected? ", WSC.isAlreadyConnected());
