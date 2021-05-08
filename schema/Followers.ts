@@ -13,3 +13,8 @@ export interface FollowerRequestParams {
 }
 
 export type FollowerResponse = APIResponse<Array<Follower>>;
+
+export interface WSFollowerUpdateBody {
+  userId?: number;
+  followUserId: number;
+}
