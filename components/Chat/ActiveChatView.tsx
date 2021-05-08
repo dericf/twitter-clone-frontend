@@ -11,10 +11,18 @@ import React, {
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
 import { useChat } from "../../hooks/useChat";
+import { useEmitter } from "../../hooks/useEmitter";
+import { WSMessage } from "../../schema/WebSockets";
 
 // Utils
 import { dateFormat, timeFormat, timeFromNow } from "../../utilities/dates";
 import { BackToConversationsButton } from "./BackToConversationsButton";
+
+import WSC from "../../websocket/client";
+import { formatUsername } from "../../utilities/formating";
+import { Button } from "../UI/Button";
+import { useAlert } from "../../hooks/useAlert";
+import { ChatUserOnlineResponseBody } from "../../schema/Chat";
 
 // const mobile = require('is-mobile');
 
@@ -31,12 +39,21 @@ export const ActiveChatView = (props: Props) => {
     goBack,
   } = useChat();
   const { user } = useAuth();
+  const { sendAlert, sendInfo } = useAlert();
+  const { emitter } = useEmitter();
 
   // Local State
   const [messageText, setMessageText] = useState("");
+  const [userIsOnline, setUserIsOnline] = useState(false);
+  const [userIsTyping, setUserIsTyping] = useState(false);
+  const [canPingUserTyping, setCanPingUserTyping] = useState(true);
+  const [loading, setLoading] = useState(true);
+  let userStoppedTypingInterval = null;
+  let canPingUserTypingInterval = null;
 
   // Refs
   const chatBoxRef = useRef<HTMLTextAreaElement>();
+  const sendButtonRef = useRef<HTMLButtonElement>();
   const messagesEndRef = useRef<HTMLDivElement>();
 
   // Methods
@@ -53,6 +70,48 @@ export const ActiveChatView = (props: Props) => {
   const deleteMessage = async (messageId: number) => {
     // Call the delegate function to actually delete the message
     await delegateDeleteMessage(messageId);
+  };
+
+  const handleUserIsOnline = ({
+    body,
+  }: WSMessage<ChatUserOnlineResponseBody>) => {
+    // Only set the state of user online if it is the active user we are chatting with
+    if (body.userId === activeConversation.userId) {
+      setUserIsOnline(body.isOnline);
+      setLoading(false);
+    }
+  };
+
+  const handleUserIsTyping = (message: WSMessage<any>) => {
+    // console.log("User is typing? ", message);
+    setUserIsTyping(true);
+
+    if (userStoppedTypingInterval) {
+      clearInterval(userStoppedTypingInterval);
+    }
+
+    userStoppedTypingInterval = setTimeout(() => {
+      setUserIsTyping(false);
+    }, 1100);
+  };
+
+  const handleTypingEvent = (e) => {
+    setMessageText(e.currentTarget.value);
+
+    // Prevent spamming of websocket message every key event
+    if (!canPingUserTyping) return;
+    setCanPingUserTyping(false);
+    WSC.waitForSocketConnection((socket: WebSocket) => {
+      // notify the server that we are online...
+      const message: WSMessage<{ userId: number }> = {
+        action: "chat.user.typing",
+        body: { userId: activeConversation.userId },
+      };
+      socket.send(JSON.stringify(message));
+    });
+    canPingUserTypingInterval = setTimeout(() => {
+      setCanPingUserTyping(true);
+    }, 1000);
   };
 
   // Lifecycle Methods
@@ -81,6 +140,34 @@ export const ActiveChatView = (props: Props) => {
         }
       } catch (error) {}
     }
+
+    // Clear any previous event listeners
+    emitter.off("chat.user.online", handleUserIsOnline);
+    emitter.off("chat.user.typing", handleUserIsTyping);
+
+    // listen for the current user coming online and typing
+    emitter.on("chat.user.online", handleUserIsOnline);
+    emitter.on("chat.user.typing", handleUserIsTyping);
+
+    WSC.waitForSocketConnection((socket: WebSocket) => {
+      // Check if our conversation user is online as well...
+      const message: WSMessage<{ userId: number }> = {
+        action: "chat.user.online",
+        body: { userId: activeConversation.userId },
+      };
+      socket.send(JSON.stringify(message));
+    });
+
+    return () => {
+      try {
+        emitter.off("chat.user.online", handleUserIsOnline);
+        emitter.off("chat.user.typing", handleUserIsTyping);
+        clearInterval(userStoppedTypingInterval);
+        clearInterval(canPingUserTypingInterval);
+      } catch (error) {
+        // error
+      }
+    };
   }, []);
 
   return (
@@ -114,11 +201,11 @@ export const ActiveChatView = (props: Props) => {
                       {timeFromNow(message.createdAt)}
                     </span>
                   </div>
-                  <div className="flex-shrink-0 flex-grow-0 mr-4">
+                  <div className="flex-shrink-0 flex-grow-0 mr-4 self-center">
                     <svg
                       onClick={async (e) => await deleteMessage(message.id)}
                       xmlns="http://www.w3.org/2000/svg"
-                      className=" h-6 w-6 text-gray-800 self-center cursor-pointer "
+                      className=" h-6 w-6 text-gray-800 hover:text-red-700 self-center cursor-pointer "
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -154,23 +241,64 @@ export const ActiveChatView = (props: Props) => {
               );
             }
           })}
+          {/* {userIsTyping && (
+            <div className="flex justify-self-stretch">
+              <div className="flex flex-col self-start bg-lightBlue-300 rounded-md m-4 p-2 shadow-md animate-pulse ">
+                <div className="text-md whitespace-pre-line">
+                  {`${formatUsername(
+                    activeConversation.username,
+                  )} is typing...`}
+                </div>
+                <span className="text-xs mt-1"></span>
+              </div>
+            </div>
+          )} */}
           <div ref={messagesEndRef} />
         </div>
-        <div className="flex justify-center items-stretch border-t-2 h-24 w-full">
-          <textarea
-            name="messageText"
-            id=""
-            className="w-full h-full px-4 py-2"
-            value={messageText}
-            onChange={(e) => setMessageText(e.currentTarget.value)}
-            ref={chatBoxRef}
-          ></textarea>
-          <button
-            className="w-max px-4 bg-green-600 text-white"
-            onClick={sendMessage}
-          >
-            Send
-          </button>
+        <div className="flex flex-col justify-center items-stretch border-t-2 w-full">
+          <div className="flex w-full py-2 justify-between items-center">
+            <span className="tracking-wide text-sm text-lightBlue-500 font-semibold">
+              {userIsTyping
+                ? `${formatUsername(activeConversation.username)} is typing...`
+                : ""}
+            </span>
+            <span className="tracking-wide text-sm text-lightBlue-500 font-semibold">
+              {loading
+                ? `Checking status for ${formatUsername(
+                    activeConversation.username,
+                  )}`
+                : `${formatUsername(activeConversation.username)} is ${
+                    userIsOnline ? "Online" : "Offline"
+                  }`}
+            </span>
+          </div>
+          <div className="flex h-24">
+            <textarea
+              onKeyDown={(e) => {
+                if (e.key === "Tab" && !e.shiftKey) {
+                  // manually focus on the send button
+                  // ! This is only an issue on safari so far...
+                }
+              }}
+              tabIndex={1}
+              name="messageText"
+              id=""
+              className="w-full h-full px-4 py-2"
+              value={messageText}
+              onChange={handleTypingEvent}
+              ref={chatBoxRef}
+            ></textarea>
+            <Button
+              disabled={messageText.length === 0}
+              tabIndex={2}
+              className="w-max px-4"
+              color="green"
+              onClick={sendMessage}
+              addMargins={false}
+            >
+              Send
+            </Button>
+          </div>
         </div>
       </div>
     </div>
