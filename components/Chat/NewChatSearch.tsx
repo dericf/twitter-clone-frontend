@@ -1,5 +1,5 @@
 // React
-import { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useState } from "react";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -11,82 +11,100 @@ import { searchUserByUsername } from "../../crud/users";
 // Schema
 import { User } from "../../schema/User";
 
+import { getConversationUsername } from "./utils";
+
+// React-Select
+import AsyncSelect from "react-select/async";
+import {
+  OptionsType,
+  InputActionMeta,
+  OptionTypeBase,
+  GroupTypeBase,
+} from "react-select";
+
+interface SelectOptions {
+  value: User;
+  label: string;
+}
+
 interface Props {}
 export const NewChatSearch: FunctionComponent<Props> = (props) => {
   // Hooks
   const { selectedUser, setSelectedUser } = useChat();
   const { user } = useAuth();
 
-  // Local State
-  const [searchResults, setSearchResults] = useState<Array<User>>([]);
+  /* Local State
+    type SearchOptions = Array<{
+     value: string;
+    label: string;
+  }>; */
+  const [searchOptions, setSearchOptions] = useState([]);
   const [searchText, setSearchText] = useState("");
 
+  // const searchOptions: searchOptions[] = [{ value: null, label: "User 1" }];
   // Methods
-  const handleChange = async (e) => {
+
+  const loadOptions = (
+    text: string,
+    callback: (options: ReadonlyArray<SelectOptions>) => void,
+  ): Promise<ReadonlyArray<SelectOptions>> | void => {
     // Clear the selected user
     setSelectedUser(null);
-    const text: string = e.currentTarget.value;
+    // Update state
     setSearchText(text);
     if (text.length < 2) {
-      setSearchResults([]);
+      setSearchOptions([]);
+      callback([]);
+    } else {
+      (async () => {
+        try {
+          const { value: userResults, error } = await searchUserByUsername(
+            text,
+          );
+          if (error) throw new Error(error.errorMessageUI);
+          // console.log("Users....", userResults);
+
+          callback(
+            userResults
+              .filter((usr) => usr.id !== user.id)
+              .map((usr) => ({
+                value: usr,
+                label: usr.username,
+                options: null,
+              })),
+          );
+        } catch (error) {
+          // console.log("error searching for users :>> ", error);
+          callback([]);
+        }
+      })().catch((err) => {
+        // console.error(err);
+      });
     }
-    if (text.length >= 2)
-      try {
-        const { value, error } = await searchUserByUsername(text);
-        if (error) throw new Error(error.errorMessageUI);
-        setSearchResults(value.filter((usr) => usr.id !== user.id));
-      } catch (error) {
-        console.log("error searching for users :>> ", error);
-      }
   };
 
   const selectUser = async (user: User) => {
     setSelectedUser(user);
     setSearchText(`@${user.username}`);
-    setSearchResults([]);
+    setSearchOptions([]);
   };
 
   return (
     <div className="flex flex-col  justify-start">
       <div className="flex flex-col bg-white text-black shadow-lg justify-evenly items-stretch max-w-xl flex-shrink-0 my-4 mb-16">
-        <input
-          autoFocus={true}
-          type="text"
-          className="text-black"
-          name="userSearch"
-          placeholder="search for a user..."
-          autoComplete="off"
-          value={searchText}
-          onChange={handleChange}
+        <AsyncSelect
+          placeholder="Search by username"
+          isClearable
+          value={{
+            value: selectedUser,
+            label: selectedUser ? `@${selectedUser.username}` : "",
+          }}
+          onChange={(value, action) => {
+            setSelectedUser({ ...value?.value } as User);
+          }}
+          loadOptions={loadOptions}
+          defaultOptions={false}
         />
-        <div className="flex flex-col flex-1 max-h-60 flex-shrink-0 flex-grow">
-          {/* {JSON.stringify(searchResults)} */}
-          {!selectedUser && searchText.length >= 2 && (
-            <h3 className="text-lg text-center px-2 py-1 bg-trueGray-700 text-white">
-              Results:
-            </h3>
-          )}
-          {!selectedUser &&
-            searchResults?.length === 0 &&
-            searchText.length >= 2 && (
-              <div className="px-4 py-2 flex justify-center">No Results</div>
-            )}
-          {searchResults &&
-            searchResults.map((resultUser) => {
-              if (resultUser.id === user.id) return;
-              return (
-                <div
-                  key={resultUser.id}
-                  onClick={async () => {
-                    await selectUser(resultUser);
-                  }}
-                  className="px-4 py-4 flex justify-center cursor-pointer hover:bg-trueGray-300 hover:text-lightBlue-700 border-t-2 uppercase"
-                >
-                  @{resultUser.username}
-                </div>
-              );
-            })}
-        </div>
       </div>
     </div>
   );
