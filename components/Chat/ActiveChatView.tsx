@@ -61,9 +61,9 @@ export const ActiveChatView = (props: Props) => {
     // Call the delegate function to actually send the message
     await delegateCreateMessage(messageText, activeConversation.userId);
     setMessageText("");
-    // ! remove re-focus on mobile Put focus back on the chat message textarea
+
     // TODO implement the show-mobile check here
-    chatBoxRef.current?.focus();
+    // chatBoxRef.current?.focus();
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
