@@ -5,26 +5,36 @@
  * If the user clicks the button and the tweet is currently already liked by them, it will unlike the tweet
  */
 
+// React
 import { FunctionComponent, useEffect, useState } from "react";
+
+// NextJS
 import { useRouter } from "next/router";
 import Link from "next/link";
+
+// UI Components
 import { LoadingSpinner } from "../UI/LoadingSpinner";
 import { Button } from "../UI/Button";
 
-//  import {
-// 	 getAllTweetLikes,
-// 	 createNewTweetLike,
-// 	 deleteTweetLike,
-//  } from "../../crud/likes";
+// Hooks
 import { useAuth } from "../../hooks/useAuth";
-import { TweetLike } from "../../schema/Likes";
+import { useStore } from "../../hooks/useStore";
+import { useEmitter } from "../../hooks/useEmitter";
+
+// CRUD
 import {
   createNewFollow,
   deleteFollow,
   getAllFollows,
 } from "../../crud/follows";
+
+// Schema
 import { Follows } from "../../schema/Follows";
-import { useStore } from "../../hooks/useStore";
+import { WSMessage, WSSubscription } from "../../schema/WebSockets";
+import { WSFollowerUpdateBody } from "../../schema/Followers";
+
+// Websocket Client
+import WSC from "../../websocket/client";
 
 interface PropType extends JSX.IntrinsicAttributes {
   followUserId: number;
@@ -34,40 +44,35 @@ export const FollowButton: FunctionComponent<PropType> = ({
   followUserId,
   ...props
 }) => {
+  // Hooks
   const { user } = useAuth();
   const { follows, setFollows } = useStore();
+  const router = useRouter();
+  const { emitter } = useEmitter();
 
-  const router = useRouter;
+  // Local State
   const [loading, setLoading] = useState(true);
   const [isFollowedByUser, setIsFollowedByUser] = useState(false);
-  // const [follows, setFoll] = useState<Array<Follows>>([]);
 
-  useEffect(() => {
-    // On component load - get all the followers
-    (async () => {
-      let isFollowed = false;
+  const handleNewFollower = ({ body }: WSMessage<WSFollowerUpdateBody>) => {
+    if (
+      body.userId === user.id &&
+      body.followUserId &&
+      body.followUserId === followUserId
+    ) {
+      setIsFollowedByUser(true);
+    }
+  };
 
-      follows.forEach((follow) => {
-        if (follow.userId === followUserId) {
-          isFollowed = true;
-        }
-      });
-      setIsFollowedByUser(isFollowed);
-      setLoading(false);
-    })();
-  }, []);
-
-  useEffect(() => {
-    setLoading(true);
-    let isFollowed = false;
-    follows.forEach((follow) => {
-      if (follow.userId === followUserId) {
-        isFollowed = true;
-      }
-    });
-    setIsFollowedByUser(isFollowed);
-    setLoading(false);
-  }, [follows]);
+  const handleLostFollower = ({ body }: WSMessage<WSFollowerUpdateBody>) => {
+    if (
+      body.userId === user.id &&
+      body.followUserId &&
+      body.followUserId === followUserId
+    ) {
+      setIsFollowedByUser(false);
+    }
+  };
 
   const unfollowUser = async () => {
     //
@@ -83,6 +88,12 @@ export const FollowButton: FunctionComponent<PropType> = ({
     // remove this user from our follows list
     //
     setFollows(follows.filter((follow) => follow.userId !== followUserId));
+    //
+    // Emit a message so other components can update
+    //
+    emitter.emit("followers.unfollowed", {
+      body: { followUserId: followUserId },
+    });
   };
 
   const followUser = async () => {
@@ -108,6 +119,12 @@ export const FollowButton: FunctionComponent<PropType> = ({
     // Changes button state
     //
     setIsFollowedByUser(true);
+    //
+    // Emit a message so other components can update
+    //
+    emitter.emit("followers.followed", {
+      body: { followUserId: followUserId },
+    });
   };
 
   const handleClick = async () => {
@@ -117,6 +134,60 @@ export const FollowButton: FunctionComponent<PropType> = ({
       await followUser();
     }
   };
+
+  // Life Cycle - first load
+  useEffect(() => {
+    // On component load - get all the followers
+    (async () => {
+      let isFollowed = false;
+
+      follows.forEach((follow) => {
+        if (follow.userId === followUserId) {
+          isFollowed = true;
+        }
+      });
+      setIsFollowedByUser(isFollowed);
+      setLoading(false);
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    //
+    // Define subscriptions
+    //
+    const wsSubscriptions: WSSubscription = new Map();
+    wsSubscriptions.set("followers.followed", handleNewFollower);
+    wsSubscriptions.set("followers.unfollowed", handleLostFollower);
+    //
+    // subscribe
+    //
+    wsSubscriptions.forEach((callback, code) => {
+      emitter.off(code, callback);
+      emitter.on(code, callback);
+    });
+    //
+    // Cleanup
+    //
+    return () => {
+      // remove the listeners.
+      wsSubscriptions.forEach((callback, code) => {
+        emitter.off(code, callback);
+      });
+    };
+  }, [user]);
+
+  useEffect(() => {
+    setLoading(true);
+    let isFollowed = false;
+    follows.forEach((follow) => {
+      if (follow.userId === followUserId) {
+        isFollowed = true;
+      }
+    });
+    setIsFollowedByUser(isFollowed);
+    setLoading(false);
+  }, [follows]);
 
   return loading === true ? (
     <Button className="ml-0" color="blue" disabled>

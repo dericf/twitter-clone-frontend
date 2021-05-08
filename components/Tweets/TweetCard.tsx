@@ -28,14 +28,22 @@ import {
 
 // Helper Methods
 import { getRandomInt } from "../../utilities/randomNumbers";
+import { WSMessage, WSSubscription } from "../../schema/WebSockets";
+import { useEmitter } from "../../hooks/useEmitter";
+import { WSFollowerUpdateBody } from "../../schema/Followers";
+import { WSCommentCountUpdatedBody } from "../../schema/Comments";
 interface Props {
   tweet: Tweet;
 }
 
 export const TweetCard = ({ tweet }: Props) => {
+  // Hooks
   const { isAuthenticated, user } = useAuth();
-  const [showComments, setShowComments] = useState<boolean>(false);
+  const { emitter } = useEmitter();
+  const { sendError } = useAlert();
 
+  // Local State
+  const [showComments, setShowComments] = useState<boolean>(false);
   const [commentCount, setCommentCount] = useState<number>(null);
   const [followsCount, setFollowsCount] = useState<number>(null);
   const [followerCount, setFollowerCount] = useState<number>(null);
@@ -43,8 +51,7 @@ export const TweetCard = ({ tweet }: Props) => {
     false,
   );
 
-  const { sendError } = useAlert();
-
+  // Functions
   const updateCommentCount = async () => {
     const { value, error } = await getCommentCountForTweet(tweet.tweetId);
     if (error) throw new Error(error.errorMessageUI);
@@ -85,12 +92,66 @@ export const TweetCard = ({ tweet }: Props) => {
     await updateCommentCount();
   };
 
+  const newFollower = (message: WSMessage<WSFollowerUpdateBody>) => {
+    if (message.body.followUserId === tweet.userId) {
+      // console.log("This user is now being followed", message);
+      setFollowerCount((prev) => prev + 1);
+    }
+  };
+
+  const removedFollower = (message: WSMessage<WSFollowerUpdateBody>) => {
+    if (message.body.followUserId === tweet.userId) {
+      // console.log("User is now being unfollowed", message);
+      setFollowerCount((prev) => (prev === 1 ? 0 : prev - 1));
+    }
+  };
+
+  const newComment = (message: WSMessage<WSCommentCountUpdatedBody>) => {
+    if (message.body.tweetId === tweet.tweetId) {
+      // console.log("A comment was added", message);
+      setCommentCount((prev) => prev + 1);
+    }
+  };
+
+  const deletedComment = (message: WSMessage<WSCommentCountUpdatedBody>) => {
+    if (message.body.tweetId === tweet.tweetId) {
+      // console.log("A comment was deleted", message);
+      setCommentCount((prev) => (prev === 1 ? 0 : prev - 1));
+    }
+  };
+
+  // Life Cycle
   useEffect(() => {
     (async () => {
       await updateCounts();
     })().catch((err) => {
-      console.error(err);
+      // console.error(err);
     });
+
+    //
+    // Define subscriptions
+    //
+    const wsSubscriptions: WSSubscription = new Map();
+    wsSubscriptions.set("followers.followed", newFollower);
+    wsSubscriptions.set("followers.unfollowed", removedFollower);
+    wsSubscriptions.set("comments.count.new", newComment);
+    wsSubscriptions.set("comments.count.deleted", deletedComment);
+    //
+    // subscribe
+    //
+    wsSubscriptions.forEach((callback, code) => {
+      emitter.off(code, callback);
+      emitter.on(code, callback);
+    });
+    //
+    // Cleanup
+    //
+    return () => {
+      // remove the listeners.
+      wsSubscriptions.forEach((callback, code) => {
+        emitter.off(code, callback);
+      });
+    };
   }, []);
 
   return (
