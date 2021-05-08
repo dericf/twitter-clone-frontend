@@ -59,7 +59,7 @@ class WebSocketClient {
 
     this.socketRef.onclose = () => {
       // console.log("WebSocket closed let's reopen");
-      this.connect(this.userId, this.mittRef);
+      // this.connect(this.userId, this.mittRef);
     };
   };
 
@@ -70,21 +70,22 @@ class WebSocketClient {
     return this.socketRef.readyState === this.socketRef.OPEN;
   };
 
-  waitForSocketConnection = (callback) => {
+  waitForSocketConnection = (callback: (socket: WebSocket) => void) => {
     const socket = this.socketRef;
     const recursion = this.waitForSocketConnection;
+    // console.log("Socket State: ", socket.readyState);
     setTimeout(() => {
       if (socket.readyState === 1) {
         // console.log("Connection is made");
         if (callback != null) {
-          callback();
+          callback(this.socketRef);
         }
         return;
       } else {
         // console.log("wait for connection...");
         recursion(callback);
       }
-    }, 1);
+    }, 1000);
   };
 }
 
