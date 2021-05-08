@@ -1,4 +1,11 @@
-import React, { useState, useContext, createContext, useEffect } from "react";
+import React, {
+  useState,
+  useContext,
+  createContext,
+  useEffect,
+  Ref,
+  useRef,
+} from "react";
 import { useAlert } from "./useAlert";
 import { useRouter } from "next/router";
 import {
@@ -13,7 +20,12 @@ import { Follower } from "../schema/Followers";
 import { Follows } from "../schema/Follows";
 import { PageId } from "../schema/Navigation";
 import { getAllFollows } from "../crud/follows";
+import { useEmitter } from "./useEmitter";
+import { WSMessage } from "../schema/WebSockets";
 
+import WSC from "../websocket/client";
+
+// TODO: Fix the types for all setState functions
 export interface StoreContextI {
   tweets: Array<Tweet>;
   setTweets: (_: Array<Tweet>) => void;
@@ -53,6 +65,8 @@ export default function StoreContextProvider({ children }) {
 
   // Next router
   const router = useRouter();
+
+  const { emitter } = useEmitter();
 
   const createTweet = async (body: TweetCreateRequestBody) => {
     // ! Depricated - do not use anymore
@@ -117,6 +131,12 @@ export default function StoreContextProvider({ children }) {
     })().catch((err) => {
       console.error(err);
     });
+
+    // Connect to websocket if not already connected
+    if (!WSC.isAlreadyConnected()) {
+      // console.log("Connecting to Websocket...");
+      WSC.connect(user.id, emitter);
+    }
   }, [user]);
 
   return (

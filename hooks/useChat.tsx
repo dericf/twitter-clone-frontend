@@ -310,14 +310,6 @@ export default function ChatContextProvider({ children }) {
     wsSubscriptions.set("chat.message.deleted", deletedMessageAlert);
     wsSubscriptions.set("chat.user.online", handleUserIsOnline);
     //
-    // Connect to the websocket
-    // console.log("Is Websocket already connected? ", WSC.isAlreadyConnected());
-    //
-    if (!WSC.isAlreadyConnected()) {
-      // console.log("Connecting to Websocket...");
-      WSC.connect(user.id, emitter);
-    }
-    //
     // subscribe for new messages
     //
     wsSubscriptions.forEach((callback, code) => {
