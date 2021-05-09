@@ -31,7 +31,6 @@ const NewTweetModal: FunctionComponent<NewTweetPropType> = (props) => {
     myTweets,
     setTweets,
     setMyTweets,
-    createTweet,
     updateTweetContent,
   } = useStore();
   const router = useRouter();
