@@ -25,6 +25,7 @@ import { getAllMessages } from "../../crud/messages";
 
 // Utils
 import { formatUsername } from "../../utilities/formating";
+import { ModalBackdrop } from "../UI/Modals/ModalBackdrop";
 
 interface Props {}
 
@@ -47,7 +48,6 @@ export const ChatModal = (props: Props) => {
   const closeOnEscape = async (e) => {
     // Closes the modal when escape key is pressed
     if (e.key === "Escape") {
-      setShowChatModal(false);
     }
   };
 
@@ -66,7 +66,7 @@ export const ChatModal = (props: Props) => {
 
   return (
     <ModalPortalWrapper>
-      <div className="fixed bottom-0 left-0 top-0 right-0 px-4 backdrop-blur-md z-30 rounded-sm">
+      <ModalBackdrop closeModal={closeModal}>
         <div
           className="
       	flex flex-col justify-start items-center
@@ -78,6 +78,7 @@ export const ChatModal = (props: Props) => {
 				shadow-xl
 				backdrop-filter
       "
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="text-center w-full items-start text-2xl relative">
             {/* Modal Title */}
@@ -100,7 +101,7 @@ export const ChatModal = (props: Props) => {
             </>
           )}
         </div>
-      </div>
+      </ModalBackdrop>
     </ModalPortalWrapper>
   );
 };
