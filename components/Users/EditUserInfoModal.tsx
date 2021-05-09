@@ -187,10 +187,7 @@ const EditUserInfoModal: FunctionComponent<EditUserInfoModalPropType> = (
 interface PropType extends JSX.IntrinsicAttributes {}
 
 export const EditUserInfoButton: FunctionComponent<PropType> = (props) => {
-  const router = useRouter;
-
   const [showModal, setShowModal] = useState<boolean>(false);
-
   return (
     <>
       <Button

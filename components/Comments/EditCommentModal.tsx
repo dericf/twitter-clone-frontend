@@ -156,8 +156,6 @@ interface PropType extends JSX.IntrinsicAttributes {
 }
 
 export const EditCommentButton: FunctionComponent<PropType> = (props) => {
-  const router = useRouter;
-
   const { comment, comments, setComments } = props;
 
   const [showModal, setShowModal] = useState<boolean>(false);

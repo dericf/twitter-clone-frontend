@@ -19,7 +19,6 @@ import { ConfirmModal } from "../UI/Modals/ConfirmModal";
 interface PropType extends JSX.IntrinsicAttributes {}
 
 export const DeleteUserModal: FunctionComponent<PropType> = (props) => {
-  const router = useRouter;
   const { sendAlert, sendError } = useAlert();
 
   const passwordRef = useRef<HTMLInputElement>();

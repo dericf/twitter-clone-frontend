@@ -146,7 +146,7 @@ export default function ChatContextProvider({ children }) {
 
     let updatedMessages: Message[];
     if (!conversations[toUserId]) {
-      console.log("first message for this conversation");
+      // console.log("first message for this conversation");
       // This is the first message for this conversation
       setConversations((prev) => {
         updatedMessages = [newMessage];
@@ -316,9 +316,6 @@ export default function ChatContextProvider({ children }) {
       emitter.off(code, callback);
       emitter.on(code, callback);
     });
-    //
-    // listen for deleted messages
-    //
     return () => {
       // remove the listeners.
       wsSubscriptions.forEach((callback, code) => {

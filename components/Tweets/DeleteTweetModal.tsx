@@ -20,7 +20,6 @@ interface PropType extends JSX.IntrinsicAttributes {
 }
 
 export const DeleteTweetModal: FunctionComponent<PropType> = (props) => {
-  const router = useRouter;
   const { sendAlert, sendError } = useAlert();
   const { tweets, setTweets, myTweets, setMyTweets } = useStore();
   const { tweetId } = props;

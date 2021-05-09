@@ -22,7 +22,6 @@ interface PropType extends JSX.IntrinsicAttributes {
 }
 
 export const DeleteCommentModal: FunctionComponent<PropType> = (props) => {
-  const router = useRouter;
   const { sendAlert, sendError } = useAlert();
   const { emitter } = useEmitter();
 

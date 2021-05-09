@@ -149,8 +149,6 @@ const NewTweetModal: FunctionComponent<NewTweetPropType> = (props) => {
 interface PropType extends JSX.IntrinsicAttributes {}
 
 export const NewTweetButton: FunctionComponent<PropType> = (props) => {
-  const router = useRouter;
-
   const [showModal, setShowModal] = useState<boolean>(false);
 
   return (
