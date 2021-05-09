@@ -11,7 +11,7 @@ import { useAlert } from "../../hooks/useAlert";
 
 import { useAuth } from "../../hooks/useAuth";
 
-import { ConfirmModal } from "../Modals/ConfirmModal";
+import { ConfirmModal } from "../UI/Modals/ConfirmModal";
 import { deleteTweet } from "../../crud/tweets";
 import { useStore } from "../../hooks/useStore";
 
@@ -20,7 +20,6 @@ interface PropType extends JSX.IntrinsicAttributes {
 }
 
 export const DeleteTweetModal: FunctionComponent<PropType> = (props) => {
-  const router = useRouter;
   const { sendAlert, sendError } = useAlert();
   const { tweets, setTweets, myTweets, setMyTweets } = useStore();
   const { tweetId } = props;

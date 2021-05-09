@@ -32,7 +32,6 @@ const EditUserInfoModal: FunctionComponent<EditUserInfoModalPropType> = (
   const [password, setPassword] = useState("");
 
   // Use Store/Context
-  // const { createTweet, updateTweetContent } = useStore();
 
   // Toast Notif.
   const { sendAlert, sendError } = useAlert();
@@ -188,10 +187,7 @@ const EditUserInfoModal: FunctionComponent<EditUserInfoModalPropType> = (
 interface PropType extends JSX.IntrinsicAttributes {}
 
 export const EditUserInfoButton: FunctionComponent<PropType> = (props) => {
-  const router = useRouter;
-
   const [showModal, setShowModal] = useState<boolean>(false);
-
   return (
     <>
       <Button

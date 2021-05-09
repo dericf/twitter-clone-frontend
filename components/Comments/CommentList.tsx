@@ -2,7 +2,12 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useStore } from "../../hooks/useStore";
-import { Comment } from "../../schema/Comments";
+import {
+  Comment,
+  WSCommentCreatedBody,
+  WSCommentDeletedBody,
+  WSCommentUpdatedBody,
+} from "../../schema/Comments";
 import { createNewComment, getAllCommentsForTweet } from "../../crud/comments";
 import { Button } from "../UI/Button";
 import { MAX_COMMENT_LENGTH } from "../../constants/constants";
@@ -13,27 +18,32 @@ import { EditCommentButton } from "./EditCommentModal";
 import { CommentLikeButton } from "./LikeCommentButton";
 import { dateFormat, timeFormat, timeFromNow } from "../../utilities/dates";
 import { LoadingSpinner } from "../UI/LoadingSpinner";
+import { useEmitter } from "../../hooks/useEmitter";
+import { WSMessage, WSSubscription } from "../../schema/WebSockets";
 
 interface PropType extends JSX.IntrinsicAttributes {
   tweetId: number;
 }
 
 export const CommentList: FunctionComponent<PropType> = (props) => {
-  const router = useRouter;
-
+  // props destructure
+  const { tweetId } = props;
+  // hooks
+  const router = useRouter();
   const { user } = useAuth();
   const { sendError, sendAlert } = useAlert();
-  const { tweetId } = props;
+  const { emitter } = useEmitter();
 
+  // Local State
   const [comments, setComments] = useState<Array<Comment>>(null);
-  const [newComment, setNewComment] = useState("");
+  const [newCommentText, setNewCommentText] = useState("");
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Try posting the comment
     try {
-      const { value, error } = await createNewComment(tweetId, newComment);
+      const { value, error } = await createNewComment(tweetId, newCommentText);
       if (error) throw new Error(error.errorMessageUI);
 
       // Toast Notification
@@ -43,9 +53,47 @@ export const CommentList: FunctionComponent<PropType> = (props) => {
       setComments([...comments, { ...value }]);
 
       // Reset the textarea
-      setNewComment("");
+      setNewCommentText("");
+      //
+      // emit a message so comment count can update
+      //
+      emitter.emit("comments.count.new", { body: { tweetId } });
     } catch (error) {
       sendError("Could not create your comment. " + error);
+    }
+  };
+
+  const handleCommentTyping = (e) => {
+    if (e.currentTarget.value.length <= MAX_COMMENT_LENGTH) {
+      setNewCommentText(e.currentTarget.value);
+    } else {
+      sendError(`Comment cannot exceed ${MAX_COMMENT_LENGTH} characters.`);
+      return false;
+    }
+  };
+
+  const newComment = ({ body }: WSMessage<WSCommentCreatedBody>) => {
+    if (body.comment.tweetId === tweetId) {
+      // console.log("A comment was added", body);
+      setComments((prev) => [...prev, body.comment]);
+      emitter.emit("comments.count.new", { body: { tweetId } });
+    }
+  };
+
+  const updatedComment = ({ body }: WSMessage<WSCommentUpdatedBody>) => {
+    if (body.comment.tweetId === tweetId) {
+      // console.log("A comment was updated", body);
+      setComments((prev) =>
+        prev.map((com) => (com.id === body.comment.id ? body.comment : com)),
+      );
+    }
+  };
+
+  const deletedComment = ({ body }: WSMessage<WSCommentDeletedBody>) => {
+    if (body.tweetId === tweetId) {
+      // console.log("A comment was deleted", body);
+      setComments((prev) => prev.filter((com) => com.id !== body.commentId));
+      emitter.emit("comments.count.deleted", { body: { tweetId } });
     }
   };
 
@@ -59,6 +107,29 @@ export const CommentList: FunctionComponent<PropType> = (props) => {
       setComments([]);
     });
   }, []);
+
+  useEffect(() => {
+    const wsSubscriptions: WSSubscription = new Map();
+    wsSubscriptions.set("comments.new", newComment);
+    wsSubscriptions.set("comments.updated", updatedComment);
+    wsSubscriptions.set("comments.deleted", deletedComment);
+    //
+    // subscribe
+    //
+    wsSubscriptions.forEach((callback, code) => {
+      emitter.off(code, callback);
+      emitter.on(code, callback);
+    });
+    //
+    // Cleanup
+    //
+    return () => {
+      // remove the listeners.
+      wsSubscriptions.forEach((callback, code) => {
+        emitter.off(code, callback);
+      });
+    };
+  }, [user]);
 
   return (
     <div className="flex justify-center w-full mx-0 mt-4 place-self-center">
@@ -118,6 +189,7 @@ export const CommentList: FunctionComponent<PropType> = (props) => {
                       setComments={setComments}
                     />
                     <DeleteCommentModal
+                      tweetId={tweetId}
                       commentId={comment.id}
                       comments={comments}
                       setComments={setComments}
@@ -147,28 +219,19 @@ export const CommentList: FunctionComponent<PropType> = (props) => {
           className="flex flex-col justify-center items-stretch w-full pt-3"
         >
           <textarea
-            name="newComment"
-            id="newComment"
+            name="newCommentText"
+            id="newCommentText"
             rows={5}
             placeholder="Add your thoughts here"
-            value={newComment}
+            value={newCommentText}
             className="px-4 py-4 bg-blueGray-600 text-white placeholder-trueGray-400 focus:ring-0 border-none focus:border-none"
-            onChange={(e) => {
-              if (e.currentTarget.value.length <= MAX_COMMENT_LENGTH) {
-                setNewComment(e.currentTarget.value);
-              } else {
-                sendError(
-                  `Comment cannot exceed ${MAX_COMMENT_LENGTH} characters.`,
-                );
-                return false;
-              }
-            }}
+            onChange={handleCommentTyping}
           ></textarea>
           <Button
             type="submit"
             color="white"
             className="my-2"
-            disabled={newComment.length === 0}
+            disabled={newCommentText.length === 0}
             addMargins={false}
           >
             {/* <svg

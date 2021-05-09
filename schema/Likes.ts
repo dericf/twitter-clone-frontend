@@ -15,3 +15,8 @@ export interface TweetLikeCreateRequestBody {
 export interface TweetLikeDeleteRequestBody {
   tweetId: number;
 }
+
+export interface WSTweetLikeUpdate {
+  isLiked: boolean;
+  tweetLike: TweetLike;
+}

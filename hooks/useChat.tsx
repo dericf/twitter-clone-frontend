@@ -146,7 +146,7 @@ export default function ChatContextProvider({ children }) {
 
     let updatedMessages: Message[];
     if (!conversations[toUserId]) {
-      console.log("first message for this conversation");
+      // console.log("first message for this conversation");
       // This is the first message for this conversation
       setConversations((prev) => {
         updatedMessages = [newMessage];
@@ -310,23 +310,12 @@ export default function ChatContextProvider({ children }) {
     wsSubscriptions.set("chat.message.deleted", deletedMessageAlert);
     wsSubscriptions.set("chat.user.online", handleUserIsOnline);
     //
-    // Connect to the websocket
-    // console.log("Is Websocket already connected? ", WSC.isAlreadyConnected());
-    //
-    if (!WSC.isAlreadyConnected()) {
-      // console.log("Connecting to Websocket...");
-      WSC.connect(user.id, emitter);
-    }
-    //
     // subscribe for new messages
     //
     wsSubscriptions.forEach((callback, code) => {
       emitter.off(code, callback);
       emitter.on(code, callback);
     });
-    //
-    // listen for deleted messages
-    //
     return () => {
       // remove the listeners.
       wsSubscriptions.forEach((callback, code) => {

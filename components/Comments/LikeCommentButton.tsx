@@ -12,12 +12,14 @@ import { LoadingSpinner } from "../UI/LoadingSpinner";
 import { Button } from "../UI/Button";
 
 import { useAuth } from "../../hooks/useAuth";
-import { CommentLike } from "../../schema/CommentLike";
+import { CommentLike, WSCommentLikeUpdate } from "../../schema/CommentLike";
 import {
   createNewCommentLike,
   deleteCommentLike,
   getAllCommentLikes,
 } from "../../crud/commentLikes";
+import { WSMessage, WSSubscription } from "../../schema/WebSockets";
+import { useEmitter } from "../../hooks/useEmitter";
 
 interface PropType extends JSX.IntrinsicAttributes {
   commentId: number;
@@ -27,13 +29,58 @@ export const CommentLikeButton: FunctionComponent<PropType> = ({
   commentId,
   ...props
 }) => {
+  // Hooks
   const { user } = useAuth();
+  const { emitter } = useEmitter();
+  const router = useRouter();
 
-  const router = useRouter;
+  // Local State
   const [loading, setLoading] = useState(true);
   const [commentIsLikedByUser, setCommentIsLikedByUser] = useState(false);
   const [commentLikes, setCommentLikes] = useState<Array<CommentLike>>([]);
 
+  // Functions
+  const commentLikeChanged = ({ body }: WSMessage<WSCommentLikeUpdate>) => {
+    if (body.commentLike.commentId === commentId) {
+      // console.log("A comment was added", message);
+      if (body.isLiked) {
+        // console.log("another user liked this comment");
+        setCommentLikes((prev) => [...prev, body.commentLike]);
+      } else {
+        // console.log("another user unliked this comment");
+        setCommentLikes((prev) =>
+          prev.filter((like) => like.userId !== body.commentLike.userId),
+        );
+      }
+    }
+  };
+
+  const likeComment = async () => {
+    setLoading(true);
+    try {
+      if (commentIsLikedByUser === true) {
+        // Unlike the comment
+        const { value, error } = await deleteCommentLike({ commentId });
+        if (error) throw new Error(error.errorMessageUI);
+        setCommentIsLikedByUser(false);
+        setCommentLikes((prev) =>
+          prev.filter((like) => like.userId !== user.id),
+        );
+      } else {
+        // Like the comment
+        const { value, error } = await createNewCommentLike({ commentId });
+        if (error) throw new Error(error.errorMessageUI);
+        setCommentIsLikedByUser(true);
+        setCommentLikes([...commentLikes, value]);
+      }
+    } catch (error) {
+      //
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Life Cycle
   useEffect(() => {
     (async () => {
       const { value: likes, error } = await getAllCommentLikes(commentId);
@@ -52,32 +99,36 @@ export const CommentLikeButton: FunctionComponent<PropType> = ({
     });
   }, []);
 
-  const likeComment = async () => {
-    if (commentIsLikedByUser === true) {
-      // Unlike the comment
-      await deleteCommentLike({ commentId });
-      setCommentIsLikedByUser(false);
-      setCommentLikes([
-        ...commentLikes.filter((like) => like.userId !== user.id),
-      ]);
-    } else {
-      // Like the comment
-      await createNewCommentLike({ commentId });
-      setCommentIsLikedByUser(true);
-      setCommentLikes([
-        ...commentLikes,
-        { commentId: commentId, userId: user.id, username: user.username },
-      ]);
-    }
-  };
+  useEffect(() => {
+    if (!user) return;
+    const wsSubscriptions: WSSubscription = new Map();
+    wsSubscriptions.set("comments.likes.changed", commentLikeChanged);
+
+    //
+    // subscribe
+    //
+    wsSubscriptions.forEach((callback, code) => {
+      emitter.off(code, callback);
+      emitter.on(code, callback);
+    });
+    //
+    // Cleanup
+    //
+    return () => {
+      // remove the listeners.
+      wsSubscriptions.forEach((callback, code) => {
+        emitter.off(code, callback);
+      });
+    };
+  }, [user]);
 
   return loading === true ? (
-    <Button className="ml-0" color="white" disabled>
+    <Button className="ml-0 items-center" color="white" disabled>
       <LoadingSpinner />
     </Button>
   ) : (
     <Button
-      className={`ml-0 ${
+      className={`ml-0 items-center ${
         commentIsLikedByUser
           ? "text-white "
           : "text-blueGray-700 hover:text-white"

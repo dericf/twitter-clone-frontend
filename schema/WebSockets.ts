@@ -3,7 +3,16 @@ type WSAction =
   | "chat.message.new"
   | "chat.message.deleted"
   | "chat.user.online"
-  | "chat.user.typing";
+  | "chat.user.typing"
+  | "followers.followed"
+  | "followers.unfollowed"
+  | "comments.count.new"
+  | "comments.count.deleted"
+  | "comments.new"
+  | "comments.updated"
+  | "comments.deleted"
+  | "comments.likes.changed"
+  | "tweets.likes.changed";
 
 interface WSMessageError {
   message: string;

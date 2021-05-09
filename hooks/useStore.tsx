@@ -1,4 +1,13 @@
-import React, { useState, useContext, createContext, useEffect } from "react";
+import React, {
+  useState,
+  useContext,
+  createContext,
+  useEffect,
+  Ref,
+  useRef,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { useAlert } from "./useAlert";
 import { useRouter } from "next/router";
 import {
@@ -13,23 +22,26 @@ import { Follower } from "../schema/Followers";
 import { Follows } from "../schema/Follows";
 import { PageId } from "../schema/Navigation";
 import { getAllFollows } from "../crud/follows";
+import { useEmitter } from "./useEmitter";
+import { WSMessage } from "../schema/WebSockets";
 
+import WSC from "../websocket/client";
+
+// TODO: Fix the types for all setState functions
 export interface StoreContextI {
   tweets: Array<Tweet>;
-  setTweets: (_: Array<Tweet>) => void;
+  setTweets: Dispatch<SetStateAction<Tweet[]>>;
   myTweets: Array<Tweet>;
-  setMyTweets: (_: Array<Tweet>) => void;
+  setMyTweets: Dispatch<SetStateAction<Tweet[]>>;
   follows: Array<Follows>;
-  setFollows: (_: Array<Follows>) => void;
+  setFollows: Dispatch<SetStateAction<Follows[]>>;
   followers: Array<Follower>;
-  setFollowers: (_: Array<Follower>) => void;
+  setFollowers: Dispatch<SetStateAction<Follower[]>>;
   showSidebar: boolean;
-  setShowSidebar: (_: boolean) => void;
-  createTweet: (body: TweetCreateRequestBody) => void;
+  setShowSidebar: Dispatch<SetStateAction<boolean>>;
   updateTweetContent: (body: TweetUpdateRequestBody, tweetId: number) => void;
-  refreshTweets: () => void;
   activePage: string;
-  setActivePage: (_: PageId) => void;
+  setActivePage: Dispatch<SetStateAction<PageId>>;
 }
 
 export const StoreContext = createContext({} as StoreContextI);
@@ -38,10 +50,10 @@ export default function StoreContextProvider({ children }) {
   //
   // Initialize Store State
   //
-  const [tweets, setTweets] = useState<Array<Tweet>>([]);
-  const [myTweets, setMyTweets] = useState<Array<Tweet>>([]);
-  const [followers, setFollowers] = useState<Array<Follower>>([]);
-  const [follows, setFollows] = useState<Array<Follows>>([]);
+  const [tweets, setTweets] = useState<Tweet[]>([]);
+  const [myTweets, setMyTweets] = useState<Tweet[]>([]);
+  const [followers, setFollowers] = useState<Follower[]>([]);
+  const [follows, setFollows] = useState<Follows[]>([]);
   const [activePage, setActivePage] = useState<PageId>("discover");
   const [showSidebar, setShowSidebar] = useState<boolean>(true);
 
@@ -54,31 +66,21 @@ export default function StoreContextProvider({ children }) {
   // Next router
   const router = useRouter();
 
-  const createTweet = async (body: TweetCreateRequestBody) => {
-    // ! Depricated - do not use anymore
-    try {
-      const resp = await createNewTweet(body);
-      sendAlert("Success !");
-      await refreshTweets();
-    } catch (error) {
-      console.log("Create Tweet Error :>> ", error);
-      sendError("Error: " + error);
-    }
-  };
+  const { emitter } = useEmitter();
 
   const updateSingleTweetContent = (newContent: string, tweetId: number) => {
     // note: This isn't really the best way of handling this but perhaps
     // I'm using the wrong paradigm from the beginning... must think about this.
 
     // Update for the discover page
-    setTweets(
-      tweets.map((tweet) =>
+    setTweets((prev) =>
+      prev.map((tweet) =>
         tweet.tweetId === tweetId ? { ...tweet, content: newContent } : tweet,
       ),
     );
     // Update for the /tweets page
-    setMyTweets(
-      myTweets.map((tweet) =>
+    setMyTweets((prev) =>
+      prev.map((tweet) =>
         tweet.tweetId === tweetId ? { ...tweet, content: newContent } : tweet,
       ),
     );
@@ -97,17 +99,6 @@ export default function StoreContextProvider({ children }) {
     }
   };
 
-  const refreshTweets = async () => {
-    // ! Depricated - do not use anymore
-    const { value: allTweets, error } = await getAllTweets(user?.id);
-    if (error) throw new Error(error.errorMessageUI);
-    setTweets(allTweets);
-  };
-
-  const refreshTweetsForUser = () => {
-    // ! Depricated - do not use anymore
-  };
-
   useEffect(() => {
     if (!user) return;
     (async () => {
@@ -117,6 +108,12 @@ export default function StoreContextProvider({ children }) {
     })().catch((err) => {
       console.error(err);
     });
+
+    // Connect to websocket if not already connected
+    if (!WSC.isAlreadyConnected()) {
+      // console.log("Connecting to Websocket...");
+      WSC.connect(user.id, emitter);
+    }
   }, [user]);
 
   return (
@@ -133,8 +130,6 @@ export default function StoreContextProvider({ children }) {
         showSidebar,
         setShowSidebar,
         updateTweetContent,
-        createTweet,
-        refreshTweets,
         activePage,
         setActivePage,
       }}

@@ -16,6 +16,8 @@ import { useAlert } from "../../hooks/useAlert";
 import { useStore } from "../../hooks/useStore";
 import { MAX_TWEET_LENGTH } from "../../constants/constants";
 import { createNewTweet } from "../../crud/tweets";
+import { ModalPortalWrapper } from "../UI/Modals/ModalPortalWrapper";
+import { ModalBackdrop } from "../UI/Modals/ModalBackdrop";
 
 interface NewTweetPropType {
   showModal: boolean;
@@ -29,7 +31,6 @@ const NewTweetModal: FunctionComponent<NewTweetPropType> = (props) => {
     myTweets,
     setTweets,
     setMyTweets,
-    createTweet,
     updateTweetContent,
   } = useStore();
   const router = useRouter();
@@ -74,8 +75,8 @@ const NewTweetModal: FunctionComponent<NewTweetPropType> = (props) => {
   }, [props.showModal]);
 
   return (
-    <>
-      <div className="modal-backdrop fixed bottom-0 left-0 top-0 right-0 px-4 backdrop-blur-md z-30">
+    <ModalPortalWrapper>
+      <ModalBackdrop closeModal={() => props.setShowModal(false)}>
         <div
           className="flex flex-col justify-center items-center
             mx-auto p-8 
@@ -84,9 +85,13 @@ const NewTweetModal: FunctionComponent<NewTweetPropType> = (props) => {
             right-0 md:right-1/4
             top-1/4 
             max-h-screen 
-            z-20 shadow-xl 
+            shadow-xl 
             backdrop-filter
             bg-white"
+          onClick={(e) => {
+            // do not close modal if anything inside modal content is clicked
+            e.stopPropagation();
+          }}
         >
           <h4 className="text-4xl text-gray-900 mb-2">Create a New Tweet</h4>
           <form
@@ -97,6 +102,7 @@ const NewTweetModal: FunctionComponent<NewTweetPropType> = (props) => {
             <textarea
               ref={inputRef}
               name="content"
+              autoFocus={true}
               className="bg-blueGray-600 tracking-wider flex-grow w-full max-lg  text-lg text-white p-4 focus:ring-0 focus:border-white"
               id=""
               value={content}
@@ -134,16 +140,14 @@ const NewTweetModal: FunctionComponent<NewTweetPropType> = (props) => {
             </div>
           </form>
         </div>
-      </div>
-    </>
+      </ModalBackdrop>
+    </ModalPortalWrapper>
   );
 };
 
 interface PropType extends JSX.IntrinsicAttributes {}
 
 export const NewTweetButton: FunctionComponent<PropType> = (props) => {
-  const router = useRouter;
-
   const [showModal, setShowModal] = useState<boolean>(false);
 
   return (

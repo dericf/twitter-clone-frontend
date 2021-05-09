@@ -36,3 +36,17 @@ export interface CommentDeleteRequestBody {
 export interface CommentDeleteResponse extends APIResponse<EmptyResponse> {
   //
 }
+
+export interface WSCommentCountUpdatedBody {
+  tweetId: number;
+}
+export interface WSCommentCreatedBody {
+  comment?: Comment;
+}
+
+export interface WSCommentUpdatedBody extends WSCommentCreatedBody {}
+
+export interface WSCommentDeletedBody {
+  tweetId: number;
+  commentId?: number;
+}

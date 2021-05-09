@@ -1,3 +1,4 @@
+// TODO : clean up imports
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import { Button } from "../components/UI/Button";
@@ -97,6 +98,7 @@ export default function Home() {
                       setComments={setComments}
                     />
                     <DeleteCommentModal
+                      tweetId={comment.tweetId}
                       commentId={comment.id}
                       comments={comments}
                       setComments={setComments}

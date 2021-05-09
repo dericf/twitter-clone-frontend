@@ -31,7 +31,7 @@ const EditTweetModal: FunctionComponent<EditTweetModalPropType> = (props) => {
   const [newContent, setNewContent] = useState(tweet.content);
 
   // Use Store/Context
-  const { createTweet, updateTweetContent } = useStore();
+  const { updateTweetContent } = useStore();
 
   // Toast Notif.
   const { sendAlert, sendError } = useAlert();
@@ -137,8 +137,6 @@ interface PropType extends JSX.IntrinsicAttributes {
 }
 
 export const EditTweetButton: FunctionComponent<PropType> = (props) => {
-  const router = useRouter;
-
   const { tweet } = props;
 
   const [showModal, setShowModal] = useState<boolean>(false);
