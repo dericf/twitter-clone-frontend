@@ -11,10 +11,8 @@ type WSAction =
   | "comments.new"
   | "comments.updated"
   | "comments.deleted"
-  | "comments.likes.liked"
-  | "comments.likes.unliked"
-  | "tweets.likes.liked"
-  | "tweets.likes.unliked";
+  | "comments.likes.changed"
+  | "tweets.likes.changed";
 
 interface WSMessageError {
   message: string;
