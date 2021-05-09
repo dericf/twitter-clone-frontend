@@ -31,7 +31,11 @@ import { getRandomInt } from "../../utilities/randomNumbers";
 import { WSMessage, WSSubscription } from "../../schema/WebSockets";
 import { useEmitter } from "../../hooks/useEmitter";
 import { WSFollowerUpdateBody } from "../../schema/Followers";
-import { WSCommentCountUpdatedBody } from "../../schema/Comments";
+import {
+  WSCommentCountUpdatedBody,
+  WSCommentDeletedBody,
+  WSCommentUpdatedBody,
+} from "../../schema/Comments";
 interface Props {
   tweet: Tweet;
 }
@@ -120,6 +124,28 @@ export const TweetCard = ({ tweet }: Props) => {
     }
   };
 
+  const forwardUpdateCommentCountNew = ({
+    body,
+  }: WSMessage<WSCommentUpdatedBody>) => {
+    // Only forwards the count for when the comment list is closed.
+    if (showComments) return;
+    if (body.comment.tweetId === tweet.tweetId) {
+      // console.log("A comment was added", message);
+      setCommentCount((prev) => prev + 1);
+    }
+  };
+
+  const forwardUpdateCommentCountDeleted = ({
+    body,
+  }: WSMessage<WSCommentDeletedBody>) => {
+    // Only forwards the count for when the comment list is closed.
+    if (showComments) return;
+    if (body.tweetId === tweet.tweetId) {
+      // console.log("A comment was deleted", message);
+      setCommentCount((prev) => (prev === 1 ? 0 : prev - 1));
+    }
+  };
+
   // Life Cycle
   useEffect(() => {
     (async () => {
@@ -136,6 +162,8 @@ export const TweetCard = ({ tweet }: Props) => {
     wsSubscriptions.set("followers.unfollowed", removedFollower);
     wsSubscriptions.set("comments.count.new", newComment);
     wsSubscriptions.set("comments.count.deleted", deletedComment);
+    wsSubscriptions.set("comments.new", forwardUpdateCommentCountNew);
+    wsSubscriptions.set("comments.deleted", forwardUpdateCommentCountDeleted);
     //
     // subscribe
     //
