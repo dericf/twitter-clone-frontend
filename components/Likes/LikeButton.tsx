@@ -17,7 +17,9 @@ import {
   deleteTweetLike,
 } from "../../crud/likes";
 import { useAuth } from "../../hooks/useAuth";
-import { TweetLike } from "../../schema/Likes";
+import { TweetLike, WSTweetLikeUpdate } from "../../schema/Likes";
+import { WSMessage, WSSubscription } from "../../schema/WebSockets";
+import { useEmitter } from "../../hooks/useEmitter";
 
 interface PropType extends JSX.IntrinsicAttributes {
   tweetId: number;
@@ -27,30 +29,33 @@ export const LikeButton: FunctionComponent<PropType> = ({
   tweetId,
   ...props
 }) => {
+  // Hooks
   const { user } = useAuth();
+  const router = useRouter();
+  const { emitter } = useEmitter();
 
-  const router = useRouter;
+  // Local State
   const [loading, setLoading] = useState(true);
   const [tweetIsLikedByUser, setTweetIsLikedByUser] = useState(false);
   const [tweetLikes, setTweetLikes] = useState<Array<TweetLike>>([]);
 
-  useEffect(() => {
-    (async () => {
-      const { value: likes, error } = await getAllTweetLikes(tweetId);
-      setTweetLikes(likes);
-      if (error) throw new Error(error.errorMessageUI);
-
-      likes.forEach((like) => {
-        if (like.userId === user.id) {
-          setTweetIsLikedByUser(true);
-        }
-      });
-      setLoading(false);
-    })().catch((err) => {
-      console.error(err);
-      setLoading(false);
-    });
-  }, []);
+  // Functions
+  const tweetLikesChanged = ({ body }: WSMessage<WSTweetLikeUpdate>) => {
+    // console.log("tweet likes changes", body);
+    // Check if it was for this tweet
+    if (body.tweetLike.tweetId === tweetId) {
+      // console.log("A comment was added", message);
+      if (body.isLiked) {
+        // console.log("another user liked this tweet");
+        setTweetLikes((prev) => [...prev, body.tweetLike]);
+      } else {
+        // console.log("another user unliked this tweet");
+        setTweetLikes((prev) =>
+          prev.filter((like) => like.userId !== body.tweetLike.userId),
+        );
+      }
+    }
+  };
 
   const likeTweet = async () => {
     if (tweetIsLikedByUser === true) {
@@ -68,6 +73,47 @@ export const LikeButton: FunctionComponent<PropType> = ({
       ]);
     }
   };
+
+  // Life Cycle
+  useEffect(() => {
+    (async () => {
+      const { value: likes, error } = await getAllTweetLikes(tweetId);
+      setTweetLikes(likes);
+      if (error) throw new Error(error.errorMessageUI);
+
+      likes.forEach((like) => {
+        if (like.userId === user.id) {
+          setTweetIsLikedByUser(true);
+        }
+      });
+      setLoading(false);
+    })().catch((err) => {
+      // console.error(err);
+      setLoading(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    const wsSubscriptions: WSSubscription = new Map();
+    wsSubscriptions.set("tweets.likes.changed", tweetLikesChanged);
+    //
+    // subscribe
+    //
+    wsSubscriptions.forEach((callback, code) => {
+      emitter.off(code, callback);
+      emitter.on(code, callback);
+    });
+    //
+    // Cleanup
+    //
+    return () => {
+      // remove the listeners.
+      wsSubscriptions.forEach((callback, code) => {
+        emitter.off(code, callback);
+      });
+    };
+  }, [user]);
 
   return loading === true ? (
     <Button className="ml-0" color="white" disabled>
