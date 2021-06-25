@@ -41,7 +41,12 @@ export default function Register() {
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
-      sendError("Passwords do not match!");
+      sendError("Passwords do not match");
+      return false;
+    }
+
+    if (!form.birthdate) {
+      sendError("Please enter your birthdate");
       return false;
     }
 
