@@ -100,13 +100,13 @@ export default function AuthProvider({ children }) {
   const tryRegister = async (
     args: UserRegisterForm,
   ): Promise<UserCreateResponse> => {
-    const { username, email, bio, birthdate, password, confirmPassword } = args;
+    const { username, email, bio, birthdate, password } = args;
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
         method: "POST",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
         },
         credentials: "include",
         body: JSON.stringify(args),
@@ -124,7 +124,12 @@ export default function AuthProvider({ children }) {
         // }, 1000);
         router.push("/confirm-email");
       } else {
-        sendError("Error registering user. Please try again.");
+        const json = await res.json();
+        if (json.detail) {
+          sendError(JSON.stringify(json.detail));
+        } else {
+          sendError("Error registering user. Please try again.");
+        }
         return null;
       }
     } catch (error) {
